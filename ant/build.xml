@@ -1,0 +1,73 @@
+<!--
+ (#)build.xml	0.1.0   04/30/2025
+
+ @author   Jonathan Parker
+ @version  0.1.0
+ @since    0.1.0
+
+ Usage:
+ 	ant deploy-jar [-Dsource.version=0.1.0]
+ 
+ MIT License
+
+ Copyright (c) 2025 Jonathan M. Parker
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+-->
+
+<project name="Spring-Boot-Valkey" default="info" basedir=".">
+	<description>
+		A program that demonstrates setting up a Spring Boot application that uses Valkey.
+	</description>
+
+	<property name="source.home" location="/Users/jonathan/IDEA-Projects/Spring-Boot-Valkey" />
+	<property name="source.libs" location="${source.home}/build/libs" />
+	<property name="source.version" value="0.1.0" />
+
+	<property name="target.home" location="/usr/local/spring-boot-valkey" />
+	<property name="target.libs" location="${target.home}/lib" />
+
+	<target name="check-jar-exists" unless="jar.file.exists">
+		<echo message="source.version: ${source.version}" />
+
+		<available property="jar.file.exists" file="${source.libs}/Spring-Boot-Valkey-${source.version}.jar" />
+	</target>
+
+	<target name="deploy-jar" depends="check-jar-exists" if="${jar.file.exists}">
+		<echo message="source.version: ${source.version}" />
+
+		<delete>
+			<fileset dir="${target.libs}">
+      			<include name="spring-boot-valkey*.jar" />
+   			</fileset>
+		</delete>
+		<copy tofile="${target.libs}/spring-boot-valkey-${source.version}.jar"
+			  file="${source.libs}/Spring-Boot-Valkey-${source.version}.jar" />
+		<exec executable="ln">
+			<arg value="-fs" />
+			<arg value="${target.libs}/spring-boot-valkey-${source.version}.jar" />
+			<arg value="${target.libs}/spring-boot-valkey.jar"/>
+		</exec>
+	</target>
+
+	<target name="info">
+		<echo message="Run 'ant deploy-jar' to deploy the Spring-Boot-Valkey application jar and link it" />
+		<echo message="source.version: ${source.version}" />
+	</target>
+</project>
