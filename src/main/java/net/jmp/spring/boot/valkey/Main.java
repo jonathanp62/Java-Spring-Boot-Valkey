@@ -50,13 +50,18 @@ public class Main implements Runnable {
     /// The environment.
     private final Environment environment;
 
+    /// The valkey service.
+    private final ValkeyService valkeyService;
+
     /// The constructor.
     ///
     /// @param  environment         org.springframework.core.env.Environment
-    public Main(final Environment environment) {
+    public Main(final Environment environment,
+                final ValkeyService valkeyService) {
         super();
 
         this.environment = environment;
+        this.valkeyService = valkeyService;
     }
 
     ///
@@ -72,6 +77,8 @@ public class Main implements Runnable {
                     this.environment.getProperty("spring.application.name"),
                     this.environment.getProperty("spring.application.version"));
         }
+
+        this.valkeyService.run();
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());

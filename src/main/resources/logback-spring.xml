@@ -59,6 +59,9 @@
         <logger name="net.jmp.spring.boot.valkey.MainCommandLineRunner" additivity="false" level="info">
             <appender-ref ref="ECS_JSON_CONSOLE" />
         </logger>
+        <logger name="net.jmp.spring.boot.valkey.ValkeyService" additivity="false" level="info">
+            <appender-ref ref="ECS_JSON_CONSOLE" />
+        </logger>
         <logger name="org.springframework.beans" additivity="false" level="warn">
             <appender-ref ref="ECS_JSON_CONSOLE" />
         </logger>
@@ -101,6 +104,9 @@
             <appender-ref ref="ECS_JSON_FILE" />
         </logger>
         <logger name="net.jmp.spring.boot.valkey.MainCommandLineRunner" additivity="false" level="info">
+            <appender-ref ref="ECS_JSON_FILE" />
+        </logger>
+        <logger name="net.jmp.spring.boot.valkey.ValkeyService" additivity="false" level="info">
             <appender-ref ref="ECS_JSON_FILE" />
         </logger>
         <logger name="org.springframework.beans" additivity="false" level="warn">

@@ -104,7 +104,7 @@ tasks.named('test') {
 
 bootRun {
 	mainClass = 'net.jmp.spring.boot.valkey.MainApplication'
-	jvmArgs = [ '-Xmx1g' ]
+	jvmArgs = [ '-Xmx1g', '--enable-native-access=ALL-UNNAMED' ]
 
 	environment("GRADLE_VERSION", "${gradle.gradleVersion}")
 }

@@ -1,7 +1,7 @@
 /*
  * (#)module-info.java  0.1.0   04/30/2025
  *
- * @version  0.17.0
+ * @version  0.1.0
  *
  * MIT License
  *
@@ -27,6 +27,10 @@
  */
 
 /// The application module.
+/// Note: This is not working with Gradle.
+///       IDEA can find the valkey.glide module,
+///       but Gradle fails during comppile as it
+///       cannot.
 ///
 /// @since  0.1.0
 module Spring.Boot.Valkey.main {
@@ -37,6 +41,7 @@ module Spring.Boot.Valkey.main {
     requires spring.boot.autoconfigure;
     requires spring.context;
     requires spring.core;
+    requires valkey.glide;
 
     opens net.jmp.spring.boot.valkey;
 }
