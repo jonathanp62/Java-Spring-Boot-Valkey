@@ -43,6 +43,8 @@ import static net.jmp.util.logging.LoggerUtils.exit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.stereotype.Service;
 
 /// The Valkey service class.
@@ -53,6 +55,18 @@ import org.springframework.stereotype.Service;
 public class ValkeyService {
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
+    /// The Glide host.
+    @Value("${glide.host}")
+    private String glideHost;
+
+    /// The Glide port.
+    @Value("${glide.port}")
+    private int glidePort;
+
+    /// True when using SSL with Glide.
+    @Value("${glide.useSsl}")
+    private boolean glideUseSsl;
 
     /// The default constructor.
     public ValkeyService() {
@@ -78,18 +92,14 @@ public class ValkeyService {
             this.logger.trace(entry());
         }
 
-        final String host = "localhost";
-        final Integer port = 6379;
-        final boolean useSsl = false;
-
         final GlideClientConfiguration config =
                 GlideClientConfiguration.builder()
                         .address(NodeAddress.builder()
-                                .host(host)
-                                .port(port)
+                                .host(this.glideHost)
+                                .port(this.glidePort)
                                 .build()
                         )
-                        .useTLS(useSsl)
+                        .useTLS(this.glideUseSsl)
                         .build();
 
         try (final GlideClient client = GlideClient.createClient(config).get()) {
@@ -98,6 +108,25 @@ public class ValkeyService {
 
             this.logger.info("SET(apples, oranges): {}", client.set(gs("apples"), gs("oranges")).get());
             this.logger.info("GET(apples): {}", client.get(gs("apples")).get());
+
+            /*
+             * APIs to get acquainted with:
+             *
+             *  client.clientGetName();
+             *  client.clientId();
+             *  client.copy();
+             *  client.customCommand();
+             *  client.dbsize();
+             *  client.echo();
+             *  client.exec();
+             *  client.fcall();
+             *  client.flushall();
+             *  client.flushdb();
+             *  client.function...();
+             *  client.info();
+             *  client.lastsave();
+             *  client.lolwut();
+             */
         } catch (final ExecutionException | InterruptedException e) {
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();

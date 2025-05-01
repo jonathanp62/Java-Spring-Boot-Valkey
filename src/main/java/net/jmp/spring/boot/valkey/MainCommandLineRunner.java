@@ -34,6 +34,8 @@ import static net.jmp.util.logging.LoggerUtils.exit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.boot.CommandLineRunner;
 
 import org.springframework.context.ApplicationContext;
@@ -55,6 +57,10 @@ public class MainCommandLineRunner implements CommandLineRunner {
     /// The application context.
     private final ApplicationContext context;
 
+    /// The Spring Boot version.
+    @Value("${spring.boot.version}")
+    private String springBootVersion;
+
     /// A constructor.
     ///
     /// @param  context org.springframework.context.ApplicationContext
@@ -72,6 +78,8 @@ public class MainCommandLineRunner implements CommandLineRunner {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entry());
         }
+
+        this.logger.info("Running Spring Boot: {}", this.springBootVersion);
 
         this.context.getBean(Main.class).run();
 
