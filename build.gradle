@@ -65,6 +65,10 @@ repositories {
 dependencies {
 	implementation		('org.springframework.boot:spring-boot-starter')
 
+	implementation		(variantOf(libs.io.valkey.valkey.glide) {
+		classifier 'osx-aarch_64' }
+	)
+
 	implementation		(libs.co.elastic.logging.logback.ecs.encoder)
 	implementation		(libs.net.jmp.util.logging.logging.utilities)
 

@@ -50,10 +50,13 @@
             </encoder>
         </appender>
 
+        <logger name="net.jmp.spring.boot.valkey.Main" additivity="false" level="info">
+            <appender-ref ref="ECS_JSON_CONSOLE" />
+        </logger>
         <logger name="net.jmp.spring.boot.valkey.MainApplication" additivity="false" level="info">
             <appender-ref ref="ECS_JSON_CONSOLE" />
         </logger>
-        <logger name="net.jmp.spring.boot.valkey.MainApplicationCommandLineRunner" additivity="false" level="info">
+        <logger name="net.jmp.spring.boot.valkey.MainCommandLineRunner" additivity="false" level="info">
             <appender-ref ref="ECS_JSON_CONSOLE" />
         </logger>
         <logger name="org.springframework.beans" additivity="false" level="warn">
@@ -91,10 +94,13 @@
             </rollingPolicy>
         </appender>
 
+        <logger name="net.jmp.spring.boot.valkey.Main" additivity="false" level="info">
+            <appender-ref ref="ECS_JSON_FILE" />
+        </logger>
         <logger name="net.jmp.spring.boot.valkey.MainApplication" additivity="false" level="info">
             <appender-ref ref="ECS_JSON_FILE" />
         </logger>
-        <logger name="net.jmp.spring.boot.valkey.MainApplicationCommandLineRunner" additivity="false" level="info">
+        <logger name="net.jmp.spring.boot.valkey.MainCommandLineRunner" additivity="false" level="info">
             <appender-ref ref="ECS_JSON_FILE" />
         </logger>
         <logger name="org.springframework.beans" additivity="false" level="warn">
