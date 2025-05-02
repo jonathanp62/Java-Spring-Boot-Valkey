@@ -218,6 +218,18 @@ public class ValkeyService {
             this.logger.info("HEXISTS(my-hash, lastName): {}", client.hexists(myHash, lastName).get());   // Returns true
             this.logger.info("HDEL(my-hash, lastName): {}", client.hdel(myHash, new GlideString[] { lastName }).get());  // Returns 1
             this.logger.info("HGET(my-hash, lastName): {}", client.hget(myHash, lastName).get());   // Returns null
+
+            Map<GlideString, GlideString> returnedMap = client.hgetall(myHash).get();
+
+            this.logger.info("HGETALL(my-hash): {}", returnedMap.toString());    // Returns {firstName=Jonathan}
+
+            returnedMap.put(gs("spouse"), gs("Dena"));
+
+            client.hset(myHash, returnedMap);
+
+            returnedMap = client.hgetall(myHash).get();
+
+            this.logger.info("HGETALL(my-hash): {}", returnedMap.toString());    // Returns {spouse=Dena, firstName=Jonathan}
         }
 
         if (this.logger.isTraceEnabled()) {
