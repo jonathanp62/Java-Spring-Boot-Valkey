@@ -56,6 +56,7 @@ public class Main implements Runnable {
     /// The constructor.
     ///
     /// @param  environment         org.springframework.core.env.Environment
+    /// @param  valkeyService       net.jmp.spring.boot.valkey.ValkeyService
     public Main(final Environment environment,
                 final ValkeyService valkeyService) {
         super();

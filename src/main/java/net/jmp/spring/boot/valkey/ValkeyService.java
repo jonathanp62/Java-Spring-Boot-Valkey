@@ -56,7 +56,6 @@ import org.springframework.stereotype.Service;
 /// @since      0.1.0
 ///
 /// APIs to get acquainted with:
-///  client.copy();
 ///  client.customCommand();
 ///  client.exec();
 ///  client.fcall();
@@ -65,8 +64,8 @@ import org.springframework.stereotype.Service;
 ///  client.lolwut();
 ///
 /// Data types to get acquainted with:
-///  String
-///  Hash
+///  String ✔️
+///  Hash ✔️
 ///  List
 ///  Set
 ///  Sorted Set
@@ -140,6 +139,8 @@ public class ValkeyService {
     /// Echo and ping commands.
     ///
     /// @param  client  glide.api.GlideClient
+    /// @throws         java.util.concurrent.ExecutionException When an error occurs
+    /// @throws         java.lang.InterruptedException          When interrupted
     private void echoAndPing(final GlideClient client) throws ExecutionException, InterruptedException {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(client));
@@ -156,14 +157,23 @@ public class ValkeyService {
     /// Get and set commands.
     ///
     /// @param  client  glide.api.GlideClient
+    /// @throws         java.util.concurrent.ExecutionException When an error occurs
+    /// @throws         java.lang.InterruptedException          When interrupted
     private void getAndSet(final GlideClient client) throws ExecutionException, InterruptedException {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(client));
         }
 
-        this.logger.info("SET(apples, oranges): {}", client.set(gs("apples"), gs("oranges")).get());    // Returns OK
-        this.logger.info("GET(apples): {}", client.get(gs("apples")).get());
-        this.logger.info("GET(oranges): {}", client.get(gs("oranges")).get());  // Returns null
+        final GlideString apples = gs("apples");
+        final GlideString oranges = gs("oranges");
+
+        this.logger.info("SET(apples, oranges): {}", client.set(apples, oranges).get());    // Returns OK
+        this.logger.info("GET(apples): {}", client.get(apples).get());
+        this.logger.info("GET(oranges): {}", client.get(oranges).get());    // Returns null
+        this.logger.info("APPEND(apples, and raisins): {}", client.append(apples, gs(" and raisins")).get());   // Returns 19
+        this.logger.info("GET(apples): {}", client.get(apples).get());
+        this.logger.info("COPY(apples, oranges): {}", client.copy(apples, oranges).get());  // Returns true
+        this.logger.info("GET(oranges): {}", client.get(oranges).get());
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
@@ -173,6 +183,8 @@ public class ValkeyService {
     /// Get and delete commands.
     ///
     /// @param  client  glide.api.GlideClient
+    /// @throws         java.util.concurrent.ExecutionException When an error occurs
+    /// @throws         java.lang.InterruptedException          When interrupted
     private void getAndDelete(final GlideClient client) throws ExecutionException, InterruptedException {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(client));
@@ -193,6 +205,8 @@ public class ValkeyService {
     /// Hash commands.
     ///
     /// @param  client  glide.api.GlideClient
+    /// @throws         java.util.concurrent.ExecutionException When an error occurs
+    /// @throws         java.lang.InterruptedException          When interrupted
     private void hash(final GlideClient client) throws ExecutionException, InterruptedException {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(client));
