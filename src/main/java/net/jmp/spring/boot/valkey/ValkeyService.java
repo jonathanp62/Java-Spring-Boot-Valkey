@@ -34,11 +34,16 @@ import static glide.api.models.GlideString.gs;
 
 import glide.api.models.GlideString;
 
+import glide.api.models.commands.LInsertOptions;
+
 import glide.api.models.configuration.GlideClientConfiguration;
 import glide.api.models.configuration.NodeAddress;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+
 import java.util.concurrent.ExecutionException;
 
 import static net.jmp.util.logging.LoggerUtils.*;
@@ -61,12 +66,11 @@ import org.springframework.stereotype.Service;
 ///  client.fcall();
 ///  client.function...();
 ///  client.lastsave();
-///  client.lolwut();
 ///
 /// Data types to get acquainted with:
 ///  String ✔️
 ///  Hash ✔️
-///  List
+///  List ✔️
 ///  Set
 ///  Sorted Set
 ///  Vector Set
@@ -119,6 +123,7 @@ public class ValkeyService {
             this.getAndSet(client);
             this.getAndDelete(client);
             this.hash(client);
+            this.list(client);
 
             client.flushall();
 
@@ -174,6 +179,8 @@ public class ValkeyService {
         this.logger.info("GET(apples): {}", client.get(apples).get());
         this.logger.info("COPY(apples, oranges): {}", client.copy(apples, oranges).get());  // Returns true
         this.logger.info("GET(oranges): {}", client.get(oranges).get());
+        this.logger.info("EXISTS(oranges): {}", client.exists(new GlideString[] { oranges }).get());    // Returns 1
+        this.logger.info("EXISTS(lemons): {}", client.exists(new GlideString[] { gs("lemons") }).get());    // Returns 0
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
@@ -191,11 +198,13 @@ public class ValkeyService {
         }
 
         final GlideString name = gs("name");
+        final GlideString myName = gs("my-name");
 
         this.logger.info("SET(name, Jonathan): {}", client.set(name, gs("Jonathan")).get());    // Returns OK
         this.logger.info("GET(name): {}", client.get(name).get());
-        this.logger.info("GETDEL(name): {}", client.getdel(name).get());    // Returns Jonathan
-        this.logger.info("GET(name): {}", client.get(name).get());          // Returns null
+        this.logger.info("RENAME(name, my-name): {}", client.rename(name, myName).get());   // Returns OK
+        this.logger.info("GETDEL(my-name): {}", client.getdel(myName).get());   // Returns Jonathan
+        this.logger.info("GET(my-name): {}", client.get(myName).get());         // Returns null
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
@@ -235,7 +244,7 @@ public class ValkeyService {
 
             Map<GlideString, GlideString> returnedMap = client.hgetall(myHash).get();
 
-            this.logger.info("HGETALL(my-hash): {}", returnedMap.toString());    // Returns {firstName=Jonathan}
+            this.logger.info("HGETALL(my-hash): {}", returnedMap);  // Returns {firstName=Jonathan}
 
             returnedMap.put(gs("spouse"), gs("Dena"));
 
@@ -243,11 +252,61 @@ public class ValkeyService {
 
             returnedMap = client.hgetall(myHash).get();
 
-            this.logger.info("HGETALL(my-hash): {}", returnedMap.toString());    // Returns {spouse=Dena, firstName=Jonathan}
+            this.logger.info("HGETALL(my-hash): {}", returnedMap);  // Returns {spouse=Dena, firstName=Jonathan}
         }
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
         }
     }
+
+    /// List commands.
+    ///
+    /// @param  client  glide.api.GlideClient
+    /// @throws         java.util.concurrent.ExecutionException When an error occurs
+    /// @throws         java.lang.InterruptedException          When interrupted
+    private void list(final GlideClient client) throws ExecutionException, InterruptedException {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(client));
+        }
+
+        final GlideString myList = gs("my-List");
+        final GlideString thirdElement = gs("Third element");
+
+        final GlideString[] myArray = new GlideString[] { gs("First"), gs("Second"), gs("Third") };
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("LPUSH: {}", client.lpush(myList, myArray).get()); // Returns 3
+            this.logger.info("LSET: {}", client.lset(myList, 0, gs("First element")).get());    // Returns OK
+            this.logger.info("LSET: {}", client.lset(myList, 1, gs("Second element")).get());   // Returns OK
+            this.logger.info("LSET: {}", client.lset(myList, 2, thirdElement).get());    // Returns OK
+            this.logger.info("LLEN(my-list): {}", client.llen(myList).get());   // Returns 3
+            this.logger.info("LINDEX(my-list, 1): {}", client.lindex(myList, 1).get());   // Returns Second element
+            this.logger.info("LPOS(my-list, Third element): {}", client.lpos(myList, thirdElement).get());   // Returns 2
+            this.logger.info("LINSERT(my-list, AFTER, Third element, Fourth element): {}", client.linsert(myList,
+                    LInsertOptions.InsertPosition.AFTER,
+                    thirdElement,
+                    gs("Fourth element")).get());   // Returns 4
+
+            final GlideString[] rangedItems = client.lrange(myList, 0, 2).get();
+
+            this.logger.info("LRANGE(my-list, 0, 2): {}", Arrays.toString(rangedItems));   // Returns [First element, Second element, Third element]
+            this.logger.info("LPOP(my-list): {}", client.lpop(myList).get());   // Returns First element
+            this.logger.info("LREM(my-list, Second element): {}", client.lrem(myList, 1, gs("Second element")).get());   // Returns 1
+
+            final List<String> list = new ArrayList<>();
+            final long itemCount = client.llen(myList).get();
+
+            for (int i = 0; i < itemCount; i++) {
+                list.add(client.lindex(myList, i).get().getString());
+            }
+
+            this.logger.info("list: {}", list);   // Returns [Third element, Fourth element]
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
 }
