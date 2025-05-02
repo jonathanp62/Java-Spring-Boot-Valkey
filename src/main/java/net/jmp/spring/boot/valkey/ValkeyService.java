@@ -114,26 +114,50 @@ public class ValkeyService {
                         .useTLS(this.glideUseSsl)
                         .build();
 
-        try (final GlideClient client = GlideClient.createClient(config).get()) {
-            this.logger.info("CLIENTGETNAME: {}", client.clientGetName().get());    // Returns null
-            this.logger.info("CLIENTID: {}", client.clientId().get());              // Returns 12
-            this.logger.info("INFO: {}", client.info().get());
+        GlideClient client = null;
 
-            this.echoAndPing(client);
-            this.getAndSet(client);
-            this.getAndDelete(client);
-            this.hash(client);
-            this.list(client);
-
-            client.flushall();
-
-            this.logger.info("DBSIZE: {}", client.dbsize().get());  // Returns 0
+        try {
+            client = GlideClient.createClient(config).exceptionally(throwable -> {
+                this.logger.error("Glide client creation incurred an exception: {}", throwable.getMessage(), throwable);
+                return null;
+            }).get();
         } catch (final ExecutionException | InterruptedException e) {
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
+                this.logger.error("Glide client creation was interrupted: {}", e.getMessage(), e);
+            } else {
+                this.logger.error("Glide client creation incurred an execution exception: {}", e.getMessage(), e);
             }
+        }
 
-            this.logger.error("Glide example failed with an exception: {}", e.getMessage(), e);
+        if (client != null) {
+            try {
+                this.logger.info("CLIENTGETNAME: {}", client.clientGetName().get());    // Returns null
+                this.logger.info("CLIENTID: {}", client.clientId().get());              // Returns 12
+                this.logger.info("INFO: {}", client.info().get());
+
+                this.echoAndPing(client);
+                this.getAndSet(client);
+                this.getAndDelete(client);
+                this.hash(client);
+                this.list(client);
+
+                client.flushall();
+
+                this.logger.info("DBSIZE: {}", client.dbsize().get());  // Returns 0
+            } catch (final ExecutionException | InterruptedException e) {
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
+
+                this.logger.error("Glide example failed with an exception: {}", e.getMessage(), e);
+            } finally {
+                try {
+                    client.close();
+                } catch (final Exception e) {
+                    this.logger.error("Glide example failed with an exception: {}", e.getMessage(), e);
+                }
+            }
         }
 
         if (this.logger.isTraceEnabled()) {
