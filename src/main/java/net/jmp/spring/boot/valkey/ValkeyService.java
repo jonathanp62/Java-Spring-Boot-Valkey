@@ -130,11 +130,12 @@ public class ValkeyService {
                 final GlideClient client = glideClient; // Lambdas require final variables
 
                 completedFutures.thenRun(() -> {
+                    this.echoAndPing(client);
+                    this.getAndSet(client);
+                    this.getAndDelete(client);
+                    this.hash(client);
+
                     try {   // @todo Once the methods no longer throw exceptions then this try can be removed
-                        this.echoAndPing(client);
-                        this.getAndSet(client);
-                        this.getAndDelete(client);
-                        this.hash(client);
                         this.list(client);
                     }  catch (final ExecutionException | InterruptedException e) {
                         if (e instanceof InterruptedException) {
@@ -351,9 +352,7 @@ public class ValkeyService {
     /// Hash commands.
     ///
     /// @param  client  glide.api.GlideClient
-    /// @throws         java.util.concurrent.ExecutionException When an error occurs
-    /// @throws         java.lang.InterruptedException          When interrupted
-    private void hash(final GlideClient client) throws ExecutionException, InterruptedException {
+    private void hash(final GlideClient client) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(client));
         }
@@ -365,31 +364,60 @@ public class ValkeyService {
 
         final GlideString myHash = gs("my-hash");
 
-        this.logger.info("HSET(my-hash, map): {}", client.hset(myHash, map).get());    // Returns 2 if not already created, else 0
+        try {
+            client.hset(myHash, map)
+                    .thenAccept(num -> this.logger.info("HSET(my-hash, map): {}", num))
+                    .join();
 
-        final GlideString[] keys = client.hkeys(myHash).get();
-        final GlideString lastName = gs("lastName");
+            final CompletableFuture<GlideString[]> futureKeys = client.hkeys(myHash);
+            final GlideString[] keys = futureKeys.join();
+            final GlideString lastName = gs("lastName");
 
-        if (this.logger.isInfoEnabled()) {
-            this.logger.info("HKEYS(my-hash): {}", Arrays.toString(keys));      // Returns [firstName, lastName]
-            this.logger.info("HLEN(my-hash): {}", client.hlen(myHash).get());   // Returns 2
-            this.logger.info("HGET(my-hash, firstName): {}", client.hget(myHash, gs("firstName")).get());
-            this.logger.info("HGET(my-hash, lastName): {}", client.hget(myHash, lastName).get());
-            this.logger.info("HEXISTS(my-hash, lastName): {}", client.hexists(myHash, lastName).get());   // Returns true
-            this.logger.info("HDEL(my-hash, lastName): {}", client.hdel(myHash, new GlideString[] { lastName }).get());  // Returns 1
-            this.logger.info("HGET(my-hash, lastName): {}", client.hget(myHash, lastName).get());   // Returns null
+            if (this.logger.isInfoEnabled()) {
+                this.logger.info("HKEYS(my-hash): {}", Arrays.toString(keys));      // Returns [firstName, lastName]
+            }
 
-            Map<GlideString, GlideString> returnedMap = client.hgetall(myHash).get();
+            client.hlen(myHash)
+                    .thenAccept(num -> this.logger.info("HLEN(my-hash): {}", num))
+                    .join();
 
-            this.logger.info("HGETALL(my-hash): {}", returnedMap);  // Returns {firstName=Jonathan}
+            client.hget(myHash, gs("firstName"))
+                    .thenAccept(str -> this.logger.info("HGET(my-hash, firstName): {}", str))
+                    .join();
+
+            client.hget(myHash, lastName)
+                    .thenAccept(str -> this.logger.info("HGET(my-hash, lastName): {}", str))
+                    .join();
+
+            client.hexists(myHash, lastName)
+                    .thenAccept(bool -> this.logger.info("HEXISTS(my-hash, lastName): {}", bool))
+                    .join();
+
+            client.hdel(myHash, new GlideString[]{ lastName })
+                    .thenAccept(num -> this.logger.info("HDEL(my-hash, lastName): {}", num))
+                    .join();
+
+            client.hget(myHash, lastName)
+                    .thenAccept(str -> this.logger.info("HGET(my-hash, lastName): {}", str))
+                    .join();
+
+            final CompletableFuture<Map<GlideString, GlideString>> futureGetAll = client.hgetall(myHash);
+
+            Map<GlideString, GlideString> returnedMap = futureGetAll.join();
+
+            this.logger.info("HGETALL(my-hash): {}", returnedMap);
 
             returnedMap.put(gs("spouse"), gs("Dena"));
 
-            client.hset(myHash, returnedMap);
+            client.hset(myHash, returnedMap)
+                    .thenAccept(num -> this.logger.info("HSET(my-hash, returnedMap): {}", num))
+                    .join();
 
-            returnedMap = client.hgetall(myHash).get();
+            returnedMap = client.hgetall(myHash).join();
 
-            this.logger.info("HGETALL(my-hash): {}", returnedMap);  // Returns {spouse=Dena, firstName=Jonathan}
+            this.logger.info("HGETALL(my-hash): {}", returnedMap);
+        } catch (final CompletionException e) {
+            this.logger.error("Glide execution incurred an exception: {}", e.getMessage(), e);
         }
 
         if (this.logger.isTraceEnabled()) {
