@@ -145,19 +145,7 @@ public class ValkeyService {
                         }
                     }
 
-                    // @todo Extract into a cleanup method
-
-                    try {
-                        client.flushall()
-                                .thenAccept(str -> this.logger.info("FLUSH-ALL: {}", str))
-                                .join();
-
-                        client.dbsize()
-                                .thenAccept(size -> this.logger.info("DB-SIZE: {}", size))
-                                .join();
-                    } catch (final CompletionException e) {
-                        this.logger.error("Glide execution waiting on futures: {}", e.getMessage(), e);
-                    }
+                    this.cleanup(client);
                 });
             } finally {
                 try {
@@ -214,6 +202,31 @@ public class ValkeyService {
         return glideClient;
     }
 
+    /// Cleanup the database.
+    ///
+    /// @param  client  glide.api.GlideClient
+    private void cleanup(final GlideClient client) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(client));
+        }
+
+        try {
+            client.flushall()
+                    .thenAccept(str -> this.logger.info("FLUSH-ALL: {}", str))
+                    .join();
+
+            client.dbsize()
+                    .thenAccept(size -> this.logger.info("DB-SIZE: {}", size))
+                    .join();
+        } catch (final CompletionException e) {
+            this.logger.error("Glide execution waiting on futures: {}", e.getMessage(), e);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
     /// Echo and ping commands.
     ///
     /// @param  client  glide.api.GlideClient
@@ -242,9 +255,7 @@ public class ValkeyService {
     /// Get and set commands.
     ///
     /// @param  client  glide.api.GlideClient
-    /// @throws         java.util.concurrent.ExecutionException When an error occurs
-    /// @throws         java.lang.InterruptedException          When interrupted
-    private void getAndSet(final GlideClient client) throws ExecutionException, InterruptedException {
+    private void getAndSet(final GlideClient client) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(client));
         }
@@ -252,19 +263,45 @@ public class ValkeyService {
         final GlideString apples = gs("apples");
         final GlideString oranges = gs("oranges");
 
-        this.logger.info("SET(apples, oranges): {}", client.set(apples, oranges).get());    // Returns OK
-        this.logger.info("GET(apples): {}", client.get(apples).get());
+        try {
+            client.set(apples, oranges)
+                    .thenAccept(str -> this.logger.info("SET(apples, oranges): {}", str))
+                    .join();
 
-        this.logger.info("GET(oranges): {}", client.get(oranges).get());    // Returns null
+            client.get(apples)
+                    .thenAccept(str -> this.logger.info("GET(apples): {}", str))
+                    .join();
 
-        this.logger.info("APPEND(apples, and raisins): {}", client.append(apples, gs(" and raisins")).get());   // Returns 19
-        this.logger.info("GET(apples): {}", client.get(apples).get());
+            client.get(oranges)
+                    .thenAccept(str -> this.logger.info("GET(oranges): {}", str))
+                    .join();
 
-        this.logger.info("COPY(apples, oranges): {}", client.copy(apples, oranges).get());  // Returns true
-        this.logger.info("GET(oranges): {}", client.get(oranges).get());
+            client.append(apples, gs(" and raisins"))
+                    .thenAccept(num -> this.logger.info("APPEND(apples, and raisins): {}", num))
+                    .join();
 
-        this.logger.info("EXISTS(oranges): {}", client.exists(new GlideString[] { oranges }).get());    // Returns 1
-        this.logger.info("EXISTS(lemons): {}", client.exists(new GlideString[] { gs("lemons") }).get());    // Returns 0
+            client.get(apples)
+                    .thenAccept(str -> this.logger.info("GET(apples): {}", str))
+                    .join();
+
+            client.copy(apples, oranges)
+                    .thenAccept(bool -> this.logger.info("COPY(apples, oranges): {}", bool))
+                    .join();
+
+            client.get(oranges)
+                    .thenAccept(str -> this.logger.info("GET(oranges): {}", str))
+                    .join();
+
+            client.exists(new GlideString[] { oranges })
+                    .thenAccept(num -> this.logger.info("EXISTS(oranges): {}", num))
+                    .join();
+
+            client.exists(new GlideString[] { gs("lemons") })
+                    .thenAccept(num -> this.logger.info("EXISTS(lemons): {}", num))
+                    .join();
+        } catch (final CompletionException e) {
+            this.logger.error("Glide execution incurred an exception: {}", e.getMessage(), e);
+        }
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
@@ -274,9 +311,7 @@ public class ValkeyService {
     /// Get and delete commands.
     ///
     /// @param  client  glide.api.GlideClient
-    /// @throws         java.util.concurrent.ExecutionException When an error occurs
-    /// @throws         java.lang.InterruptedException          When interrupted
-    private void getAndDelete(final GlideClient client) throws ExecutionException, InterruptedException {
+    private void getAndDelete(final GlideClient client) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(client));
         }
@@ -284,11 +319,29 @@ public class ValkeyService {
         final GlideString name = gs("name");
         final GlideString myName = gs("my-name");
 
-        this.logger.info("SET(name, Jonathan): {}", client.set(name, gs("Jonathan")).get());    // Returns OK
-        this.logger.info("GET(name): {}", client.get(name).get());
-        this.logger.info("RENAME(name, my-name): {}", client.rename(name, myName).get());   // Returns OK
-        this.logger.info("GETDEL(my-name): {}", client.getdel(myName).get());   // Returns Jonathan
-        this.logger.info("GET(my-name): {}", client.get(myName).get());         // Returns null
+        try {
+            client.set(name, gs("Jonathan"))
+                    .thenAccept(str -> this.logger.info("SET(name, Jonathan): {}", str))
+                    .join();
+
+            client.get(name)
+                    .thenAccept(str -> this.logger.info("GET(name): {}", str))
+                    .join();
+
+            client.rename(name, myName)
+                    .thenAccept(str -> this.logger.info("RENAME(name, my-name): {}", str))
+                    .join();
+
+            client.getdel(myName)
+                    .thenAccept(str -> this.logger.info("GETDEL(my-name): {}", str))
+                    .join();
+
+            client.get(myName)
+                    .thenAccept(str -> this.logger.info("GET(my-name): {}", str))
+                    .join();
+        } catch (final CompletionException e) {
+            this.logger.error("Glide execution incurred an exception: {}", e.getMessage(), e);
+        }
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
