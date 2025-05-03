@@ -44,6 +44,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static net.jmp.util.logging.LoggerUtils.*;
@@ -104,6 +105,70 @@ public class ValkeyService {
             this.logger.trace(entry());
         }
 
+        final GlideClient glideClient = this.connect();
+
+        if (glideClient != null) {
+            try {
+                final GlideClient client = glideClient; // Lambdas require final variables
+
+                final CompletableFuture<Void> clientName = glideClient.clientGetName()
+                        .thenAccept(name -> this.logger.info("CLIENT-NAME: {}", name));
+
+                final CompletableFuture<Void> clientId = glideClient.clientId()
+                        .thenAccept(id -> this.logger.info("CLIENT-ID: {}", id));
+
+                final CompletableFuture<Void> info = glideClient.info()
+                        .thenAccept(str -> this.logger.info("INFO: {}", str));
+
+                final CompletableFuture<Void> completedFutures = CompletableFuture.allOf(clientName, clientId, info);
+
+                completedFutures.join();
+                completedFutures.thenRun(() -> {
+                    try {
+                        this.echoAndPing(client);
+                        this.getAndSet(client);
+                        this.getAndDelete(client);
+                        this.hash(client);
+                        this.list(client);
+                    }  catch (final ExecutionException | InterruptedException e) {
+                        if (e instanceof InterruptedException) {
+                            Thread.currentThread().interrupt();
+                            this.logger.error("Glide execution was interrupted: {}", e.getMessage(), e);
+                        } else {
+                            this.logger.error("Glide execution incurred an exception: {}", e.getMessage(), e);
+                        }
+                    }
+
+                    client.flushall()
+                            .thenAccept(str -> this.logger.info("FLUSH-ALL: {}", str))
+                            .join();
+
+                    client.dbsize()
+                            .thenAccept(size -> this.logger.info("DB-SIZE: {}", size))
+                            .join();
+                });
+            } finally {
+                try {
+                    glideClient.close();
+                } catch (final Exception e) {
+                    this.logger.error("Glide client close failed with an exception: {}", e.getMessage(), e);
+                }
+            }
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Connect to Valkey using Glide.
+    ///
+    /// @return glide.api.GlideClient
+    private GlideClient connect() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
         final GlideClientConfiguration config =
                 GlideClientConfiguration.builder()
                         .address(NodeAddress.builder()
@@ -114,10 +179,10 @@ public class ValkeyService {
                         .useTLS(this.glideUseSsl)
                         .build();
 
-        GlideClient client = null;
+        GlideClient glideClient = null;
 
         try {
-            client = GlideClient.createClient(config).exceptionally(throwable -> {
+            glideClient = GlideClient.createClient(config).exceptionally(throwable -> {
                 this.logger.error("Glide client creation incurred an exception: {}", throwable.getMessage(), throwable);
                 return null;
             }).get();
@@ -130,39 +195,11 @@ public class ValkeyService {
             }
         }
 
-        if (client != null) {
-            try {
-                this.logger.info("CLIENTGETNAME: {}", client.clientGetName().get());    // Returns null
-                this.logger.info("CLIENTID: {}", client.clientId().get());              // Returns 12
-                this.logger.info("INFO: {}", client.info().get());
-
-                this.echoAndPing(client);
-                this.getAndSet(client);
-                this.getAndDelete(client);
-                this.hash(client);
-                this.list(client);
-
-                client.flushall();
-
-                this.logger.info("DBSIZE: {}", client.dbsize().get());  // Returns 0
-            } catch (final ExecutionException | InterruptedException e) {
-                if (e instanceof InterruptedException) {
-                    Thread.currentThread().interrupt();
-                }
-
-                this.logger.error("Glide example failed with an exception: {}", e.getMessage(), e);
-            } finally {
-                try {
-                    client.close();
-                } catch (final Exception e) {
-                    this.logger.error("Glide example failed with an exception: {}", e.getMessage(), e);
-                }
-            }
-        }
-
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(exit());
+            this.logger.trace(exitWith(glideClient));
         }
+
+        return glideClient;
     }
 
     /// Echo and ping commands.
