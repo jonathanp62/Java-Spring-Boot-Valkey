@@ -35,6 +35,8 @@ import static glide.api.models.GlideString.gs;
 import glide.api.models.GlideString;
 
 import glide.api.models.commands.LInsertOptions;
+import glide.api.models.commands.RangeOptions;
+import glide.api.models.commands.ScoreFilter;
 
 import glide.api.models.configuration.GlideClientConfiguration;
 import glide.api.models.configuration.NodeAddress;
@@ -132,6 +134,7 @@ public class ValkeyService {
                     this.hash(client);
                     this.list(client);
                     this.set(client);
+                    this.sortedSet(client);
 
                     this.cleanup(client);
                 });
@@ -527,6 +530,76 @@ public class ValkeyService {
                     .forEach(str -> this.logger.info("SMEMBERS(my-set): {}", str.getString()));
         } catch (final CompletionException e) {
             this.logger.error("Glide exception handling a set: {}", e.getMessage(), e);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Sorted set commands. The
+    /// sorting is by score.
+    ///
+    /// @param  client  glide.api.GlideClient
+    private void sortedSet(final GlideClient client) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(client));
+        }
+
+        final GlideString mySortedSet = gs("my-sorted-set");
+        final GlideString ccc = gs("CCC");
+
+        final Map<GlideString, Double> map = Map.of(
+                gs("ZZZ"), 1.0,
+                gs("YYY"), 2.0,
+                gs("XXX"), 3.0,
+                ccc, 24.0,
+                gs("BBB"), 25.0,
+                gs("AAA"), 26.0
+        );
+
+        try {
+            client.zadd(mySortedSet, map)
+                    .thenAccept(num -> this.logger.info("ZADD: {}", num))
+                    .join();
+
+            client.zcard(mySortedSet)
+                    .thenAccept(num -> this.logger.info("ZCARD(my-sorted-set): {}", num))
+                    .join();
+
+            client.zscore(mySortedSet, gs("CCC"))
+                    .thenAccept(str -> this.logger.info("ZSCORE(my-sorted-set, CCC): {}", str))
+                    .join();
+
+            client.zrank(mySortedSet, gs("CCC"))
+                    .thenAccept(num -> this.logger.info("ZRANK(my-sorted-set, CCC): {}", num))
+                    .join();
+
+            client.zcount(mySortedSet,
+                        new RangeOptions.ScoreBoundary(1.0, true),
+                        new RangeOptions.ScoreBoundary(3.0, true)
+                    )
+                    .thenAccept(num -> this.logger.info("ZCOUNT(my-sorted-set, 1.0, 3.0): {}", num))
+                    .join();
+
+            final Object[] elements = client.zmpop(new GlideString[] { mySortedSet }, ScoreFilter.MIN)
+                    .join();
+
+            if (this.logger.isInfoEnabled()) {
+                this.logger.info("ZMPOP(my-sorted-set, MIN): {}", Arrays.toString(elements));
+            }
+
+            client.zrem(mySortedSet, new GlideString[] { ccc })
+                    .thenAccept(num -> this.logger.info("ZREM(my-sorted-set, CCC): {}", num))
+                    .join();
+
+            final GlideString[] range = client.zrange(mySortedSet, new RangeOptions.RangeByIndex(0, 26)).join();
+
+            if (this.logger.isInfoEnabled()) {
+                this.logger.info("ZRANGE(my-sorted-set, 0, 26): {}", Arrays.toString(range));
+            }
+        } catch (final CompletionException e) {
+            this.logger.error("Glide exception handling a sorted set: {}", e.getMessage(), e);
         }
 
         if (this.logger.isTraceEnabled()) {
