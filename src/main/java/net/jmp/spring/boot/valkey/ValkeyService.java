@@ -134,17 +134,7 @@ public class ValkeyService {
                     this.getAndSet(client);
                     this.getAndDelete(client);
                     this.hash(client);
-
-                    try {   // @todo Once the methods no longer throw exceptions then this try can be removed
-                        this.list(client);
-                    }  catch (final ExecutionException | InterruptedException e) {
-                        if (e instanceof InterruptedException) {
-                            Thread.currentThread().interrupt();
-                            this.logger.error("Glide execution was interrupted: {}", e.getMessage(), e);
-                        } else {
-                            this.logger.error("Glide execution incurred an exception: {}", e.getMessage(), e);
-                        }
-                    }
+                    this.list(client);
 
                     this.cleanup(client);
                 });
@@ -428,9 +418,7 @@ public class ValkeyService {
     /// List commands.
     ///
     /// @param  client  glide.api.GlideClient
-    /// @throws         java.util.concurrent.ExecutionException When an error occurs
-    /// @throws         java.lang.InterruptedException          When interrupted
-    private void list(final GlideClient client) throws ExecutionException, InterruptedException {
+    private void list(final GlideClient client) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(client));
         }
@@ -440,38 +428,71 @@ public class ValkeyService {
 
         final GlideString[] myArray = new GlideString[] { gs("First"), gs("Second"), gs("Third") };
 
-        if (this.logger.isInfoEnabled()) {
-            this.logger.info("LPUSH: {}", client.lpush(myList, myArray).get()); // Returns 3
-            this.logger.info("LSET: {}", client.lset(myList, 0, gs("First element")).get());    // Returns OK
-            this.logger.info("LSET: {}", client.lset(myList, 1, gs("Second element")).get());   // Returns OK
-            this.logger.info("LSET: {}", client.lset(myList, 2, thirdElement).get());    // Returns OK
-            this.logger.info("LLEN(my-list): {}", client.llen(myList).get());   // Returns 3
-            this.logger.info("LINDEX(my-list, 1): {}", client.lindex(myList, 1).get());   // Returns Second element
-            this.logger.info("LPOS(my-list, Third element): {}", client.lpos(myList, thirdElement).get());   // Returns 2
-            this.logger.info("LINSERT(my-list, AFTER, Third element, Fourth element): {}", client.linsert(myList,
-                    LInsertOptions.InsertPosition.AFTER,
-                    thirdElement,
-                    gs("Fourth element")).get());   // Returns 4
+        try {
+            client.lpush(myList, myArray)
+                    .thenAccept(num -> this.logger.info("LPUSH: {}", num))
+                    .join();
 
-            final GlideString[] rangedItems = client.lrange(myList, 0, 2).get();
+            client.lset(myList, 0, gs("First element"))
+                    .thenAccept(str -> this.logger.info("LSET: {}", str))
+                    .join();
 
-            this.logger.info("LRANGE(my-list, 0, 2): {}", Arrays.toString(rangedItems));   // Returns [First element, Second element, Third element]
-            this.logger.info("LPOP(my-list): {}", client.lpop(myList).get());   // Returns First element
-            this.logger.info("LREM(my-list, Second element): {}", client.lrem(myList, 1, gs("Second element")).get());   // Returns 1
+            client.lset(myList, 1, gs("Second element"))
+                    .thenAccept(str -> this.logger.info("LSET: {}", str))
+                    .join();
+
+            client.lset(myList, 2, thirdElement)
+                    .thenAccept(str -> this.logger.info("LSET: {}", str))
+                    .join();
+
+            client.llen(myList)
+                    .thenAccept(num -> this.logger.info("LLEN(my-list): {}", num))
+                    .join();
+
+            client.lindex(myList, 1)
+                    .thenAccept(str -> this.logger.info("LINDEX(my-list, 1): {}", str))
+                    .join();
+
+            client.lpos(myList, thirdElement)
+                    .thenAccept(num -> this.logger.info("LPOS(my-list, Third element): {}", num))
+                    .join();
+
+            client.linsert(myList,
+                            LInsertOptions.InsertPosition.AFTER,
+                            thirdElement,
+                            gs("Fourth element")
+                    )
+                    .thenAccept(num -> this.logger.info("LINSERT(my-list, AFTER, Third element, Fourth element): {}", num))
+                    .join();
+
+            final GlideString[] rangedItems = client.lrange(myList, 0, 2).join();
+
+            if (this.logger.isInfoEnabled()) {
+                this.logger.info("LRANGE(my-list, 0, 2): {}", Arrays.toString(rangedItems));   // Returns [First element, Second element, Third element]
+            }
+
+            client.lpop(myList)
+                    .thenAccept(str -> this.logger.info("LPOP(my-list): {}", str))
+                    .join();
+
+            client.lrem(myList, 1, gs("Second element"))
+                    .thenAccept(num -> this.logger.info("LREM(my-list, Second element): {}", num))
+                    .join();
 
             final List<String> list = new ArrayList<>();
-            final long itemCount = client.llen(myList).get();
+            final long itemCount = client.llen(myList).join();
 
             for (int i = 0; i < itemCount; i++) {
-                list.add(client.lindex(myList, i).get().getString());
+                list.add(client.lindex(myList, i).join().getString());
             }
 
             this.logger.info("list: {}", list);   // Returns [Third element, Fourth element]
+        } catch (final CompletionException e) {
+            this.logger.error("Glide execution incurred an exception: {}", e.getMessage(), e);
         }
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
         }
     }
-
 }
