@@ -39,10 +39,7 @@ import glide.api.models.commands.LInsertOptions;
 import glide.api.models.configuration.GlideClientConfiguration;
 import glide.api.models.configuration.NodeAddress;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -73,9 +70,8 @@ import org.springframework.stereotype.Service;
 ///  String ✔️
 ///  Hash ✔️
 ///  List ✔️
-///  Set
+///  Set ✔️
 ///  Sorted Set
-///  Vector Set
 ///  JSON
 ///  Serialized Objects (Kryo, JSON, Java)
 @Service
@@ -135,6 +131,7 @@ public class ValkeyService {
                     this.getAndDelete(client);
                     this.hash(client);
                     this.list(client);
+                    this.set(client);
 
                     this.cleanup(client);
                 });
@@ -291,7 +288,7 @@ public class ValkeyService {
                     .thenAccept(num -> this.logger.info("EXISTS(lemons): {}", num))
                     .join();
         } catch (final CompletionException e) {
-            this.logger.error("Glide execution incurred an exception: {}", e.getMessage(), e);
+            this.logger.error("Glide exception handling keys: {}", e.getMessage(), e);
         }
 
         if (this.logger.isTraceEnabled()) {
@@ -331,7 +328,7 @@ public class ValkeyService {
                     .thenAccept(str -> this.logger.info("GET(my-name): {}", str))
                     .join();
         } catch (final CompletionException e) {
-            this.logger.error("Glide execution incurred an exception: {}", e.getMessage(), e);
+            this.logger.error("Glide exception handling keys: {}", e.getMessage(), e);
         }
 
         if (this.logger.isTraceEnabled()) {
@@ -407,7 +404,7 @@ public class ValkeyService {
 
             this.logger.info("HGETALL(my-hash): {}", returnedMap);
         } catch (final CompletionException e) {
-            this.logger.error("Glide execution incurred an exception: {}", e.getMessage(), e);
+            this.logger.error("Glide exception handling a hash: {}", e.getMessage(), e);
         }
 
         if (this.logger.isTraceEnabled()) {
@@ -488,7 +485,48 @@ public class ValkeyService {
 
             this.logger.info("list: {}", list);   // Returns [Third element, Fourth element]
         } catch (final CompletionException e) {
-            this.logger.error("Glide execution incurred an exception: {}", e.getMessage(), e);
+            this.logger.error("Glide exception handling a list: {}", e.getMessage(), e);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Set commands.
+    ///
+    /// @param  client  glide.api.GlideClient
+    private void set(final GlideClient client) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(client));
+        }
+
+        final GlideString mySet = gs("my-set");
+        final GlideString aimee = gs("Aimee");
+        final GlideString[] myArray = new GlideString[] { gs("Jonathan"), gs("Dena"), aimee };
+
+        try {
+            client.sadd(mySet, myArray)
+                    .thenAccept(num -> this.logger.info("SADD: {}", num))
+                    .join();
+
+            client.scard(mySet)
+                    .thenAccept(num -> this.logger.info("SCARD(my-set): {}", num))
+                    .join();
+
+            client.sismember(mySet, aimee)
+                    .thenAccept(bool -> this.logger.info("SISMEMBER(my-set, aimee): {}", bool))
+                    .join();
+
+            client.srem(mySet, new GlideString[] { aimee })
+                    .thenAccept(num -> this.logger.info("SREM(my-set, aimee): {}", num))
+                    .join();
+
+            client.smembers(mySet)
+                    .join()
+                    .forEach(str -> this.logger.info("SMEMBERS(my-set): {}", str.getString()));
+        } catch (final CompletionException e) {
+            this.logger.error("Glide exception handling a set: {}", e.getMessage(), e);
         }
 
         if (this.logger.isTraceEnabled()) {
