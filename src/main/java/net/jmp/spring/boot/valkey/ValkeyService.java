@@ -122,18 +122,16 @@ public class ValkeyService {
                 this.logger.error("Glide execution waiting on futures: {}", e.getMessage(), e);
             }
 
-            final GlideClient client = glideClient; // Lambdas require final variables
-
             completedFutures.thenRun(() -> {
-                this.echoAndPing(client);
-                this.getAndSet(client);
-                this.getAndDelete(client);
-                this.hash(client);
-                this.list(client);
-                this.set(client);
-                this.sortedSet(client);
+                this.echoAndPing(glideClient);
+                this.getAndSet(glideClient);
+                this.getAndDelete(glideClient);
+                this.hash(glideClient);
+                this.list(glideClient);
+                this.set(glideClient);
+                this.sortedSet(glideClient);
 
-                this.cleanup(client);
+                this.cleanup(glideClient);
             });
         } catch (final ExecutionException e) {
             this.logger.error("Glide execution execution: {}", e.getMessage(), e);
