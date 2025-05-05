@@ -618,6 +618,9 @@ public class ValkeyService {
         }
     }
 
+    /// JSON commands.
+    ///
+    /// @param  client  glide.api.GlideClient
     private void json(final GlideClient client) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(client));
