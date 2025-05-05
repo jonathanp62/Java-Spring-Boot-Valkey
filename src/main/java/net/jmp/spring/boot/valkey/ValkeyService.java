@@ -32,6 +32,8 @@ import glide.api.GlideClient;
 
 import static glide.api.models.GlideString.gs;
 
+import glide.api.commands.servermodules.Json;
+
 import glide.api.models.GlideString;
 
 import glide.api.models.commands.LInsertOptions;
@@ -74,7 +76,7 @@ import org.springframework.stereotype.Service;
 ///  List ✔️
 ///  Set ✔️
 ///  Sorted Set ✔️
-///  JSON
+///  JSON ❌
 ///  Serialized Objects (Kryo, JSON, Java)
 @Service
 public class ValkeyService {
@@ -92,6 +94,14 @@ public class ValkeyService {
     /// True when using SSL with Glide.
     @Value("${glide.useSsl}")
     private boolean glideUseSsl;
+
+    /// Flush the database at the end when true.
+    @Value("${glide.flushDb}")
+    private boolean glideFlushDb;
+
+    /// True when the JSON data type is supported.
+    @Value("${valkey.json.supported}")
+    private boolean valkeyJsonSupported;
 
     /// The default constructor.
     public ValkeyService() {
@@ -130,7 +140,10 @@ public class ValkeyService {
                 this.list(glideClient);
                 this.set(glideClient);
                 this.sortedSet(glideClient);
-                this.json(glideClient);
+
+                if (this.valkeyJsonSupported) {
+                    this.json(glideClient);
+                }
 
                 this.cleanup(glideClient);
             });
@@ -198,9 +211,11 @@ public class ValkeyService {
         }
 
         try {
-            client.flushall()
-                    .thenAccept(str -> this.logger.info("FLUSH-ALL: {}", str))
-                    .join();
+            if (this.glideFlushDb) {
+                client.flushall()
+                        .thenAccept(str -> this.logger.info("FLUSH-ALL: {}", str))
+                        .join();
+            }
 
             client.dbsize()
                     .thenAccept(size -> this.logger.info("DB-SIZE: {}", size))
@@ -607,6 +622,13 @@ public class ValkeyService {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(client));
         }
+
+        Json.set(client,
+                    gs("my-json-key"),
+                    gs("$"),
+                    gs("my-json-value"))
+                .thenAccept(num -> this.logger.info("SET(my-json-key, $, my-json-value): {}", num))
+                .join();
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
