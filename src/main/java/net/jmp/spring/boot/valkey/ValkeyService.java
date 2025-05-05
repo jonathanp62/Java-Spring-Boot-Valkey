@@ -1,6 +1,7 @@
 package net.jmp.spring.boot.valkey;
 
 /*
+ * (#)ValkeyService.java    0.2.0   05/05/2025
  * (#)ValkeyService.java    0.1.0   05/01/2025
  *
  * @author   Jonathan Parker
@@ -28,6 +29,8 @@ package net.jmp.spring.boot.valkey;
  * SOFTWARE.
  */
 
+import com.google.gson.Gson;
+
 import glide.api.GlideClient;
 
 import static glide.api.models.GlideString.gs;
@@ -42,6 +45,8 @@ import glide.api.models.commands.ScoreFilter;
 
 import glide.api.models.configuration.GlideClientConfiguration;
 import glide.api.models.configuration.NodeAddress;
+
+import java.io.*;
 
 import java.util.*;
 
@@ -60,15 +65,8 @@ import org.springframework.stereotype.Service;
 
 /// The Valkey service class.
 ///
-/// @version    0.1.0
+/// @version    0.2.0
 /// @since      0.1.0
-///
-/// APIs to get acquainted with:
-///  client.customCommand();
-///  client.exec();
-///  client.fcall();
-///  client.function...();
-///  client.lastsave();
 ///
 /// Data types to get acquainted with:
 ///  String ✔️
@@ -77,7 +75,7 @@ import org.springframework.stereotype.Service;
 ///  Set ✔️
 ///  Sorted Set ✔️
 ///  JSON ❌
-///  Serialized Objects (Kryo, JSON, Java)
+///  Serialized Objects (Kryo, JSON ✔️, Java ✔️)
 @Service
 public class ValkeyService {
     /// The logger.
@@ -102,6 +100,9 @@ public class ValkeyService {
     /// True when the JSON data type is supported.
     @Value("${valkey.json.supported}")
     private boolean valkeyJsonSupported;
+
+    /// The GSON object.
+    private final Gson gson = new Gson();
 
     /// The default constructor.
     public ValkeyService() {
@@ -145,6 +146,7 @@ public class ValkeyService {
                     this.json(glideClient);
                 }
 
+                this.objects(glideClient);
                 this.cleanup(glideClient);
             });
         } catch (final ExecutionException e) {
@@ -636,5 +638,192 @@ public class ValkeyService {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
         }
+    }
+
+    /// Object commands.
+    ///
+    /// @param  client  glide.api.GlideClient
+    /// @since          0.2.0
+    private void objects(final GlideClient client) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(client));
+        }
+
+        final Person person = this.newPerson();
+
+        this.serializeToJson(client, person);
+        this.serializeToBase64(client, person);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Serialize an object to JSON.
+    ///
+    /// @param  client  glide.api.GlideClient
+    /// @param  object  java.lang.Object
+    /// @since          0.2.0
+    private void serializeToJson(final GlideClient client, final Object object) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(client, object));
+        }
+
+        final Person person = this.newPerson();
+        final String json = this.gson.toJson(person);
+        final GlideString jsonPerson = gs("json-person");
+
+        try {
+            client.set(jsonPerson, gs(json))
+                    .thenAccept(num -> this.logger.info("SET(json-person, {}): {}", json, num))
+                    .join();
+
+            client.strlen(jsonPerson)
+                    .thenAccept(num -> this.logger.info("STRLEN(json-person): {}", num))
+                    .join();
+        } catch (final CompletionException e) {
+            this.logger.error("Glide exception handling a JSON object: {}", e.getMessage(), e);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Serialize an object to Base64 using Java serialization.
+    ///
+    /// @param  client  glide.api.GlideClient
+    /// @param  object  java.lang.Object
+    /// @since          0.2.0
+    private void serializeToBase64(final GlideClient client, final Object object) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(client, object));
+        }
+
+        final Person person = this.newPerson();
+        final GlideString base64Person = gs("base64-person");
+        final String serializedPerson = this.base64Serialize(person);   // Java serialization to Base64
+
+        if (serializedPerson != null) {
+            Person deserializedPerson = null;
+
+            try {
+                client.set(base64Person, gs(serializedPerson))
+                        .thenAccept(num -> this.logger.info("SET(base64-person, {}): {}", serializedPerson, num))
+                        .join();
+
+                client.strlen(base64Person)
+                        .thenAccept(num -> this.logger.info("STRLEN(base64-person): {}", num))
+                        .join();
+
+                final String deserializedPersonString = client.get(base64Person).join().getString();
+
+                deserializedPerson = this.base64Deserialize(deserializedPersonString);  // Java deserialization from Base64
+            } catch (final CompletionException e) {
+                this.logger.error("Glide exception handling a Base64 object: {}", e.getMessage(), e);
+            }
+
+            if (deserializedPerson != null) {
+                this.logger.info("deserializedPerson == person?: {}", person.equals(deserializedPerson));
+            }
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Serialize a person to Base64.
+    ///
+    /// @param  person  net.jmp.spring.boot.valkey.Person
+    /// @return         java.lang.String
+    /// @since          0.2.0
+    private String base64Serialize(final Person person) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(person));
+        }
+
+        String string = null;
+
+        try (final ByteArrayOutputStream byteStream = new ByteArrayOutputStream()) {
+            try (final ObjectOutputStream objectStream = new ObjectOutputStream(byteStream)) {
+                objectStream.writeObject(person);
+
+                string =  Base64.getEncoder().encodeToString(byteStream.toByteArray());
+            }
+        } catch (final IOException ioe) {
+            this.logger.error("Error serializing person to Base64: {}", ioe.getMessage(), ioe);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(string));
+        }
+
+        return string;
+    }
+
+    /// Deserialize a person from Base64.
+    ///
+    /// @param  base64  java.lang.String
+    /// @return         net.jmp.spring.boot.valkey.Person
+    /// @since          0.2.0
+    private Person base64Deserialize(final String base64) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(base64));
+        }
+
+        Person person = null;
+
+        final byte[] bytes = Base64.getDecoder().decode(base64);
+
+        try (final ByteArrayInputStream byteStream = new ByteArrayInputStream(bytes)) {
+            try (final ObjectInputStream objectStream = new ObjectInputStream(byteStream)) {
+                person = (Person) objectStream.readObject();
+            }
+        } catch (final ClassNotFoundException | IOException e) {
+            this.logger.error("Error deserializing Base64 person: {}", e.getMessage(), e);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(person));
+        }
+
+        return person;
+    }
+
+    /// Create a new person.
+    ///
+    /// @return net.jmp.spring.boot.valkey.Person
+    /// @since  0.2.0
+    private Person newPerson() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final Person person = new Person();
+        final Address childhoodAddress = new Address();
+        final Address currentAddress = new Address();
+
+        childhoodAddress.setStreetName("8528 Harris Avenue");
+        childhoodAddress.setCity("Baltimore");
+        childhoodAddress.setState("MD");
+        childhoodAddress.setZipCode("21234");
+
+        currentAddress.setStreetName("324 Lantana Drive");
+        currentAddress.setCity("Owings Mills");
+        currentAddress.setState("MD");
+        currentAddress.setZipCode("21117");
+
+        person.setFirstName("Jonathan");
+        person.setLastName("Parker");
+        person.setAge(63);
+        person.setAddresses(List.of(childhoodAddress, currentAddress));
+        person.setPhoneNumbers(List.of("410-668-5636", "443-604-2821"));
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(person));
+        }
+
+        return person;
     }
 }
