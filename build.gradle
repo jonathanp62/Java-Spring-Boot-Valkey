@@ -1,8 +1,9 @@
 /*
+ * (#)build.gradle  0.2.0   05/05/2025
  * (#)build.gradle  0.1.0   04/30/2025
  *
  * @author   Jonathan Parker
- * @version  0.1.0
+ * @version  0.2.0
  * @since    0.1.0
  *
  * MIT License
@@ -45,7 +46,7 @@ apply plugin: 'net.jmp.gradle.plugin.projectinfo-info'
 
 ext {
 	project.group = 'net.jmp.spring.boot.valkey'
-	project.version = '0.1.0'
+	project.version = '0.2.0'
 	project.description = 'to demonstrate Spring Boot with Valkey'
 }
 

@@ -1,8 +1,9 @@
 <!--
+ (#)build.xml	0.2.0   05/05/2025
  (#)build.xml	0.1.0   04/30/2025
 
  @author   Jonathan Parker
- @version  0.1.0
+ @version  0.2.0
  @since    0.1.0
 
  Usage:
@@ -38,7 +39,7 @@
 
 	<property name="source.home" location="/Users/jonathan/IDEA-Projects/Spring-Boot-Valkey" />
 	<property name="source.libs" location="${source.home}/build/libs" />
-	<property name="source.version" value="0.1.0" />
+	<property name="source.version" value="0.2.0" />
 
 	<property name="target.home" location="/usr/local/spring-boot-valkey" />
 	<property name="target.libs" location="${target.home}/lib" />
