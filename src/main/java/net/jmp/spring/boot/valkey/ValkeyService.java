@@ -73,7 +73,7 @@ import org.springframework.stereotype.Service;
 ///  Hash ✔️
 ///  List ✔️
 ///  Set ✔️
-///  Sorted Set
+///  Sorted Set ✔️
 ///  JSON
 ///  Serialized Objects (Kryo, JSON, Java)
 @Service
@@ -104,47 +104,39 @@ public class ValkeyService {
             this.logger.trace(entry());
         }
 
-        final GlideClient glideClient = this.connect();
+        try (final GlideClient glideClient = this.connect()) {
+            final CompletableFuture<Void> clientName = glideClient.clientGetName()
+                    .thenAccept(name -> this.logger.info("CLIENT-NAME: {}", name));
 
-        if (glideClient != null) {
+            final CompletableFuture<Void> clientId = glideClient.clientId()
+                    .thenAccept(id -> this.logger.info("CLIENT-ID: {}", id));
+
+            final CompletableFuture<Void> info = glideClient.info()
+                    .thenAccept(str -> this.logger.info("INFO: {}", str));
+
+            final CompletableFuture<Void> completedFutures = CompletableFuture.allOf(clientName, clientId, info);
+
             try {
-                final CompletableFuture<Void> clientName = glideClient.clientGetName()
-                        .thenAccept(name -> this.logger.info("CLIENT-NAME: {}", name));
-
-                final CompletableFuture<Void> clientId = glideClient.clientId()
-                        .thenAccept(id -> this.logger.info("CLIENT-ID: {}", id));
-
-                final CompletableFuture<Void> info = glideClient.info()
-                        .thenAccept(str -> this.logger.info("INFO: {}", str));
-
-                final CompletableFuture<Void> completedFutures = CompletableFuture.allOf(clientName, clientId, info);
-
-                try {
-                    completedFutures.join();
-                } catch (final CompletionException e) {
-                    this.logger.error("Glide execution waiting on futures: {}", e.getMessage(), e);
-                }
-
-                final GlideClient client = glideClient; // Lambdas require final variables
-
-                completedFutures.thenRun(() -> {
-                    this.echoAndPing(client);
-                    this.getAndSet(client);
-                    this.getAndDelete(client);
-                    this.hash(client);
-                    this.list(client);
-                    this.set(client);
-                    this.sortedSet(client);
-
-                    this.cleanup(client);
-                });
-            } finally {
-                try {
-                    glideClient.close();
-                } catch (final Exception e) {
-                    this.logger.error("Glide client close failed with an exception: {}", e.getMessage(), e);
-                }
+                completedFutures.join();
+            } catch (final CompletionException e) {
+                this.logger.error("Glide execution waiting on futures: {}", e.getMessage(), e);
             }
+
+            final GlideClient client = glideClient; // Lambdas require final variables
+
+            completedFutures.thenRun(() -> {
+                this.echoAndPing(client);
+                this.getAndSet(client);
+                this.getAndDelete(client);
+                this.hash(client);
+                this.list(client);
+                this.set(client);
+                this.sortedSet(client);
+
+                this.cleanup(client);
+            });
+        } catch (final ExecutionException e) {
+            this.logger.error("Glide execution execution: {}", e.getMessage(), e);
         }
 
         if (this.logger.isTraceEnabled()) {
@@ -155,6 +147,7 @@ public class ValkeyService {
     /// Connect to Valkey using Glide.
     ///
     /// @return glide.api.GlideClient
+    /// @throws java.lang.RuntimeException  When the Glide client cannot be created
     private GlideClient connect() {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entry());
@@ -184,6 +177,10 @@ public class ValkeyService {
             } else {
                 this.logger.error("Glide client creation incurred an execution exception: {}", e.getMessage(), e);
             }
+        }
+
+        if (glideClient == null) {
+            throw new RuntimeException("Unable to create Glide client");
         }
 
         if (this.logger.isTraceEnabled()) {
