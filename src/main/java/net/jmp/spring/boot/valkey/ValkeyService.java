@@ -98,8 +98,8 @@ public class ValkeyService {
         super();
     }
 
-    /// The run method.
-    public void run() {
+    /// The demo method.
+    public void demo() {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entry());
         }
@@ -130,6 +130,7 @@ public class ValkeyService {
                 this.list(glideClient);
                 this.set(glideClient);
                 this.sortedSet(glideClient);
+                this.json(glideClient);
 
                 this.cleanup(glideClient);
             });
@@ -595,6 +596,16 @@ public class ValkeyService {
             }
         } catch (final CompletionException e) {
             this.logger.error("Glide exception handling a sorted set: {}", e.getMessage(), e);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    private void json(final GlideClient client) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(client));
         }
 
         if (this.logger.isTraceEnabled()) {

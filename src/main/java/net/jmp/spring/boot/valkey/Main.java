@@ -79,7 +79,7 @@ public class Main implements Runnable {
                     this.environment.getProperty("spring.application.version"));
         }
 
-        this.valkeyService.run();
+        this.valkeyService.demo();
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
