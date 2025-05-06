@@ -30,6 +30,7 @@
 
 [versions]
 co-elastic-logging-logback-ecs-encoder = "1.7.0"
+com-esotericsoftware-kryo-kryo5 = "5.6.2"
 com-google-code-gson-gson = "2.13.1"
 io-valkey-valkey-glide = "1.3.2"
 net-javacrumbs-json-unit-json-unit-spring = "4.1.0"
@@ -37,6 +38,7 @@ net-jmp-util-logging-logging-utilities = "1.2.0"
 
 [libraries]
 co-elastic-logging-logback-ecs-encoder = { module = "co.elastic.logging:logback-ecs-encoder", version.ref = "co-elastic-logging-logback-ecs-encoder" }
+com-esotericsoftware-kryo-kryo5 = { module = "com.esotericsoftware.kryo:kryo5", version.ref = "com-esotericsoftware-kryo-kryo5" }
 com-google-code-gson-gson = { module = "com.google.code.gson:gson", version.ref = "com-google-code-gson-gson" }
 io-valkey-valkey-glide = { module = "io.valkey:valkey-glide", version.ref = "io-valkey-valkey-glide" }
 net-jmp-util-logging-logging-utilities = { module = "net.jmp.util.logging:logging-utilities", version.ref = "net-jmp-util-logging-logging-utilities" }

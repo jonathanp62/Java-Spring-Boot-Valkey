@@ -71,6 +71,7 @@ dependencies {
 	)
 
 	implementation		(libs.co.elastic.logging.logback.ecs.encoder)
+	implementation		(libs.com.esotericsoftware.kryo.kryo5)
 	implementation		(libs.com.google.code.gson.gson)
 	implementation		(libs.net.jmp.util.logging.logging.utilities)
 
