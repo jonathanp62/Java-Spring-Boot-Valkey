@@ -35,9 +35,13 @@ import java.util.Objects;
 
 /// The person class.
 ///
+/// Kryo5 apparently does not work when
+/// serializable classes actually implement
+/// the Serializable readObject and writeObject
+/// methods.
+///
 /// @version    0.2.0
 /// @since      0.2.0
-///
 public class Person implements Serializable {
     /// The serial version UID.
     @Serial

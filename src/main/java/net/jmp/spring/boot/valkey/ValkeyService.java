@@ -29,6 +29,10 @@ package net.jmp.spring.boot.valkey;
  * SOFTWARE.
  */
 
+import com.esotericsoftware.kryo.kryo5.Kryo;
+
+import com.esotericsoftware.kryo.kryo5.io.Output;
+
 import com.google.gson.Gson;
 
 import glide.api.GlideClient;
@@ -103,6 +107,9 @@ public class ValkeyService {
 
     /// The GSON object.
     private final Gson gson = new Gson();
+
+    /// The Kryo object.
+    private final Kryo kryo = new Kryo();
 
     /// The default constructor.
     public ValkeyService() {
@@ -653,6 +660,7 @@ public class ValkeyService {
 
         this.serializeToJson(client, person);
         this.serializeToBase64(client, person);
+        this.serializeToKryo5(client, person);
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
@@ -791,6 +799,53 @@ public class ValkeyService {
         }
 
         return object;
+    }
+
+    /// Serialize an object to Base64 using Kryo5 serialization.
+    ///
+    /// @param  client  glide.api.GlideClient
+    /// @param  object  java.lang.Object
+    /// @since          0.2.0
+    private void serializeToKryo5(final GlideClient client, final Object object) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(client, object));
+        }
+
+        final GlideString kryoAnimal = gs("kryo-animal");
+        final Animal animal = new Animal();
+
+        animal.setAge(5);
+        animal.setName("Aimee");
+        animal.setType("Dog");
+        animal.setColor("Black");
+
+        this.kryo.register(Animal.class);
+        this.kryo.register(String.class);
+
+        String string = null;
+
+        try (final ByteArrayOutputStream byteStream = new ByteArrayOutputStream()) {
+            try (final Output output = new Output(byteStream)) {
+                this.kryo.writeObject(output, animal);
+                output.flush();
+
+                string = byteStream.toString();
+            }
+        } catch (final IOException e) {
+            this.logger.error("Error serializing animal to Kryo5: {}", e.getMessage(), e);
+        }
+
+        if (string != null) {
+            final String kryoString = string;
+
+            client.set(kryoAnimal, gs(kryoString))
+                    .thenAccept(num -> this.logger.info("SET(kryo-animal, {}): {}", kryoString, num))
+                    .join();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
     }
 
     /// Create a new person.
