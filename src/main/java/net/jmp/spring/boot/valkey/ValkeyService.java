@@ -718,7 +718,7 @@ public class ValkeyService {
 
                 final String deserializedPersonString = client.get(base64Person).join().getString();
 
-                deserializedPerson = this.base64Deserialize(deserializedPersonString);  // Java deserialization from Base64
+                deserializedPerson = this.base64Deserialize(deserializedPersonString, Person.class);  // Java deserialization from Base64
             } catch (final CompletionException e) {
                 this.logger.error("Glide exception handling a Base64 object: {}", e.getMessage(), e);
             }
@@ -764,31 +764,33 @@ public class ValkeyService {
 
     /// Deserialize a person from Base64.
     ///
+    /// @param  <T>     The type of object to serialize to.
     /// @param  base64  java.lang.String
-    /// @return         net.jmp.spring.boot.valkey.Person
+    /// @param  clazz   java.lang.Class<T>
+    /// @return         T
     /// @since          0.2.0
-    private Person base64Deserialize(final String base64) {
+    private <T> T base64Deserialize(final String base64, final Class<T> clazz) {
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(entryWith(base64));
+            this.logger.trace(entryWith(base64), clazz);
         }
 
-        Person person = null;
+        T object = null;
 
         final byte[] bytes = Base64.getDecoder().decode(base64);
 
         try (final ByteArrayInputStream byteStream = new ByteArrayInputStream(bytes)) {
             try (final ObjectInputStream objectStream = new ObjectInputStream(byteStream)) {
-                person = (Person) objectStream.readObject();
+                object = clazz.cast(objectStream.readObject());
             }
         } catch (final ClassNotFoundException | IOException e) {
-            this.logger.error("Error deserializing Base64 person: {}", e.getMessage(), e);
+            this.logger.error("Error deserializing Base64 object: {}", e.getMessage(), e);
         }
 
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(exitWith(person));
+            this.logger.trace(exitWith(object));
         }
 
-        return person;
+        return object;
     }
 
     /// Create a new person.

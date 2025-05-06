@@ -118,6 +118,7 @@ tasks.register("bootRunDev") {
 	doFirst {
 		tasks.bootRun.configure {
 			systemProperty("spring.profiles.active", "dev")
+			systemProperty("glide.flushDb", "false")
 		}
 	}
 
@@ -133,6 +134,7 @@ tasks.register("bootRunTest") {
 	doFirst {
 		tasks.bootRun.configure {
 			systemProperty("spring.profiles.active", "testing")
+			systemProperty("glide.flushDb", "true")
 		}
 	}
 
