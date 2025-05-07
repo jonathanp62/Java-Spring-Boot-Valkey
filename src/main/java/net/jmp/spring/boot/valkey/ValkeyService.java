@@ -31,6 +31,7 @@ package net.jmp.spring.boot.valkey;
 
 import com.esotericsoftware.kryo.kryo5.Kryo;
 
+import com.esotericsoftware.kryo.kryo5.io.Input;
 import com.esotericsoftware.kryo.kryo5.io.Output;
 
 import com.google.gson.Gson;
@@ -51,6 +52,8 @@ import glide.api.models.configuration.GlideClientConfiguration;
 import glide.api.models.configuration.NodeAddress;
 
 import java.io.*;
+
+import java.nio.charset.StandardCharsets;
 
 import java.util.*;
 
@@ -660,7 +663,7 @@ public class ValkeyService {
 
         this.serializeToJson(client, person);
         this.serializeToBase64(client, person);
-        this.serializeToKryo5(client, person);
+        this.serializeToKryo5(client);
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
@@ -804,14 +807,13 @@ public class ValkeyService {
     /// Serialize an object to Base64 using Kryo5 serialization.
     ///
     /// @param  client  glide.api.GlideClient
-    /// @param  object  java.lang.Object
     /// @since          0.2.0
-    private void serializeToKryo5(final GlideClient client, final Object object) {
+    private void serializeToKryo5(final GlideClient client) {
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(entryWith(client, object));
+            this.logger.trace(entryWith(client));
         }
 
-        final GlideString kryoAnimal = gs("kryo-animal");
+        final String kryoAnimal = "kryo-animal";
         final Animal animal = new Animal();
 
         animal.setAge(5);
@@ -819,18 +821,16 @@ public class ValkeyService {
         animal.setType("Dog");
         animal.setColor("Black");
 
-        this.kryo.register(Animal.class);
-        this.kryo.register(String.class);
+        this.kryo.register(Animal.class, new AnimalSerializer());
 
         String string = null;
 
         try (final ByteArrayOutputStream byteStream = new ByteArrayOutputStream()) {
             try (final Output output = new Output(byteStream)) {
-                this.kryo.writeObject(output, animal);
-                output.flush();
-
-                string = byteStream.toString();
+                this.kryo.writeClassAndObject(output, animal);
             }
+
+            string = byteStream.toString(StandardCharsets.ISO_8859_1);  // UTF-8 does not work
         } catch (final IOException e) {
             this.logger.error("Error serializing animal to Kryo5: {}", e.getMessage(), e);
         }
@@ -838,9 +838,20 @@ public class ValkeyService {
         if (string != null) {
             final String kryoString = string;
 
-            client.set(kryoAnimal, gs(kryoString))
+            client.set(kryoAnimal, kryoString)  // A serialized GlideString does not work
                     .thenAccept(num -> this.logger.info("SET(kryo-animal, {}): {}", kryoString, num))
                     .join();
+
+            final String deserializedAnimalString = client.get(kryoAnimal).join();
+            final byte[] stringBytes = deserializedAnimalString.getBytes(StandardCharsets.ISO_8859_1);
+
+            try (final Input input = new Input(new ByteArrayInputStream(stringBytes))) {
+                final Animal deserializedAnimal = (Animal) this.kryo.readClassAndObject(input);
+
+                this.logger.info("deserializedAnimal == animal?: {}", deserializedAnimal.equals(animal));
+            } catch (final Exception e) {
+                this.logger.error("Error deserializing Kryo5 animal: {}", e.getMessage(), e);
+            }
         }
 
         if (this.logger.isTraceEnabled()) {

@@ -128,4 +128,17 @@ public class Animal {
     public int hashCode() {
         return Objects.hash(this.type, this.name, this.color, this.age);
     }
+
+    /// The default toString method.
+    ///
+    /// @return     java.lang.String
+    @Override
+    public String toString() {
+        return "Animal{" +
+                "type='" + type + '\'' +
+                ", name='" + name + '\'' +
+                ", color='" + color + '\'' +
+                ", age=" + age +
+                '}';
+    }
 }
