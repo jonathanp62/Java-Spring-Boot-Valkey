@@ -813,15 +813,40 @@ public class ValkeyService {
             this.logger.trace(entryWith(client));
         }
 
-        final String kryoAnimal = "kryo-animal";
-        final Animal animal = new Animal();
-
-        animal.setAge(5);
-        animal.setName("Aimee");
-        animal.setType("Dog");
-        animal.setColor("Black");
-
         this.kryo.register(Animal.class, new AnimalSerializer());
+
+        final String kryoAnimal = "kryo-animal";
+        final Animal animal = this.newAnimal();
+        final String string = this.kryoSerialize(animal);
+
+        if (string != null) {
+            client.set(kryoAnimal, string)  // A serialized GlideString does not work
+                    .thenAccept(num -> this.logger.info("SET(kryo-animal, {}): {}", string, num))
+                    .join();
+
+            final String deserializedAnimalString = client.get(kryoAnimal).join();
+            final byte[] stringBytes = deserializedAnimalString.getBytes(StandardCharsets.ISO_8859_1);
+            final Animal deserializedAnimal = this.kryoDeserialize(stringBytes, Animal.class);
+
+            if (deserializedAnimal != null) {
+                this.logger.info("deserializedAnimal == animal?: {}", deserializedAnimal.equals(animal));
+            }
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Serialize an object to Base64 using Kryo5 serialization.
+    ///
+    /// @param  animal  net.jmp.spring.boot.valkey.Animal
+    /// @return         java.lang.String
+    /// @since          0.2.0
+    private String kryoSerialize(final Animal animal) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(animal));
+        }
 
         String string = null;
 
@@ -835,28 +860,38 @@ public class ValkeyService {
             this.logger.error("Error serializing animal to Kryo5: {}", e.getMessage(), e);
         }
 
-        if (string != null) {
-            final String kryoString = string;
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(string));
+        }
 
-            client.set(kryoAnimal, kryoString)  // A serialized GlideString does not work
-                    .thenAccept(num -> this.logger.info("SET(kryo-animal, {}): {}", kryoString, num))
-                    .join();
+        return string;
+    }
 
-            final String deserializedAnimalString = client.get(kryoAnimal).join();
-            final byte[] stringBytes = deserializedAnimalString.getBytes(StandardCharsets.ISO_8859_1);
+    /// Deserialize an object from Base64 using Kryo5 deserialization.
+    ///
+    /// @param  <T>     The type of object to serialize to.
+    /// @param  bytes   byte[]
+    /// @param  clazz   java.lang.Class<T>
+    /// @return         T
+    /// @since          0.2.0
+    private <T> T kryoDeserialize(final byte[] bytes, final Class<T> clazz) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(bytes), clazz);
+        }
 
-            try (final Input input = new Input(new ByteArrayInputStream(stringBytes))) {
-                final Animal deserializedAnimal = (Animal) this.kryo.readClassAndObject(input);
+        T object = null;
 
-                this.logger.info("deserializedAnimal == animal?: {}", deserializedAnimal.equals(animal));
-            } catch (final Exception e) {
-                this.logger.error("Error deserializing Kryo5 animal: {}", e.getMessage(), e);
-            }
+        try (final Input input = new Input(new ByteArrayInputStream(bytes))) {
+            object = clazz.cast(this.kryo.readClassAndObject(input));
+        } catch (final Exception e) {
+            this.logger.error("Error deserializing Kryo5 object: {}", e.getMessage(), e);
         }
 
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(exit());
+            this.logger.trace(exitWith(object));
         }
+
+        return object;
     }
 
     /// Create a new person.
@@ -893,5 +928,20 @@ public class ValkeyService {
         }
 
         return person;
+    }
+
+    /// Create a new animal.
+    ///
+    /// @return net.jmp.spring.boot.valkey.Animal
+    /// @since  0.2.0
+    private Animal newAnimal() {
+        final Animal animal = new Animal();
+
+        animal.setType("Dog");
+        animal.setName("Aimee");
+        animal.setColor("Black");
+        animal.setAge(5);
+
+        return animal;
     }
 }
