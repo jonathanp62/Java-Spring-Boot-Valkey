@@ -817,7 +817,7 @@ public class ValkeyService {
 
         final String kryoAnimal = "kryo-animal";
         final Animal animal = this.newAnimal();
-        final String string = this.kryoSerialize(animal);
+        final String string = this.kryoSerialize(animal, Animal.class);
 
         if (string != null) {
             client.set(kryoAnimal, string)  // A serialized GlideString does not work
@@ -840,24 +840,25 @@ public class ValkeyService {
 
     /// Serialize an object to Base64 using Kryo5 serialization.
     ///
-    /// @param  animal  net.jmp.spring.boot.valkey.Animal
+    /// @param  object  java.lang.Object
+    /// @param  clazz   java.lang.Class
     /// @return         java.lang.String
     /// @since          0.2.0
-    private String kryoSerialize(final Animal animal) {
+    private String kryoSerialize(final Object object, final Class<?> clazz) {
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(entryWith(animal));
+            this.logger.trace(entryWith(object, clazz));
         }
 
         String string = null;
 
         try (final ByteArrayOutputStream byteStream = new ByteArrayOutputStream()) {
             try (final Output output = new Output(byteStream)) {
-                this.kryo.writeClassAndObject(output, animal);
+                this.kryo.writeClassAndObject(output, clazz.cast(object));
             }
 
             string = byteStream.toString(StandardCharsets.ISO_8859_1);  // UTF-8 does not work
         } catch (final IOException e) {
-            this.logger.error("Error serializing animal to Kryo5: {}", e.getMessage(), e);
+            this.logger.error("Error serializing object to Kryo5: {}", e.getMessage(), e);
         }
 
         if (this.logger.isTraceEnabled()) {
