@@ -53,6 +53,7 @@ import glide.api.models.configuration.NodeAddress;
 
 import java.io.*;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import java.util.*;
@@ -82,7 +83,7 @@ import org.springframework.stereotype.Service;
 ///  Set ✔️
 ///  Sorted Set ✔️
 ///  JSON ❌
-///  Serialized Objects (Kryo, JSON ✔️, Java ✔️)
+///  Serialized Objects (Kryo ✔️, JSON ✔️, Java ✔️)
 @Service
 public class ValkeyService {
     /// The logger.
@@ -113,6 +114,9 @@ public class ValkeyService {
 
     /// The Kryo object.
     private final Kryo kryo = new Kryo();
+
+    /// The character set to use with Kryo.
+    private Charset kryoCharset = StandardCharsets.ISO_8859_1;  // UTF-8 does not work
 
     /// The default constructor.
     public ValkeyService() {
@@ -713,7 +717,7 @@ public class ValkeyService {
 
         final Person person = this.newPerson();
         final GlideString base64Person = gs("base64-person");
-        final String serializedPerson = this.base64Serialize(person);   // Java serialization to Base64
+        final String serializedPerson = this.base64Serialize(person, Person.class); // Java serialization to Base64
 
         if (serializedPerson != null) {
             Person deserializedPerson = null;
@@ -744,26 +748,27 @@ public class ValkeyService {
         }
     }
 
-    /// Serialize a person to Base64.
+    /// Serialize an object to Base64.
     ///
-    /// @param  person  net.jmp.spring.boot.valkey.Person
+    /// @param  object  java.lang.Object
+    /// @param  clazz   java.lang.Class
     /// @return         java.lang.String
     /// @since          0.2.0
-    private String base64Serialize(final Person person) {
+    private String base64Serialize(final Object object, final Class<?> clazz) {
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(entryWith(person));
+            this.logger.trace(entryWith(object, clazz));
         }
 
         String string = null;
 
         try (final ByteArrayOutputStream byteStream = new ByteArrayOutputStream()) {
             try (final ObjectOutputStream objectStream = new ObjectOutputStream(byteStream)) {
-                objectStream.writeObject(person);
+                objectStream.writeObject(clazz.cast(object));
 
                 string =  Base64.getEncoder().encodeToString(byteStream.toByteArray());
             }
         } catch (final IOException ioe) {
-            this.logger.error("Error serializing person to Base64: {}", ioe.getMessage(), ioe);
+            this.logger.error("Error serializing object to Base64: {}", ioe.getMessage(), ioe);
         }
 
         if (this.logger.isTraceEnabled()) {
@@ -773,7 +778,7 @@ public class ValkeyService {
         return string;
     }
 
-    /// Deserialize a person from Base64.
+    /// Deserialize a Base64 string to an object.
     ///
     /// @param  <T>     The type of object to serialize to.
     /// @param  base64  java.lang.String
@@ -804,7 +809,8 @@ public class ValkeyService {
         return object;
     }
 
-    /// Serialize an object to Base64 using Kryo5 serialization.
+    /// Serialize and deserialize an animal
+    /// object using Kryo5 serialization.
     ///
     /// @param  client  glide.api.GlideClient
     /// @since          0.2.0
@@ -825,8 +831,7 @@ public class ValkeyService {
                     .join();
 
             final String deserializedAnimalString = client.get(kryoAnimal).join();
-            final byte[] stringBytes = deserializedAnimalString.getBytes(StandardCharsets.ISO_8859_1);
-            final Animal deserializedAnimal = this.kryoDeserialize(stringBytes, Animal.class);
+            final Animal deserializedAnimal = this.kryoDeserialize(deserializedAnimalString, Animal.class);
 
             if (deserializedAnimal != null) {
                 this.logger.info("deserializedAnimal == animal?: {}", deserializedAnimal.equals(animal));
@@ -838,7 +843,7 @@ public class ValkeyService {
         }
     }
 
-    /// Serialize an object to Base64 using Kryo5 serialization.
+    /// Serialize an object to a string using Kryo5 serialization.
     ///
     /// @param  object  java.lang.Object
     /// @param  clazz   java.lang.Class
@@ -856,7 +861,7 @@ public class ValkeyService {
                 this.kryo.writeClassAndObject(output, clazz.cast(object));
             }
 
-            string = byteStream.toString(StandardCharsets.ISO_8859_1);  // UTF-8 does not work
+            string = byteStream.toString(this.kryoCharset); // UTF-8 does not work
         } catch (final IOException e) {
             this.logger.error("Error serializing object to Kryo5: {}", e.getMessage(), e);
         }
@@ -868,17 +873,19 @@ public class ValkeyService {
         return string;
     }
 
-    /// Deserialize an object from Base64 using Kryo5 deserialization.
+    /// Deserialize a string to an object using Kryo5 deserialization.
     ///
     /// @param  <T>     The type of object to serialize to.
-    /// @param  bytes   byte[]
+    /// @param  string  java.lang.String
     /// @param  clazz   java.lang.Class<T>
     /// @return         T
     /// @since          0.2.0
-    private <T> T kryoDeserialize(final byte[] bytes, final Class<T> clazz) {
+    private <T> T kryoDeserialize(final String string, final Class<T> clazz) {
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(entryWith(bytes), clazz);
+            this.logger.trace(entryWith(string, clazz));
         }
+
+        final byte[] bytes = string.getBytes(this.kryoCharset); // UTF-8 does not work
 
         T object = null;
 
