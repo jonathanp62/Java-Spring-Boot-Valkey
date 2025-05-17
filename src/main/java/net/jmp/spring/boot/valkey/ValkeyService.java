@@ -94,6 +94,10 @@ public class ValkeyService {
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
+    /// The Glide client name.
+    @Value("${glide.client.name}")
+    private String glideClientName;
+
     /// The Glide host.
     @Value("${glide.host}")
     private String glideHost;
@@ -205,10 +209,10 @@ public class ValkeyService {
         final String notificationsChannelName = "notifications";
         final String newsChannelName = "news";
 
-        final var pubSubConfig = StandaloneSubscriptionConfiguration.builder()
+        final StandaloneSubscriptionConfiguration pubSubConfig = StandaloneSubscriptionConfiguration.builder()
                 .subscription(EXACT, gs(notificationsChannelName))
                 .subscription(EXACT, gs(newsChannelName))
-                .callback(callback)
+                .callback(callback, "my-context")   // The context is optional
                 .build();
 
         try (final GlideClient glideClient = this.connect(pubSubConfig)) {
@@ -248,7 +252,7 @@ public class ValkeyService {
                                     .port(this.glidePort)
                                     .build()
                             )
-                            .clientName("Valkey-Glide-Client")  // @todo: Make this configurable
+                            .clientName(this.glideClientName)
                             .useTLS(this.glideUseSsl)
                             .build();
         } else {
@@ -259,7 +263,7 @@ public class ValkeyService {
                                     .port(this.glidePort)
                                     .build()
                             )
-                            .clientName("Valkey-Glide-Client")  // @todo: Make this configurable
+                            .clientName(this.glideClientName)
                             .useTLS(this.glideUseSsl)
                             .subscriptionConfiguration(pubSubconfig)
                             .build();

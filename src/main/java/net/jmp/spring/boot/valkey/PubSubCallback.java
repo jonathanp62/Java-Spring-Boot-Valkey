@@ -53,21 +53,24 @@ public class PubSubCallback implements BaseSubscriptionConfiguration.MessageCall
     }
 
     /// The accept method.
-    /// Not sure what the object is. Right now it's not used
-    /// and is always null. The documentation states that it
-    /// is a user defined context that will be passed to the
-    /// callback for every message received.
+    /// The documentation states that object
+    /// is a user defined context that will be passed
+    /// to the callback for every message received.
     ///
     /// @param  pubSubMessage   glide.api.models.PubSubMessage
-    /// @param  o               Object
+    /// @param  object          java.lang.Object
     @Override
-    public void accept(final PubSubMessage pubSubMessage, final Object o) {
+    public void accept(final PubSubMessage pubSubMessage, final Object object) {
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(entryWith(pubSubMessage.toString(), o));
+            this.logger.trace(entryWith(pubSubMessage.toString(), object));
         }
 
         this.logger.info("Received message: {}", pubSubMessage.getMessage());
         this.logger.info("Received channel: {}", pubSubMessage.getChannel());
+
+        if (object != null) {
+            this.logger.info("Received object: {}", object);
+        }
 
         if (this.logger.isInfoEnabled()) {
             this.logger.trace(exit());
