@@ -49,8 +49,12 @@ import glide.api.models.commands.LInsertOptions;
 import glide.api.models.commands.RangeOptions;
 import glide.api.models.commands.ScoreFilter;
 
+import glide.api.models.configuration.BaseSubscriptionConfiguration;
 import glide.api.models.configuration.GlideClientConfiguration;
 import glide.api.models.configuration.NodeAddress;
+import glide.api.models.configuration.StandaloneSubscriptionConfiguration;
+
+import static glide.api.models.configuration.StandaloneSubscriptionConfiguration.PubSubChannelMode.EXACT;
 
 import java.io.*;
 
@@ -130,7 +134,23 @@ public class ValkeyService {
             this.logger.trace(entry());
         }
 
-        try (final GlideClient glideClient = this.connect()) {
+        this.nonPubSub();
+        this.pubSub(new PubSubCallback());  // The callback class is defined here so it does not go out of scope
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Demonstrate non-pub/sub commands.
+    ///
+    /// @since  0.3.0
+    private void nonPubSub() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        try (final GlideClient glideClient = this.connect(null)) {
             final CompletableFuture<Void> clientName = glideClient.clientGetName()
                     .thenAccept(name -> this.logger.info("CLIENT-NAME: {}", name));
 
@@ -173,24 +193,77 @@ public class ValkeyService {
         }
     }
 
-    /// Connect to Valkey using Glide.
+    /// Demonstrate pub/sub commands.
     ///
-    /// @return glide.api.GlideClient
-    /// @throws java.lang.RuntimeException  When the Glide client cannot be created
-    private GlideClient connect() {
+    /// @param  callback    glide.api.models.configuration.BaseSubscriptionConfiguration.MessageCallback
+    /// @since              0.3.0
+    private void pubSub(final BaseSubscriptionConfiguration.MessageCallback callback) {
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(entry());
+            this.logger.trace(entryWith(callback.toString()));
         }
 
-        final GlideClientConfiguration config =
-                GlideClientConfiguration.builder()
-                        .address(NodeAddress.builder()
-                                .host(this.glideHost)
-                                .port(this.glidePort)
-                                .build()
-                        )
-                        .useTLS(this.glideUseSsl)
-                        .build();
+        final String notificationsChannelName = "notifications";
+        final String newsChannelName = "news";
+
+        final var pubSubConfig = StandaloneSubscriptionConfiguration.builder()
+                .subscription(EXACT, gs(notificationsChannelName))
+                .subscription(EXACT, gs(newsChannelName))
+                .callback(callback)
+                .build();
+
+        try (final GlideClient glideClient = this.connect(pubSubConfig)) {
+            glideClient.publish(gs("You are notified"), gs(notificationsChannelName))
+                    .thenAccept(num -> this.logger.info("PUBLISH(You are notified, notifications): {}", num))
+                    .join();
+
+            glideClient.publish(gs("Some news"), gs(newsChannelName))
+                    .thenAccept(num -> this.logger.info("PUBLISH(Some news, news): {}", num))
+                    .join();
+        } catch (final ExecutionException e) {
+            this.logger.error("Glide execution execution: {}", e.getMessage(), e);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Connect to Valkey using Glide.
+    ///
+    /// @param  pubSubconfig    glide.api.models.configuration.StandaloneSubscriptionConfiguration
+    /// @return                 glide.api.GlideClient                                                   The glide.api.GlideClient
+    /// @throws                 java.lang.RuntimeException  When the Glide client cannot be created
+    private GlideClient connect(final StandaloneSubscriptionConfiguration pubSubconfig) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(pubSubconfig));
+        }
+
+        GlideClientConfiguration config = null;
+
+        if (pubSubconfig == null) {
+            config =
+                    GlideClientConfiguration.builder()
+                            .address(NodeAddress.builder()
+                                    .host(this.glideHost)
+                                    .port(this.glidePort)
+                                    .build()
+                            )
+                            .clientName("Valkey-Glide-Client")  // @todo: Make this configurable
+                            .useTLS(this.glideUseSsl)
+                            .build();
+        } else {
+            config =
+                    GlideClientConfiguration.builder()
+                            .address(NodeAddress.builder()
+                                    .host(this.glideHost)
+                                    .port(this.glidePort)
+                                    .build()
+                            )
+                            .clientName("Valkey-Glide-Client")  // @todo: Make this configurable
+                            .useTLS(this.glideUseSsl)
+                            .subscriptionConfiguration(pubSubconfig)
+                            .build();
+        }
 
         GlideClient glideClient = null;
 
