@@ -1,6 +1,7 @@
 package net.jmp.spring.boot.valkey;
 
 /*
+ * (#)ValkeyService.java    0.3.0   05/17/2025
  * (#)ValkeyService.java    0.2.0   05/05/2025
  * (#)ValkeyService.java    0.1.0   05/01/2025
  *
@@ -73,7 +74,7 @@ import org.springframework.stereotype.Service;
 
 /// The Valkey service class.
 ///
-/// @version    0.2.0
+/// @version    0.3.0
 /// @since      0.1.0
 ///
 /// Data types to get acquainted with:
@@ -116,7 +117,7 @@ public class ValkeyService {
     private final Kryo kryo = new Kryo();
 
     /// The character set to use with Kryo.
-    private Charset kryoCharset = StandardCharsets.ISO_8859_1;  // UTF-8 does not work
+    private final Charset kryoCharset = StandardCharsets.ISO_8859_1;    // UTF-8 does not work
 
     /// The default constructor.
     public ValkeyService() {
