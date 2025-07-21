@@ -31,6 +31,7 @@
 ///
 /// @since  0.1.0
 module Spring.Boot.Valkey.main {
+    requires com.esotericsoftware.kryo.kryo5;
     requires com.google.gson;
     requires glide.api;
     requires logging.utilities;
