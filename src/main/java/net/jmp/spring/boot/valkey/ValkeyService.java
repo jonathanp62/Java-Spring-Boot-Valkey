@@ -1,6 +1,7 @@
 package net.jmp.spring.boot.valkey;
 
 /*
+ * (#)ValkeyService.java    0.4.0   07/21/2025
  * (#)ValkeyService.java    0.3.0   05/17/2025
  * (#)ValkeyService.java    0.2.0   05/05/2025
  * (#)ValkeyService.java    0.1.0   05/01/2025
@@ -78,7 +79,7 @@ import org.springframework.stereotype.Service;
 
 /// The Valkey service class.
 ///
-/// @version    0.3.0
+/// @version    0.4.0
 /// @since      0.1.0
 ///
 /// Data types to get acquainted with:
@@ -687,11 +688,13 @@ public class ValkeyService {
                     .thenAccept(num -> this.logger.info("ZCOUNT(my-sorted-set, 1.0, 3.0): {}", num))
                     .join();
 
-            final Object[] elements = client.zmpop(new GlideString[] { mySortedSet }, ScoreFilter.MIN)
+            // The map's key is the element name and the value is the score
+            
+            final Map<GlideString, Object> elements = client.zmpop(new GlideString[] { mySortedSet }, ScoreFilter.MIN)
                     .join();
 
             if (this.logger.isInfoEnabled()) {
-                this.logger.info("ZMPOP(my-sorted-set, MIN): {}", Arrays.toString(elements));
+                this.logger.info("ZMPOP(my-sorted-set, MIN): {}", elements);
             }
 
             client.zrem(mySortedSet, new GlideString[] { ccc })
