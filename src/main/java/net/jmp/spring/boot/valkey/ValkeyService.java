@@ -689,7 +689,7 @@ public class ValkeyService {
                     .join();
 
             // The map's key is the element name and the value is the score
-            
+
             final Map<GlideString, Object> elements = client.zmpop(new GlideString[] { mySortedSet }, ScoreFilter.MIN)
                     .join();
 
