@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
+ (#)logback-spring.xml  0.4.0   07/22/2025
  (#)logback-spring.xml  0.3.0   05/17/2025
  (#)logback-spring.xml  0.1.0   04/30/2025
 
  @author   Jonathan Parker
- @version  0.3.0
+ @version  0.4.0
  @since    0.1.0
 
  MIT License
@@ -66,6 +67,9 @@
         <logger name="net.jmp.spring.boot.valkey.ValkeyService" additivity="false" level="info">
             <appender-ref ref="ECS_JSON_CONSOLE" />
         </logger>
+        <logger name="net.jmp.spring.boot.valkey.ezglide" additivity="false" level="info">
+            <appender-ref ref="ECS_JSON_CONSOLE" />
+        </logger>
         <logger name="org.springframework.beans" additivity="false" level="warn">
             <appender-ref ref="ECS_JSON_CONSOLE" />
         </logger>
@@ -115,6 +119,9 @@
         </logger>
         <logger name="net.jmp.spring.boot.valkey.ValkeyService" additivity="false" level="info">
             <appender-ref ref="ECS_JSON_FILE" />
+        </logger>
+        <logger name="net.jmp.spring.boot.valkey.ezglide" additivity="false" level="info">
+            <appender-ref ref="ECS_JSON_CONSOLE" />
         </logger>
         <logger name="org.springframework.beans" additivity="false" level="warn">
             <appender-ref ref="ECS_JSON_FILE" />
