@@ -33,7 +33,6 @@ import glide.api.GlideClient;
 import glide.api.models.configuration.GlideClientConfiguration;
 import glide.api.models.configuration.NodeAddress;
 
-import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
 import static net.jmp.util.logging.LoggerUtils.*;
@@ -133,6 +132,12 @@ public class EZGlideService {
     private void getAndSet(final EZGlide ezGlide) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(ezGlide));
+        }
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("Set: {}", ezGlide.set("Apples", "Oranges"));
+            this.logger.info("Get: {}", ezGlide.get("Apples").orElse("Not found"));
+            this.logger.info("Get: {}", ezGlide.get("Oranges").orElse("Not found"));
         }
 
         if (this.logger.isTraceEnabled()) {

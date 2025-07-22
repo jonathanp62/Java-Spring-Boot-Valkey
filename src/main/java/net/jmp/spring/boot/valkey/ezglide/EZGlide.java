@@ -34,6 +34,8 @@ import glide.api.models.GlideString;
 
 import static glide.api.models.GlideString.gs;
 
+import java.util.Optional;
+
 import java.util.concurrent.CompletableFuture;
 
 import static net.jmp.util.logging.LoggerUtils.*;
@@ -209,4 +211,48 @@ public final class EZGlide {
         return dbsize;
     }
 
+    /// Set a key with a value.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  value   java.lang.String
+    /// @return         java.lang.String
+    public String set(final String key, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, value));
+        }
+
+        final CompletableFuture<String> future = this.glideClient.set(gs(key), gs(value));
+        final String set = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(set));
+        }
+
+        return set;
+    }
+
+    /// Get a value from the specified key.
+    ///
+    /// @param  key java.lang.String
+    /// @return     java.util.Optional<java.lang.String>
+    public Optional<String> get(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        String value = null;
+
+        final CompletableFuture<GlideString> future = this.glideClient.get(gs(key));
+        final GlideString get = future.join();
+
+        if (get != null) {
+            value = get.getString();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(value));
+        }
+
+        return Optional.ofNullable(value);
+    }
 }
