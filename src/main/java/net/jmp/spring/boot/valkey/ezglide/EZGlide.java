@@ -30,6 +30,10 @@ package net.jmp.spring.boot.valkey.ezglide;
 
 import glide.api.GlideClient;
 
+import glide.api.models.GlideString;
+
+import static glide.api.models.GlideString.gs;
+
 import java.util.concurrent.CompletableFuture;
 
 import static net.jmp.util.logging.LoggerUtils.*;
@@ -73,5 +77,99 @@ public final class EZGlide {
         }
 
         return clientName;
+    }
+
+    /// Get the client identifier.
+    ///
+    /// @return     long
+    public long clientId() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.clientId();
+        final Long clientId = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(clientId));
+        }
+
+        return clientId;
+    }
+
+    /// Get the client information.
+    ///
+    /// @return     java.lang.String
+    public String info() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final CompletableFuture<String> future = this.glideClient.info();
+        final String info = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(info));
+        }
+
+        return info;
+    }
+
+    /// Ping.
+    ///
+    /// @return     java.lang.String
+    public String ping() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final CompletableFuture<String> future = this.glideClient.ping();
+        final String ping = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(ping));
+        }
+
+        return ping;
+    }
+
+    /// Ping with a message.
+    ///
+    /// @param  message java.lang.String
+    /// @return         java.lang.String
+    public String ping(final String message) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(message));
+        }
+
+        final CompletableFuture<GlideString> future = this.glideClient.ping(gs(message));
+        final GlideString ping = future.join();
+        final String result = ping.getString();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Echo with a message.
+    ///
+    /// @param  message java.lang.String
+    /// @return         java.lang.String
+    public String echo(final String message) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(message));
+        }
+
+        final CompletableFuture<GlideString> future = this.glideClient.echo(gs(message));
+        final GlideString echo = future.join();
+        final String result = echo.getString();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
     }
 }
