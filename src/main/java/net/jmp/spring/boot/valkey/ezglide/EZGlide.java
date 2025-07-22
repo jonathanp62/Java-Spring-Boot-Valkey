@@ -63,7 +63,7 @@ public final class EZGlide {
 
     /// Get the client name.
     ///
-    /// @return     java.lang.String
+    /// @return java.lang.String
     public String clientGetName() {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entry());
@@ -81,7 +81,7 @@ public final class EZGlide {
 
     /// Get the client identifier.
     ///
-    /// @return     long
+    /// @return long
     public long clientId() {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entry());
@@ -99,7 +99,7 @@ public final class EZGlide {
 
     /// Get the client information.
     ///
-    /// @return     java.lang.String
+    /// @return java.lang.String
     public String info() {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entry());
@@ -117,7 +117,7 @@ public final class EZGlide {
 
     /// Ping.
     ///
-    /// @return     java.lang.String
+    /// @return java.lang.String
     public String ping() {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entry());
@@ -172,4 +172,41 @@ public final class EZGlide {
 
         return result;
     }
+
+    /// Flush the database.
+    ///
+    /// @return java.lang.String
+    public String flushall() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final CompletableFuture<String> future = this.glideClient.flushall();
+        final String flushall = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(flushall));
+        }
+
+        return flushall;
+    }
+
+    /// Get the database size.
+    ///
+    /// @return long
+    public long dbsize() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.dbsize();
+        final long dbsize = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(dbsize));
+        }
+
+        return dbsize;
+    }
+
 }

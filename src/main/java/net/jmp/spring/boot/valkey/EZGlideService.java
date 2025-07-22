@@ -33,6 +33,7 @@ import glide.api.GlideClient;
 import glide.api.models.configuration.GlideClientConfiguration;
 import glide.api.models.configuration.NodeAddress;
 
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
 import static net.jmp.util.logging.LoggerUtils.*;
@@ -93,6 +94,8 @@ public class EZGlideService {
             final EZGlide ezGlide = new EZGlide(glideClient);
 
             this.miscellaneous(ezGlide);
+            this.getAndSet(ezGlide);
+            this.cleanup(ezGlide);
         } catch (final ExecutionException e) {
             this.logger.error("Glide execution execution: {}", e.getMessage(), e);
         }
@@ -117,6 +120,19 @@ public class EZGlideService {
             this.logger.info("Ping: {}", ezGlide.ping());
             this.logger.info("Ping: {}", ezGlide.ping("Pinging..."));
             this.logger.info("Echo: {}", ezGlide.ping("Message that is echoed"));
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Get and set commands.
+    ///
+    /// @param  ezGlide net.jmp.spring.boot.valkey.ezglide.EZGlide
+    private void getAndSet(final EZGlide ezGlide) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(ezGlide));
         }
 
         if (this.logger.isTraceEnabled()) {
@@ -169,5 +185,24 @@ public class EZGlideService {
         }
 
         return glideClient;
+    }
+
+    /// Cleanup the database.
+    ///
+    /// @param  ezGlide  net.jmp.spring.boot.valkey.ezglide.EZGlide
+    private void cleanup(final EZGlide ezGlide) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(ezGlide));
+        }
+
+        if (this.glideFlushDb) {
+            this.logger.info("Flush All: {}", ezGlide.flushall());
+        }
+
+        this.logger.info("DB size: {}", ezGlide.dbsize());
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
     }
 }
