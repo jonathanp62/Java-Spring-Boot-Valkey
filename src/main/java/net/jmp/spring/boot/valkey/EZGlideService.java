@@ -103,6 +103,8 @@ public class EZGlideService {
     }
 
     /// Miscellaneous commands.
+    ///
+    /// @param  ezGlide net.jmp.spring.boot.valkey.ezglide.EZGlide
     private void miscellaneous(final EZGlide ezGlide) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(ezGlide));
@@ -110,6 +112,11 @@ public class EZGlideService {
 
         if (this.logger.isInfoEnabled()) {
             this.logger.info("Client name: {}", ezGlide.clientGetName());
+            this.logger.info("Client ID: {}", ezGlide.clientId());
+            this.logger.info("Client info: {}", ezGlide.info());
+            this.logger.info("Ping: {}", ezGlide.ping());
+            this.logger.info("Ping: {}", ezGlide.ping("Pinging..."));
+            this.logger.info("Echo: {}", ezGlide.ping("Message that is echoed"));
         }
 
         if (this.logger.isTraceEnabled()) {
