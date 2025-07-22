@@ -72,13 +72,13 @@ public final class EZGlide {
         }
 
         final CompletableFuture<String> future = this.glideClient.clientGetName();
-        final String clientName = future.join();
+        final String result = future.join();
 
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(exitWith(clientName));
+            this.logger.trace(exitWith(result));
         }
 
-        return clientName;
+        return result;
     }
 
     /// Get the client identifier.
@@ -90,13 +90,13 @@ public final class EZGlide {
         }
 
         final CompletableFuture<Long> future = this.glideClient.clientId();
-        final Long clientId = future.join();
+        final Long result = future.join();
 
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(exitWith(clientId));
+            this.logger.trace(exitWith(result));
         }
 
-        return clientId;
+        return result;
     }
 
     /// Get the client information.
@@ -108,13 +108,13 @@ public final class EZGlide {
         }
 
         final CompletableFuture<String> future = this.glideClient.info();
-        final String info = future.join();
+        final String result = future.join();
 
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(exitWith(info));
+            this.logger.trace(exitWith(result));
         }
 
-        return info;
+        return result;
     }
 
     /// Ping.
@@ -126,13 +126,13 @@ public final class EZGlide {
         }
 
         final CompletableFuture<String> future = this.glideClient.ping();
-        final String ping = future.join();
+        final String result = future.join();
 
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(exitWith(ping));
+            this.logger.trace(exitWith(result));
         }
 
-        return ping;
+        return result;
     }
 
     /// Ping with a message.
@@ -145,8 +145,8 @@ public final class EZGlide {
         }
 
         final CompletableFuture<GlideString> future = this.glideClient.ping(gs(message));
-        final GlideString ping = future.join();
-        final String result = ping.getString();
+        final GlideString value = future.join();
+        final String result = value.getString();
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));
@@ -165,8 +165,8 @@ public final class EZGlide {
         }
 
         final CompletableFuture<GlideString> future = this.glideClient.echo(gs(message));
-        final GlideString echo = future.join();
-        final String result = echo.getString();
+        final GlideString value = future.join();
+        final String result = value.getString();
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));
@@ -184,13 +184,13 @@ public final class EZGlide {
         }
 
         final CompletableFuture<String> future = this.glideClient.flushall();
-        final String flushall = future.join();
+        final String result = future.join();
 
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(exitWith(flushall));
+            this.logger.trace(exitWith(result));
         }
 
-        return flushall;
+        return result;
     }
 
     /// Get the database size.
@@ -202,13 +202,13 @@ public final class EZGlide {
         }
 
         final CompletableFuture<Long> future = this.glideClient.dbsize();
-        final long dbsize = future.join();
+        final long result = future.join();
 
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(exitWith(dbsize));
+            this.logger.trace(exitWith(result));
         }
 
-        return dbsize;
+        return result;
     }
 
     /// Set a key with a value.
@@ -222,13 +222,13 @@ public final class EZGlide {
         }
 
         final CompletableFuture<String> future = this.glideClient.set(gs(key), gs(value));
-        final String set = future.join();
+        final String result = future.join();
 
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(exitWith(set));
+            this.logger.trace(exitWith(result));
         }
 
-        return set;
+        return result;
     }
 
     /// Get a value from the specified key.
@@ -240,19 +240,40 @@ public final class EZGlide {
             this.logger.trace(entryWith(key));
         }
 
-        String value = null;
+        String result = null;
 
         final CompletableFuture<GlideString> future = this.glideClient.get(gs(key));
-        final GlideString get = future.join();
+        final GlideString value = future.join();
 
-        if (get != null) {
-            value = get.getString();
+        if (value != null) {
+            result = value.getString();
         }
 
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(exitWith(value));
+            this.logger.trace(exitWith(result));
         }
 
-        return Optional.ofNullable(value);
+        return Optional.ofNullable(result);
+    }
+
+    /// Append the specified value to a key
+    /// and return the new length of the value.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  value   java.lang.String
+    /// @return         long
+    public long append(final String key, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, value));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.append(gs(key), gs(value));
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
     }
 }

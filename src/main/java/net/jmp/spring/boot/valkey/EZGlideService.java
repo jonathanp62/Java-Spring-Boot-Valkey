@@ -138,6 +138,8 @@ public class EZGlideService {
             this.logger.info("Set: {}", ezGlide.set("Apples", "Oranges"));
             this.logger.info("Get: {}", ezGlide.get("Apples").orElse("Not found"));
             this.logger.info("Get: {}", ezGlide.get("Oranges").orElse("Not found"));
+            this.logger.info("Append: {}", ezGlide.append("Apples", " and Raisins"));
+            this.logger.info("Get: {}", ezGlide.get("Apples").orElse("Not found"));
         }
 
         if (this.logger.isTraceEnabled()) {
