@@ -34,6 +34,7 @@ import glide.api.models.GlideString;
 
 import static glide.api.models.GlideString.gs;
 
+import java.util.List;
 import java.util.Optional;
 
 import java.util.concurrent.CompletableFuture;
@@ -269,6 +270,77 @@ public final class EZGlide {
 
         final CompletableFuture<Long> future = this.glideClient.append(gs(key), gs(value));
         final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Copy the value in the source key to the target key.
+    ///
+    /// @param  source  java.lang.String
+    /// @param  target  java.lang.String
+    /// @return         boolean
+    public boolean copy(final String source, final String target) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(source, target));
+        }
+
+        final CompletableFuture<Boolean> future = this.glideClient.copy(gs(source), gs(target));
+        final boolean result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return true if the key exists and false if not.
+    ///
+    /// @param  key java.lang.String
+    /// @return     boolean
+    public boolean exists(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        final GlideString[] keys = new GlideString[] { gs(key) };
+        final CompletableFuture<Long> future = this.glideClient.exists(keys);
+        final long value = future.join();
+        final boolean result = value == 1;
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// From the list of specified keys, return the number of keys that exist.
+    ///
+    /// @param  keys    java.util.List<java.lang.String>
+    /// @return         long
+    public long exists(final List<String> keys) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(keys));
+        }
+
+        long result = 0;
+
+        if (!keys.isEmpty()) {
+            final GlideString[] glideStringKeys = new GlideString[keys.size()];
+
+            for (int i = 0; i < keys.size(); i++) {
+                glideStringKeys[i] = gs(keys.get(i));
+            }
+
+            final CompletableFuture<Long> future = this.glideClient.exists(glideStringKeys);
+
+            result = future.join();
+        }
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));

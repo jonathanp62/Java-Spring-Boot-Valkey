@@ -33,6 +33,8 @@ import glide.api.GlideClient;
 import glide.api.models.configuration.GlideClientConfiguration;
 import glide.api.models.configuration.NodeAddress;
 
+import java.util.List;
+
 import java.util.concurrent.ExecutionException;
 
 import static net.jmp.util.logging.LoggerUtils.*;
@@ -140,6 +142,11 @@ public class EZGlideService {
             this.logger.info("Get: {}", ezGlide.get("Oranges").orElse("Not found"));
             this.logger.info("Append: {}", ezGlide.append("Apples", " and Raisins"));
             this.logger.info("Get: {}", ezGlide.get("Apples").orElse("Not found"));
+            this.logger.info("Copy: {}", ezGlide.copy("Apples", "Oranges"));
+            this.logger.info("Get: {}", ezGlide.get("Oranges").orElse("Not found"));
+            this.logger.info("Exists: {}", ezGlide.exists("Oranges"));
+            this.logger.info("Exists: {}", ezGlide.exists("Lemons"));
+            this.logger.info("Exists: {}", ezGlide.exists(List.of("Oranges", "Lemons", "Apples")));
         }
 
         if (this.logger.isTraceEnabled()) {
