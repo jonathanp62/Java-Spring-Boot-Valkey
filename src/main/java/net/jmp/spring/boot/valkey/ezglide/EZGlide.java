@@ -500,4 +500,116 @@ public final class EZGlide {
 
         return result;
     }
+
+    /// Return the number of entries in the hash.
+    ///
+    /// @param  key java.lang.String
+    /// @return     long
+    public long hlen(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.hlen(gs(key));
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Get the value associated with the entry key in the hash.
+    ///
+    /// @param  hashKeyName     java.lang.String
+    /// @param  entryKeyName    java.lang.String
+    /// @return                 java.util.Optional<java.lang.String>
+    public Optional<String> hget(final String hashKeyName, final String entryKeyName) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(hashKeyName, entryKeyName));
+        }
+
+        String result = null;
+
+        final CompletableFuture<GlideString> future = this.glideClient.hget(gs(hashKeyName), gs(entryKeyName));
+        final GlideString value = future.join();
+
+        if (value != null) {
+            result = value.getString();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
+    }
+
+    /// Return true if the entry key exists in the hash.
+    ///
+    /// @param  hashKeyName     java.lang.String
+    /// @param  entryKeyName    java.lang.String
+    /// @return                 java.util.Optional<java.lang.String>
+    public boolean hexists(final String hashKeyName, final String entryKeyName) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(hashKeyName, entryKeyName));
+        }
+
+        final CompletableFuture<Boolean> future = this.glideClient.hexists(gs(hashKeyName), gs(entryKeyName));
+        final boolean result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Delete the entry keys from the hash.
+    ///
+    /// @param  hashKey java.lang.String
+    /// @param  keys    java.util.List<java.lang.String>
+    /// @return         long
+    public long hdel(final String hashKey, final List<String> keys) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(hashKey, keys));
+        }
+
+        final GlideString[] glideStringKeys = new GlideString[keys.size()];
+
+        for (int i = 0; i < keys.size(); i++) {
+            glideStringKeys[i] = gs(keys.get(i));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.hdel(gs(hashKey), glideStringKeys);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Delete the entry key from the hash.
+    ///
+    /// @param  hashKey java.lang.String
+    /// @param  key     java.lang.String
+    /// @return         long
+    public long hdel(final String hashKey, final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(hashKey, key));
+        }
+
+        final GlideString[] keys = new GlideString[] { gs(key) };
+        final CompletableFuture<Long> future = this.glideClient.hdel(gs(hashKey), keys);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
 }

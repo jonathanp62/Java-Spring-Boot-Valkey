@@ -38,9 +38,10 @@ import java.util.Map;
 
 import java.util.concurrent.ExecutionException;
 
+import net.jmp.spring.boot.valkey.ezglide.EZGlide;
+
 import static net.jmp.util.logging.LoggerUtils.*;
 
-import net.jmp.spring.boot.valkey.ezglide.EZGlide;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -201,6 +202,14 @@ public class EZGlideService {
         if (this.logger.isInfoEnabled()) {
             this.logger.info("HSet: {}", ezGlide.hset("Names", map));
             this.logger.info("HKeys: {}", ezGlide.hkeys("Names"));
+            this.logger.info("HLen: {}", ezGlide.hlen("Names"));
+            this.logger.info("HGet: {}", ezGlide.hget("Names", "middleName").orElse("middleName not found in Names"));
+            this.logger.info("HGet: {}", ezGlide.hget("Names", "nickName").orElse("nickName not found in Names"));
+            this.logger.info("HExists: {}", ezGlide.hexists("Names", "middleName"));
+            this.logger.info("HExists: {}", ezGlide.hexists("Names", "nickName"));
+            this.logger.info("HDel: {}", ezGlide.hdel("Names", "middleName"));
+            this.logger.info("HDel: {}", ezGlide.hdel("Names", List.of("firstName", "lastName")));
+
         }
 
         if (this.logger.isTraceEnabled()) {
