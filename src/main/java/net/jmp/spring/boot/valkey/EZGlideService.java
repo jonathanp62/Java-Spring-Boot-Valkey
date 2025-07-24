@@ -139,12 +139,12 @@ public class EZGlideService {
 
         if (this.logger.isInfoEnabled()) {
             this.logger.info("Set: {}", ezGlide.set("Apples", "Oranges"));
-            this.logger.info("Get: {}", ezGlide.get("Apples").orElse("Not found"));
-            this.logger.info("Get: {}", ezGlide.get("Oranges").orElse("Not found"));
+            this.logger.info("Get: {}", ezGlide.get("Apples").orElse("Apples not found"));
+            this.logger.info("Get: {}", ezGlide.get("Oranges").orElse("Oranges not found"));
             this.logger.info("Append: {}", ezGlide.append("Apples", " and Raisins"));
-            this.logger.info("Get: {}", ezGlide.get("Apples").orElse("Not found"));
+            this.logger.info("Get: {}", ezGlide.get("Apples").orElse("Apples not found"));
             this.logger.info("Copy: {}", ezGlide.copy("Apples", "Oranges"));
-            this.logger.info("Get: {}", ezGlide.get("Oranges").orElse("Not found"));
+            this.logger.info("Get: {}", ezGlide.get("Oranges").orElse("Oranges not found"));
             this.logger.info("Exists: {}", ezGlide.exists("Oranges"));
             this.logger.info("Exists: {}", ezGlide.exists("Lemons"));
             this.logger.info("Exists: {}", ezGlide.exists(List.of("Oranges", "Lemons", "Apples")));
@@ -164,7 +164,17 @@ public class EZGlideService {
         }
 
         if (this.logger.isInfoEnabled()) {
-
+            this.logger.info("Set: {}", ezGlide.set("Name", "Jonathan"));
+            this.logger.info("Get: {}", ezGlide.get("Name").orElse("Name not found"));
+            this.logger.info("Rename: {}", ezGlide.rename("Name", "My-Name"));
+            this.logger.info("Exists: {}", ezGlide.exists("Name"));
+            this.logger.info("GetDel: {}", ezGlide.getdel("My-Name"));
+            this.logger.info("Exists: {}", ezGlide.exists("My-Name"));
+            this.logger.info("Set: {}", ezGlide.set("Middle-Name", "Martin"));
+            this.logger.info("Del: {}", ezGlide.del("Middle-Name"));
+            this.logger.info("Set: {}", ezGlide.set("Last-Name", "Parker"));
+            this.logger.info("Set: {}", ezGlide.set("Middle-Name", "Martin"));
+            this.logger.info("Del: {}", ezGlide.del(List.of("Last-Name", "Middle-Name")));
         }
 
         if (this.logger.isTraceEnabled()) {

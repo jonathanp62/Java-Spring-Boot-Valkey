@@ -348,4 +348,95 @@ public final class EZGlide {
 
         return result;
     }
+
+    /// Rename the source key to the target key.
+    ///
+    /// @param  source  java.lang.String
+    /// @param  target  java.lang.String
+    /// @return         java.lang.String
+    public String rename(final String source, final String target) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(source, target));
+        }
+
+        final CompletableFuture<String> future = this.glideClient.rename(gs(source), gs(target));
+        final String result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Get the value from the key then delete the key.
+    ///
+    /// @param  key java.lang.String
+    /// @return     java.lang.String
+    public String getdel(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        final CompletableFuture<GlideString> future = this.glideClient.getdel(gs(key));
+        final GlideString value = future.join();
+        final String result = value.getString();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return true if the key was deleted and false if not.
+    ///
+    /// @param  key java.lang.String
+    /// @return     boolean
+    public boolean del(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        final GlideString[] keys = new GlideString[] { gs(key) };
+        final CompletableFuture<Long> future = this.glideClient.del(keys);
+        final long value = future.join();
+        final boolean result = value == 1;
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Delete the keys specified in the list, returning the number of keys that were deleted.
+    ///
+    /// @param  keys    java.util.List<java.lang.String>
+    /// @return         long
+    public long del(final List<String> keys) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(keys));
+        }
+
+        long result = 0;
+
+        if (!keys.isEmpty()) {
+            final GlideString[] glideStringKeys = new GlideString[keys.size()];
+
+            for (int i = 0; i < keys.size(); i++) {
+                glideStringKeys[i] = gs(keys.get(i));
+            }
+
+            final CompletableFuture<Long> future = this.glideClient.del(glideStringKeys);
+
+            result = future.join();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
 }
