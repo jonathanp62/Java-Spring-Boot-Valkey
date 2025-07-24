@@ -97,6 +97,7 @@ public class EZGlideService {
             this.miscellaneous(ezGlide);
             this.getAndSet(ezGlide);
             this.getAndDelete(ezGlide);
+            this.hash(ezGlide);
             this.cleanup(ezGlide);
         } catch (final ExecutionException e) {
             this.logger.error("Glide execution execution: {}", e.getMessage(), e);
@@ -175,6 +176,23 @@ public class EZGlideService {
             this.logger.info("Set: {}", ezGlide.set("Last-Name", "Parker"));
             this.logger.info("Set: {}", ezGlide.set("Middle-Name", "Martin"));
             this.logger.info("Del: {}", ezGlide.del(List.of("Last-Name", "Middle-Name")));
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Hash commands.
+    ///
+    /// @param  ezGlide net.jmp.spring.boot.valkey.ezglide.EZGlide
+    private void hash(final EZGlide ezGlide) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(ezGlide));
+        }
+
+        if (this.logger.isInfoEnabled()) {
+
         }
 
         if (this.logger.isTraceEnabled()) {
