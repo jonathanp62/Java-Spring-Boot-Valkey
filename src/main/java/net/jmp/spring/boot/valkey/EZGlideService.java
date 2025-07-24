@@ -34,6 +34,7 @@ import glide.api.models.configuration.GlideClientConfiguration;
 import glide.api.models.configuration.NodeAddress;
 
 import java.util.List;
+import java.util.Map;
 
 import java.util.concurrent.ExecutionException;
 
@@ -191,8 +192,15 @@ public class EZGlideService {
             this.logger.trace(entryWith(ezGlide));
         }
 
-        if (this.logger.isInfoEnabled()) {
+        final Map<String, String> map = Map.of(
+                "firstName", "Wendy",
+                "middleName", "Carol",
+                "lastName", "Burkins"
+        );
 
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("HSet: {}", ezGlide.hset("Names", map));
+            this.logger.info("HKeys: {}", ezGlide.hkeys("Names"));
         }
 
         if (this.logger.isTraceEnabled()) {

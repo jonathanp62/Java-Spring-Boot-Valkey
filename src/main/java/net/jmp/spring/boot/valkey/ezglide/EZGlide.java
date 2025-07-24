@@ -34,8 +34,7 @@ import glide.api.models.GlideString;
 
 import static glide.api.models.GlideString.gs;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -431,6 +430,68 @@ public final class EZGlide {
             final CompletableFuture<Long> future = this.glideClient.del(glideStringKeys);
 
             result = future.join();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Set a hash as the value associated with the key.
+    ///
+    /// @param  key java.lang.String
+    /// @param  map java.util.Map<java.lang.String, java.lang.String>
+    /// @return     long
+    public long hset(final String key, final Map<String, String> map) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, map));
+        }
+
+        long result = 0;
+
+        if (!map.isEmpty()) {
+            final Map<GlideString, GlideString> glideStringMap = HashMap.newHashMap(map.size());
+
+            for (final Map.Entry<String, String> entry : map.entrySet()) {
+                glideStringMap.put(gs(entry.getKey()), gs(entry.getValue()));
+            }
+
+            final CompletableFuture<Long> future = this.glideClient.hset(gs(key), glideStringMap);
+
+            result = future.join();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return a list of keys in the hash.
+    ///
+    /// @param  key java.lang.String
+    /// @return     long
+    public List<String> hkeys(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        List<String> result;
+
+        final CompletableFuture<GlideString[]> future = this.glideClient.hkeys(gs(key));
+        final GlideString[] keyNames = future.join();
+
+        if (keyNames.length > 0) {
+            result = new ArrayList<>(keyNames.length);
+
+            for (final GlideString keyName : keyNames) {
+                result.add(keyName.getString());
+            }
+        } else {
+            result = Collections.emptyList();
         }
 
         if (this.logger.isTraceEnabled()) {
