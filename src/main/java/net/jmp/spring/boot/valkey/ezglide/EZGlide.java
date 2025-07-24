@@ -612,4 +612,35 @@ public final class EZGlide {
 
         return result;
     }
+
+    /// Return the entire hash as a map.
+    ///
+    /// @param  hashKey java.lang.String
+    /// @return         java.util.Map<java.lang.String, java.lang.String>
+    public Map<String, String> hgetall(final String hashKey) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(hashKey));
+        }
+
+        final Map<String, String> result;
+
+        if (this.exists(hashKey)) {
+            result = HashMap.newHashMap((int) this.hlen(hashKey));
+
+            final CompletableFuture<Map<GlideString, GlideString>> future = this.glideClient.hgetall(gs(hashKey));
+            final Map<GlideString, GlideString> map = future.join();
+
+            for (final Map.Entry<GlideString, GlideString> entry : map.entrySet()) {
+                result.put(entry.getKey().getString(), entry.getValue().getString());
+            }
+        } else {
+            result = Collections.emptyMap();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
 }
