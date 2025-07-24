@@ -118,6 +118,7 @@ public final class EZGlide {
     }
 
     /// Ping.
+    /// PONG is returned.
     ///
     /// @return java.lang.String
     public String ping() {
@@ -212,6 +213,7 @@ public final class EZGlide {
     }
 
     /// Set a key with a value.
+    /// OK is returned.
     ///
     /// @param  key     java.lang.String
     /// @param  value   java.lang.String
@@ -636,6 +638,86 @@ public final class EZGlide {
         } else {
             result = Collections.emptyMap();
         }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Insert all the specified values at the head of the list stored at key
+    /// and return the number of elements added.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  values  java.util.List<java.lang.String>
+    /// @return         long
+    public long lpush(final String key, final List<String> values) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, values));
+        }
+
+        long result = 0;
+
+        if (!values.isEmpty()) {
+            final GlideString[] glideStrings = new GlideString[values.size()];
+
+            for (int i = 0; i < values.size(); i++) {
+                glideStrings[i] = gs(values.get(i));
+            }
+
+            final CompletableFuture<Long> future = this.glideClient.lpush(gs(key), glideStrings);
+
+            result = future.join();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the element at index 'index' in the list stored at key.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  index   long
+    /// @return         java.util.Optional<java.lang.String>
+    public Optional<String> lindex(final String key, final long index) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, index));
+        }
+
+        String result = null;
+
+        final CompletableFuture<GlideString> future = this.glideClient.lindex(gs(key), index);
+        final GlideString value = future.join();
+
+        if (value != null) {
+            result = value.getString();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
+    }
+
+    /// Set the element at index 'index' in the list stored at key.
+    /// OK is returned.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  index   long
+    /// @param  value   java.lang.String
+    /// @return         java.lang.String
+    public String lset(final String key, final long index, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, index, value));
+        }
+
+        final CompletableFuture<String> future = this.glideClient.lset(gs(key), index, gs(value));
+        final String result = future.join();
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));

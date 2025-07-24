@@ -156,6 +156,10 @@ public class ValkeyService {
         }
 
         try (final GlideClient glideClient = this.connect(null)) {
+            glideClient.flushall()
+                    .thenAccept(str -> this.logger.info("FLUSH-ALL: {}", str))
+                    .join();
+
             final CompletableFuture<Void> clientName = glideClient.clientGetName()
                     .thenAccept(name -> this.logger.info("CLIENT-NAME: {}", name));
 

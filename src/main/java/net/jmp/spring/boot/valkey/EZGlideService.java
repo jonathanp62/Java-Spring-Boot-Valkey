@@ -96,6 +96,8 @@ public class EZGlideService {
         try (final GlideClient glideClient = this.connect()) {
             final EZGlide ezGlide = new EZGlide(glideClient);
 
+            ezGlide.flushall();
+
             this.miscellaneous(ezGlide);
             this.getAndSet(ezGlide);
             this.getAndDelete(ezGlide);
@@ -228,8 +230,22 @@ public class EZGlideService {
             this.logger.trace(entryWith(ezGlide));
         }
 
-        if (this.logger.isInfoEnabled()) {
+        /*
+         * Pushing to the list means that the element is added to the head of the list.
+         * So the list will look like this:
+         *   Grapes
+         *   Strawberries
+         *   Blueberries
+         *   Cherries
+         */
 
+        final List<String> list = List.of("Cherries", "Blueberries", "Strawberries", "Grapes");
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("LPush: {}", ezGlide.lpush("Fruits", list));
+            this.logger.info("LIndex: {}", ezGlide.lindex("Fruits", 0).orElse("Fruits[0] not found"));
+            this.logger.info("LIndex: {}", ezGlide.lindex("Fruits", 1).orElse("Fruits[1] not found"));
+            this.logger.info("LSet: {}", ezGlide.lset("Fruits", 0, "Green Grapes"));
         }
 
         if (this.logger.isTraceEnabled()) {
