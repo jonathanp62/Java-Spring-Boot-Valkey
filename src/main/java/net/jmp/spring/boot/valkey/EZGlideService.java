@@ -74,9 +74,13 @@ public class EZGlideService {
     @Value("${glide.useSsl}")
     private boolean glideUseSsl;
 
+    /// Flush the database at the start when true.
+    @Value("${glide.flushDbOnEZGlideServiceStart}")
+    private boolean flushDbOnServiceStart;
+
     /// Flush the database at the end when true.
-    @Value("${glide.flushDb}")
-    private boolean glideFlushDb;
+    @Value("${glide.flushDbOnEZGlideServiceStop}")
+    private boolean flushDbOnServiceStop;
 
     /// True when the JSON data type is supported.
     @Value("${valkey.json.supported}")
@@ -96,14 +100,19 @@ public class EZGlideService {
         try (final GlideClient glideClient = this.connect()) {
             final EZGlide ezGlide = new EZGlide(glideClient);
 
-            ezGlide.flushall();
+            if (this.flushDbOnServiceStart) {
+                this.cleanup(ezGlide);
+            }
 
             this.miscellaneous(ezGlide);
             this.getAndSet(ezGlide);
             this.getAndDelete(ezGlide);
             this.hash(ezGlide);
             this.list(ezGlide);
-            this.cleanup(ezGlide);
+
+            if (this.flushDbOnServiceStop) {
+                this.cleanup(ezGlide);
+            }
         } catch (final ExecutionException e) {
             this.logger.error("Glide execution execution: {}", e.getMessage(), e);
         }
@@ -308,10 +317,7 @@ public class EZGlideService {
             this.logger.trace(entryWith(ezGlide));
         }
 
-        if (this.glideFlushDb) {
-            this.logger.info("Flush All: {}", ezGlide.flushall());
-        }
-
+        this.logger.info("Flush All: {}", ezGlide.flushall());
         this.logger.info("DB size: {}", ezGlide.dbsize());
 
         if (this.logger.isTraceEnabled()) {

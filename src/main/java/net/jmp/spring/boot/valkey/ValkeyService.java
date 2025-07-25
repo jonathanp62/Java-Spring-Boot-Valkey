@@ -111,9 +111,13 @@ public class ValkeyService {
     @Value("${glide.useSsl}")
     private boolean glideUseSsl;
 
+    /// Flush the database at the start when true.
+    @Value("${glide.flushDbOnValkeyServiceStart}")
+    private boolean flushDbOnServiceStart;
+
     /// Flush the database at the end when true.
-    @Value("${glide.flushDb}")
-    private boolean glideFlushDb;
+    @Value("${glide.flushDbOnValkeyServiceStop}")
+    private boolean flushDbOnServiceStop;
 
     /// True when the JSON data type is supported.
     @Value("${valkey.json.supported}")
@@ -156,9 +160,9 @@ public class ValkeyService {
         }
 
         try (final GlideClient glideClient = this.connect(null)) {
-            glideClient.flushall()
-                    .thenAccept(str -> this.logger.info("FLUSH-ALL: {}", str))
-                    .join();
+            if (this.flushDbOnServiceStart) {
+                this.cleanup(glideClient);
+            }
 
             final CompletableFuture<Void> clientName = glideClient.clientGetName()
                     .thenAccept(name -> this.logger.info("CLIENT-NAME: {}", name));
@@ -191,7 +195,10 @@ public class ValkeyService {
                 }
 
                 this.objects(glideClient);
-                this.cleanup(glideClient);
+
+                if (this.flushDbOnServiceStop) {
+                    this.cleanup(glideClient);
+                }
             });
         } catch (final ExecutionException e) {
             this.logger.error("Glide execution execution: {}", e.getMessage(), e);
@@ -310,11 +317,9 @@ public class ValkeyService {
         }
 
         try {
-            if (this.glideFlushDb) {
-                client.flushall()
-                        .thenAccept(str -> this.logger.info("FLUSH-ALL: {}", str))
-                        .join();
-            }
+            client.flushall()
+                    .thenAccept(str -> this.logger.info("FLUSH-ALL: {}", str))
+                    .join();
 
             client.dbsize()
                     .thenAccept(size -> this.logger.info("DB-SIZE: {}", size))
