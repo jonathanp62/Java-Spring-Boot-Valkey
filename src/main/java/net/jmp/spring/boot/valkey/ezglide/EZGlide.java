@@ -35,6 +35,7 @@ import glide.api.models.GlideString;
 import static glide.api.models.GlideString.gs;
 
 import glide.api.models.commands.LInsertOptions;
+import glide.api.models.commands.ListDirection;
 
 import java.util.*;
 
@@ -63,6 +64,15 @@ public final class EZGlide {
 
         /// After the specified element.
         AFTER
+    }
+
+    /// The list move direction.
+    public enum ListMoveDirection {
+        /// Move the list to the right.
+        RIGHT,
+
+        /// Move the list to the left.
+        LEFT
     }
 
     /// The constructor.
@@ -940,6 +950,70 @@ public final class EZGlide {
 
         final CompletableFuture<Long> future = this.glideClient.lrem(gs(key), count, gs(value));
         final Long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Move the element at the head or tail of the source list to the head or tail of the destination list.
+    /// The element moved is returned.
+    ///
+    /// @param  sourceListKey           java.lang.String
+    /// @param  destinationListKey      java.lang.String
+    /// @param  sourceDirection         net.jmp.spring.boot.valkey.EZGlide.ListMoveDirection
+    /// @param  destinationDirection    net.jmp.spring.boot.valkey.EZGlide.ListMoveDirection
+    /// @return                         java.util.Optional<java.lang.String>
+    public Optional<String> lmove(final String sourceListKey,
+                                  final String destinationListKey,
+                                  final ListMoveDirection sourceDirection,
+                                  final ListMoveDirection destinationDirection) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(sourceListKey, destinationListKey, sourceDirection, destinationDirection));
+        }
+
+        String result = null;
+
+        final ListDirection sourceDir = sourceDirection == ListMoveDirection.LEFT ? ListDirection.LEFT : ListDirection.RIGHT;
+        final ListDirection destinationDir = destinationDirection == ListMoveDirection.LEFT ? ListDirection.LEFT : ListDirection.RIGHT;
+
+        final CompletableFuture<GlideString> future = this.glideClient.lmove(
+                                                                gs(sourceListKey),
+                                                                gs(destinationListKey),
+                                                                sourceDir,
+                                                                destinationDir);
+        final GlideString value = future.join();
+
+        if (value != null) {
+            result = value.getString();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
+    }
+
+    /// Remove and return the element at the tail of the list stored at the source
+    /// key and move it to the head of the list stored at the destination key.
+    ///
+    /// @param  sourceListKey       java.lang.String
+    /// @param  destinationListKey  java.lang.String
+    /// @return                     java.util.Optional<java.lang.String>
+    public Optional<String> rpoplpush(final String sourceListKey, final String destinationListKey) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(sourceListKey, destinationListKey));
+        }
+
+        final Optional<String> result = this.lmove(
+                sourceListKey,
+                destinationListKey,
+                ListMoveDirection.RIGHT,
+                ListMoveDirection.LEFT
+        );
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));

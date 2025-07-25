@@ -279,6 +279,17 @@ public class EZGlideService {
             this.logger.info("LRem: {}", ezGlide.lrem("Veggies", -1, "Cauliflower"));
         }
 
+        final List<String> one = List.of("a", "b", "c");
+        final List<String> two = List.of("x", "y", "z");
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("RPush: {}", ezGlide.rpush("One", one));
+            this.logger.info("RPush: {}", ezGlide.rpush("Two", two));
+            this.logger.info("LMove: {}", ezGlide.lmove("One", "Two", EZGlide.ListMoveDirection.RIGHT, EZGlide.ListMoveDirection.LEFT).orElse("One not found or is empty"));
+            this.logger.info("LMove: {}", ezGlide.lmove("Two", "One", EZGlide.ListMoveDirection.LEFT, EZGlide.ListMoveDirection.RIGHT).orElse("Two not found or is empty"));
+            this.logger.info("RPopLPush: {}", ezGlide.rpoplpush("One", "Two").orElse("One not found or is empty"));
+        }
+
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
         }
