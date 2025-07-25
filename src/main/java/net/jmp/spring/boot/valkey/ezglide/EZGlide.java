@@ -34,6 +34,8 @@ import glide.api.models.GlideString;
 
 import static glide.api.models.GlideString.gs;
 
+import glide.api.models.commands.LInsertOptions;
+
 import java.util.*;
 
 import java.util.concurrent.CompletableFuture;
@@ -53,6 +55,15 @@ public final class EZGlide {
 
     /// The Glide client.
     private final GlideClient glideClient;
+
+    /// The list insert position.
+    public enum ListInsertPosition {
+        /// Before the specified element.
+        BEFORE,
+
+        /// After the specified element.
+        AFTER
+    }
 
     /// The constructor.
     ///
@@ -678,7 +689,40 @@ public final class EZGlide {
         return result;
     }
 
+    /// Insert all the specified values at the tail of the list stored at key
+    /// and return the number of elements added.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  values  java.util.List<java.lang.String>
+    /// @return         long
+    public long rpush(final String key, final List<String> values) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, values));
+        }
+
+        long result = 0;
+
+        if (!values.isEmpty()) {
+            final GlideString[] glideStrings = new GlideString[values.size()];
+
+            for (int i = 0; i < values.size(); i++) {
+                glideStrings[i] = gs(values.get(i));
+            }
+
+            final CompletableFuture<Long> future = this.glideClient.rpush(gs(key), glideStrings);
+
+            result = future.join();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Return the element at index 'index' in the list stored at key.
+    /// The index is zero based.
     ///
     /// @param  key     java.lang.String
     /// @param  index   long
@@ -705,7 +749,7 @@ public final class EZGlide {
     }
 
     /// Set the element at index 'index' in the list stored at key.
-    /// OK is returned.
+    /// OK is returned. The index is zero based.
     ///
     /// @param  key     java.lang.String
     /// @param  index   long
@@ -718,6 +762,184 @@ public final class EZGlide {
 
         final CompletableFuture<String> future = this.glideClient.lset(gs(key), index, gs(value));
         final String result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the number of elements in the list stored at the key.
+    ///
+    /// @param  key java.lang.String
+    /// @return     long
+    public long llen(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.llen(gs(key));
+        final Long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the index of the first element of the list stored at the key
+    /// that is equal to the value. The index is zero based.
+    ///
+    /// @param  key   java.lang.String
+    /// @param  value java.lang.String
+    /// @return       long
+    public long lpos(final String key, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, value));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.lpos(gs(key), gs(value));
+        final Long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Insert the specified value at the specified position in the list stored
+    /// at the key. The position argument can be either 'before' or 'after' the
+    /// value of pivot. The new length of the list is returned.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  position ListInsertPosition
+    /// @param  pivot   java.lang.String
+    /// @param  value   java.lang.String
+    /// @return         long
+    public long linsert(final String key, final ListInsertPosition position, final String pivot, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, position, pivot, value));
+        }
+
+        final LInsertOptions.InsertPosition insertPosition = switch (position) {
+            case BEFORE -> LInsertOptions.InsertPosition.BEFORE;
+            case AFTER -> LInsertOptions.InsertPosition.AFTER;
+            default -> throw new IllegalArgumentException("ListInsertPosition is not supported: " + position);
+        };
+
+        final CompletableFuture<Long> future = this.glideClient.linsert(gs(key), insertPosition, gs(pivot), gs(value));
+        final Long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the specified elements of the list stored at the key.
+    /// The indexes are zero based.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  start   long
+    /// @param  end     long
+    /// @return         java.util.List<java.lang.String>
+    public List<String> lrange(final String key, final long start, final long end) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, start, end));
+        }
+
+        List<String> result = null;
+
+        if (this.llen(key) > 0) {
+            final CompletableFuture<GlideString[]> future = this.glideClient.lrange(gs(key), start, end);
+            final GlideString[] glideStrings = future.join();
+
+            result = Arrays.stream(glideStrings).map(GlideString::getString).toList();
+        } else {
+            result = Collections.emptyList();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove and return the element at the head of the list stored at the key.
+    /// The value of the element popped from the list is returned.
+    ///
+    /// @param  key java.lang.String
+    /// @return     java.util.Optional<java.lang.String>
+    public Optional<String> lpop(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        String result = null;
+
+        final CompletableFuture<GlideString> future = this.glideClient.lpop(gs(key));
+        final GlideString value = future.join();
+
+        if (value != null) {
+            result = value.getString();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
+    }
+
+    /// Remove and return the element at the tail of the list stored at the key.
+    /// The value of the element popped from the list is returned.
+    ///
+    /// @param  key java.lang.String
+    /// @return     java.util.Optional<java.lang.String>
+    public Optional<String> rpop(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        String result = null;
+
+        final CompletableFuture<GlideString> future = this.glideClient.rpop(gs(key));
+        final GlideString value = future.join();
+
+        if (value != null) {
+            result = value.getString();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
+    }
+
+    /// Remove the first count occurrences of elements equal to value from the
+    /// list stored at key. The count argument affects the number of elements
+    /// removed: it returns the number of elements that were removed from the list,
+    /// not the original length of the list. If the count argument is positive,
+    /// traversal will start from the head of the list. If the count argument is
+    /// negative, traversal will start from the tail of the list.
+    ///
+    /// @param  key   java.lang.String
+    /// @param  count long
+    /// @param  value java.lang.String
+    /// @return       long
+    public long lrem(final String key, final long count, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, count, value));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.lrem(gs(key), count, gs(value));
+        final Long result = future.join();
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));

@@ -240,7 +240,7 @@ public class EZGlideService {
         }
 
         /*
-         * Pushing to the list means that the element is added to the head of the list.
+         * Left pushing to the list means that the element is added to the head of the list.
          * So the list will look like this:
          *   Grapes
          *   Strawberries
@@ -248,13 +248,35 @@ public class EZGlideService {
          *   Cherries
          */
 
-        final List<String> list = List.of("Cherries", "Blueberries", "Strawberries", "Grapes");
+        final List<String> fruits = List.of("Cherries", "Blueberries", "Strawberries", "Grapes");
 
         if (this.logger.isInfoEnabled()) {
-            this.logger.info("LPush: {}", ezGlide.lpush("Fruits", list));
+            this.logger.info("LPush: {}", ezGlide.lpush("Fruits", fruits));
             this.logger.info("LIndex: {}", ezGlide.lindex("Fruits", 0).orElse("Fruits[0] not found"));
             this.logger.info("LIndex: {}", ezGlide.lindex("Fruits", 1).orElse("Fruits[1] not found"));
             this.logger.info("LSet: {}", ezGlide.lset("Fruits", 0, "Green Grapes"));
+            this.logger.info("LLen: {}", ezGlide.llen("Fruits"));
+            this.logger.info("LPos: {}", ezGlide.lpos("Fruits", "Blueberries"));
+            this.logger.info("LInsert: {}", ezGlide.linsert("Fruits", EZGlide.ListInsertPosition.BEFORE, "Cherries", "Raspberries"));
+            this.logger.info("LRange: {}", ezGlide.lrange("Fruits", 1, 3));
+            this.logger.info("LPop: {}", ezGlide.lpop("Fruits").orElse("Fruits not found or is empty"));
+        }
+
+        /*
+         * Right pushing to the list means that the element is added to the head of the list.
+         * So the list will look like this:
+         *   Broccoli
+         *   Cauliflower
+         *   Green Beans
+         *   Zucchini
+         */
+
+        final List<String> veggies = List.of("Broccoli", "Cauliflower", "Green Beans", "Zucchini");
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("RPush: {}", ezGlide.rpush("Veggies", veggies));
+            this.logger.info("RPop: {}", ezGlide.rpop("Veggies").orElse("Veggies not found or is empty"));
+            this.logger.info("LRem: {}", ezGlide.lrem("Veggies", -1, "Cauliflower"));
         }
 
         if (this.logger.isTraceEnabled()) {
