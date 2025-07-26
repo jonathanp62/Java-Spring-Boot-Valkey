@@ -109,6 +109,7 @@ public class EZGlideService {
             this.getAndDelete(ezGlide);
             this.hash(ezGlide);
             this.list(ezGlide);
+            this.set(ezGlide);
 
             if (this.flushDbOnServiceStop) {
                 this.cleanup(ezGlide);
@@ -288,6 +289,30 @@ public class EZGlideService {
             this.logger.info("LMove: {}", ezGlide.lmove("One", "Two", EZGlide.ListMoveDirection.RIGHT, EZGlide.ListMoveDirection.LEFT).orElse("One not found or is empty"));
             this.logger.info("LMove: {}", ezGlide.lmove("Two", "One", EZGlide.ListMoveDirection.LEFT, EZGlide.ListMoveDirection.RIGHT).orElse("Two not found or is empty"));
             this.logger.info("RPopLPush: {}", ezGlide.rpoplpush("One", "Two").orElse("One not found or is empty"));
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Set commands.
+    ///
+    /// @param  ezGlide net.jmp.spring.boot.valkey.ezglide.EZGlide
+    private void set(final EZGlide ezGlide) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(ezGlide));
+        }
+
+        final List<String> girls = List.of("Heather", "Jane", "Jill", "Amy", "Jill", "Suzy", "Wendy", "Laura");
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("SAdd: {}", ezGlide.sadd("Girls", girls));
+            this.logger.info("SCard: {}", ezGlide.scard("Girls"));
+            this.logger.info("SIsMember: {}", ezGlide.sismember("Girls", "Heather"));
+            this.logger.info("SIsMember: {}", ezGlide.sismember("Girls", "Robin"));
+            this.logger.info("SRem: {}", ezGlide.srem("Girls", "Jane"));
+            this.logger.info("SRem: {}", ezGlide.srem("Girls", List.of("Heather", "Jill", "Amy")));
         }
 
         if (this.logger.isTraceEnabled()) {

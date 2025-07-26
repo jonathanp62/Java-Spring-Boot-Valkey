@@ -1021,4 +1021,163 @@ public final class EZGlide {
 
         return result;
     }
+
+    /// Add the specified members to the set stored at key.
+    /// The number of members added to the set is returned.
+    ///
+    /// @param  key java.lang.String
+    /// @param  set java.util.Set<java.lang.String>
+    /// @return     long
+    public long sadd(final String key, final Set<String> set) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, set));
+        }
+
+        final GlideString[] array = new GlideString[set.size()];
+        final Iterator<String> iterator = set.iterator();
+
+        int i = 0;
+
+        while (iterator.hasNext()) {
+            array[i++] = gs(iterator.next());
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.sadd(gs(key), array);
+        final Long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Add the specified members to the set stored at key.
+    /// The number of members added to the set is returned.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  list    java.util.List<java.lang.String>
+    /// @return         long
+    public long sadd(final String key, final List<String> list) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, list));
+        }
+
+        final long result = this.sadd(key, new HashSet<>(list));
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the number of members in the set stored at key.
+    ///
+    /// @param  key java.lang.String
+    /// @return     long
+    public long scard(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.scard(gs(key));
+        final Long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return true if value is a member of the set stored at key.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  value   java.lang.String
+    /// @return         boolean
+    public boolean sismember(final String key, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, value));
+        }
+
+        final CompletableFuture<Boolean> future = this.glideClient.sismember(gs(key), gs(value));
+        final boolean result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove the specified member from the set stored at key.
+    /// The number of members removed from the set is returned.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  value   java.lang.String
+    /// @return         long
+    public long srem(final String key, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, value));
+        }
+
+        final long result = this.srem(key, Collections.singleton(value));
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove the specified members from the set stored at key.
+    /// The number of members removed from the set is returned.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  values  java.util.List<java.lang.String>
+    /// @return         long
+    public long srem(final String key, final List<String> values) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, values));
+        }
+
+        final long result = this.srem(key, new HashSet<>(values));
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove the specified members from the set stored at key.
+    /// The number of members removed from the set is returned.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  values  java.util.Set<java.lang.String>
+    /// @return         long
+    public long srem(final String key, final Set<String> values) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        final GlideString[] array = new GlideString[values.size()];
+        final Iterator<String> iterator = values.iterator();
+
+        int i = 0;
+
+        while (iterator.hasNext()) {
+            array[i++] = gs(iterator.next());
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.srem(gs(key), array);
+        final Long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
 }
