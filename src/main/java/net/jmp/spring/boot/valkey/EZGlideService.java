@@ -307,12 +307,14 @@ public class EZGlideService {
         final List<String> girls = List.of("Heather", "Jane", "Jill", "Amy", "Jill", "Suzy", "Wendy", "Laura");
 
         if (this.logger.isInfoEnabled()) {
+            this.logger.info("SAdd: {}", ezGlide.sadd("Girls", "Brooke"));
             this.logger.info("SAdd: {}", ezGlide.sadd("Girls", girls));
             this.logger.info("SCard: {}", ezGlide.scard("Girls"));
             this.logger.info("SIsMember: {}", ezGlide.sismember("Girls", "Heather"));
             this.logger.info("SIsMember: {}", ezGlide.sismember("Girls", "Robin"));
             this.logger.info("SRem: {}", ezGlide.srem("Girls", "Jane"));
             this.logger.info("SRem: {}", ezGlide.srem("Girls", List.of("Heather", "Jill", "Amy")));
+            this.logger.info("SMembers: {}", ezGlide.smembers("Girls"));
         }
 
         if (this.logger.isTraceEnabled()) {

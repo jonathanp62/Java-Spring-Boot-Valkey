@@ -1052,6 +1052,26 @@ public final class EZGlide {
         return result;
     }
 
+    /// Add the specified member to the set stored at key.
+    /// The number of members added to the set is returned.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  value   java.lang.String
+    /// @return         long
+    public long sadd(final String key, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, value));
+        }
+
+        final long result = this.sadd(key, Collections.singleton(value));
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Add the specified members to the set stored at key.
     /// The number of members added to the set is returned.
     ///
@@ -1173,6 +1193,30 @@ public final class EZGlide {
 
         final CompletableFuture<Long> future = this.glideClient.srem(gs(key), array);
         final Long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return all members of the set value stored at key.
+    ///
+    /// @param  key ßjava.lang.String
+    /// @return     java.util.Set<java.lang.String>
+    public Set<String> smembers(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        final CompletableFuture<Set<GlideString>> future = this.glideClient.smembers(gs(key));
+        final Set<GlideString> members = future.join();
+        final Set<String> result = new HashSet<>();
+
+        for (final GlideString member : members) {
+            result.add(member.toString());
+        }
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));
