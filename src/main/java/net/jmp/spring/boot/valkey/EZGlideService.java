@@ -110,6 +110,7 @@ public class EZGlideService {
             this.hash(ezGlide);
             this.list(ezGlide);
             this.set(ezGlide);
+            this.sortedSet(ezGlide);
 
             if (this.flushDbOnServiceStop) {
                 this.cleanup(ezGlide);
@@ -315,6 +316,38 @@ public class EZGlideService {
             this.logger.info("SRem: {}", ezGlide.srem("Girls", "Jane"));
             this.logger.info("SRem: {}", ezGlide.srem("Girls", List.of("Heather", "Jill", "Amy")));
             this.logger.info("SMembers: {}", ezGlide.smembers("Girls"));
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Sorted set commands.
+    ///
+    /// @param  ezGlide net.jmp.spring.boot.valkey.ezglide.EZGlide
+    private void sortedSet(final EZGlide ezGlide) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(ezGlide));
+        }
+
+        /* A sorted set is a collection of unique strings that maintain order by each string's associated score */
+
+        final Map<String, Double> map = Map.of(
+                "ZZZ", 1.0,
+                "YYY", 2.0,
+                "XXX", 3.0,
+                "CCC", 24.0,
+                "BBB", 25.0,
+                "AAA", 26.0
+        );
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("ZAdd: {}", ezGlide.zadd("My-Sorted-Set", map));
+            this.logger.info("ZAdd: {}", ezGlide.zadd("My-Sorted-Set", 4.0, "WWW"));
+            this.logger.info("ZCard: {}", ezGlide.zcard("My-Sorted-Set"));
+            this.logger.info("ZScore: {}", ezGlide.zscore("My-Sorted-Set", "CCC"));
+            this.logger.info("ZRank: {}", ezGlide.zrank("My-Sorted-Set", "CCC"));
         }
 
         if (this.logger.isTraceEnabled()) {

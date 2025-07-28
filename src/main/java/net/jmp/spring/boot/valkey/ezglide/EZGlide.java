@@ -1224,4 +1224,116 @@ public final class EZGlide {
 
         return result;
     }
+
+    /// Add the specified member with the specified score to the sorted set stored at key.
+    /// The number of elements added to the sorted set, not including elements already existing for which the
+    /// score was updated, is returned.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  score   double
+    /// @param  value   java.lang.String
+    /// @return         long
+    public long zadd(final String key, final double score, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, score, value));
+        }
+
+        final Map<String, Double> map = Collections.singletonMap(value, score);
+        final long result = this.zadd(key, map);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Add the specified members with the specified scores to the sorted set stored at key.
+    /// The number of elements added to the sorted set, not including elements already existing for which the
+    /// score was updated, is returned.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  map     java.util.Map<java.lang.String, java.lang.Double>
+    /// @return         long
+    public long zadd(final String key, final Map<String, Double> map) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, map));
+        }
+
+        final Map<GlideString, Double> glideStringMap = HashMap.newHashMap(map.size());
+
+        for (final Map.Entry<String, Double> entry : map.entrySet()) {
+            glideStringMap.put(gs(entry.getKey()), entry.getValue());
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.zadd(gs(key), glideStringMap);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the number of members in the sorted set stored at key.
+    ///
+    /// @param  key java.lang.String
+    /// @return     long
+    public long zcard(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.zcard(gs(key));
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the score of member in the sorted set stored at key.
+    ///
+    /// @param  key   java.lang.String
+    /// @param  value java.lang.String
+    /// @return       double
+    public double zscore(final String key, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, value));
+        }
+
+        final CompletableFuture<Double> future = this.glideClient.zscore(gs(key), gs(value));
+        final double result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the rank of member in the sorted set stored at key.
+    /// The rank (or index) is 0-based, which means that the member with the lowest score has rank 0.
+    ///
+    /// @param  key   java.lang.String
+    /// @param  value java.lang.String
+    /// @return       long
+    public long zrank(final String key, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, value));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.zrank(gs(key), gs(value));
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
 }
