@@ -1641,4 +1641,51 @@ public final class EZGlide {
 
         return Optional.ofNullable(result);
     }
+
+    /// Remove the specified member from the sorted set stored at key.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  value   java.lang.String
+    /// @return         long
+    public long zrem(final String key, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, value));
+        }
+
+        final GlideString[] values = { gs(value) };
+        final CompletableFuture<Long> future = this.glideClient.zrem(gs(key), values);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove the specified members from the sorted set stored at key.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  values  java.util.List<java.lang.String>
+    /// @return         long
+    public long zrem(final String key, final List<String> values) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, values));
+        }
+
+        final GlideString[] array = new GlideString[values.size()];
+
+        for (int i = 0; i < values.size(); i++) {
+            array[i] = gs(values.get(i));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.zrem(gs(key), array);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
 }

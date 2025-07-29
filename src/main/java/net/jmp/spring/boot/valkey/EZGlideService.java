@@ -359,6 +359,8 @@ public class EZGlideService {
             this.logger.info("ZMPopMin: {}", ezGlide.zmpopmin("My-Sorted-Set"));
             this.logger.info("ZMPopMax: {}", ezGlide.zmpopmax("My-Sorted-Set"));
             this.logger.info("ZRandMember: {}", ezGlide.zrandmember("My-Sorted-Set").orElse("My-Sorted-Set not found or is empty"));
+            this.logger.info("ZMRem: {}", ezGlide.zrem("My-Sorted-Set", "XXX"));
+            this.logger.info("ZMRem: {}", ezGlide.zrem("My-Sorted-Set", List.of("BBB", "CCC")));
         }
 
         if (this.logger.isTraceEnabled()) {
