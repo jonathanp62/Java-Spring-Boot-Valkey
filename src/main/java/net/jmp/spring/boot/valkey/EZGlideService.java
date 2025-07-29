@@ -358,6 +358,7 @@ public class EZGlideService {
             this.logger.info("ZMPop: {}", ezGlide.zmpop("My-Sorted-Set", EZGlide.PopScoreFilter.MIN));
             this.logger.info("ZMPopMin: {}", ezGlide.zmpopmin("My-Sorted-Set"));
             this.logger.info("ZMPopMax: {}", ezGlide.zmpopmax("My-Sorted-Set"));
+            this.logger.info("ZRandMember: {}", ezGlide.zrandmember("My-Sorted-Set").orElse("My-Sorted-Set not found or is empty"));
         }
 
         if (this.logger.isTraceEnabled()) {
