@@ -348,6 +348,12 @@ public class EZGlideService {
             this.logger.info("ZCard: {}", ezGlide.zcard("My-Sorted-Set"));
             this.logger.info("ZScore: {}", ezGlide.zscore("My-Sorted-Set", "CCC"));
             this.logger.info("ZRank: {}", ezGlide.zrank("My-Sorted-Set", "CCC"));
+            this.logger.info("ZCount: {}", ezGlide.zcount("My-Sorted-Set", 1.0, 3.0));
+            this.logger.info("ZIncBy: {}", ezGlide.zincby("My-Sorted-Set", 0.1, "CCC"));
+            this.logger.info("ZRange: {}", ezGlide.zrange("My-Sorted-Set", 0, 26));
+            this.logger.info("ZRevRange: {}", ezGlide.zrevrange("My-Sorted-Set", 0, 26));
+            this.logger.info("ZRange: {}", ezGlide.zrange("My-Sorted-Set", 2.0, 25.0));
+            this.logger.info("ZRevRange: {}", ezGlide.zrevrange("My-Sorted-Set", 2.0, 25.0));
         }
 
         if (this.logger.isTraceEnabled()) {

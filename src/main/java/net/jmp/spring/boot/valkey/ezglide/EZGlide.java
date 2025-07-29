@@ -36,6 +36,7 @@ import static glide.api.models.GlideString.gs;
 
 import glide.api.models.commands.LInsertOptions;
 import glide.api.models.commands.ListDirection;
+import glide.api.models.commands.RangeOptions;
 
 import java.util.*;
 
@@ -1336,4 +1337,186 @@ public final class EZGlide {
         return result;
     }
 
+    /// Return the number of members in the sorted set stored at key with a score between the given values.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  lowerBound  double
+    /// @param  upperBound  double
+    /// @return             long
+    public long zcount(final String key, final double lowerBound, final double upperBound) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, lowerBound, upperBound));
+        }
+
+        final RangeOptions.ScoreBoundary lower = new RangeOptions.ScoreBoundary(lowerBound, true);
+        final RangeOptions.ScoreBoundary upper = new RangeOptions.ScoreBoundary(upperBound, true);
+
+        final CompletableFuture<Long> future = this.glideClient.zcount(gs(key), lower, upper);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Increment the score of member in the sorted set stored at key by increment.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  increment   double
+    /// @param  value       java.lang.String
+    /// @return             double
+    public double zincby(final String key, final double increment, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, increment, value));
+        }
+
+        final CompletableFuture<Double> future = this.glideClient.zincrby(gs(key), increment, gs(value));
+        final double result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the specified range of elements by index in a sorted set stored at key.
+    /// The list is reversed when the reverse option is true.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  start   long
+    /// @param  end     long
+    /// @param  reverse boolean
+    /// @return         java.util.List
+    public List<String> zrange(final String key, final long start, final long end, final boolean reverse) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, start, end, reverse));
+        }
+
+        final RangeOptions.RangeByIndex options = new RangeOptions.RangeByIndex(start, end);
+        final CompletableFuture<GlideString[]> future = this.glideClient.zrange(gs(key), options, reverse);
+        final GlideString[] array = future.join();
+        final List<String> result = new ArrayList<>(array.length);
+
+        for (final GlideString element : array) {
+            result.add(element.getString());
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the specified range of elements by score in a sorted set stored at key.
+    /// The list is reversed when the reverse option is true.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  lowerScore  double
+    /// @param  upperScore  double
+    /// @param  reverse     boolean
+    /// @return             java.util.List
+    public List<String> zrange(final String key, final double lowerScore, final double upperScore, final boolean reverse) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, lowerScore, upperScore, reverse));
+        }
+
+        final RangeOptions.RangeByScore options = new RangeOptions.RangeByScore(new RangeOptions.ScoreBoundary(lowerScore, true), new RangeOptions.ScoreBoundary(upperScore, true));
+        final CompletableFuture<GlideString[]> future = this.glideClient.zrange(gs(key), options, reverse);
+        final GlideString[] array = future.join();
+        final List<String> result = new ArrayList<>(array.length);
+
+        for (final GlideString element : array) {
+            result.add(element.getString());
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the specified range of elements by index in a sorted set stored at key.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  start   long
+    /// @param  end     long
+    /// @return         java.util.List
+    public List<String> zrange(final String key, final long start, final long end) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, start, end));
+        }
+
+        final List<String> result = this.zrange(key, start, end, false);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the specified range of elements by score in a sorted set stored at key.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  lowerScore  double
+    /// @param  upperScore  double
+    /// @return             java.util.List
+    public List<String> zrange(final String key, final double lowerScore, final double upperScore) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, lowerScore, upperScore));
+        }
+
+        final List<String> result = this.zrange(key, lowerScore, upperScore, false);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the specified range of elements by index, reversed, in a sorted set stored at key.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  start   long
+    /// @param  end     long
+    /// @return         java.util.List
+    public List<String> zrevrange(final String key, final long start, final long end) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, start, end));
+        }
+
+        final List<String> result = this.zrange(key, start, end, true);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the specified range of elements, reversed, by score in a sorted set stored at key.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  lowerScore  double
+    /// @param  upperScore  double
+    /// @return             java.util.List
+    public List<String> zrevrange(final String key, final double lowerScore, final double upperScore) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, lowerScore, upperScore));
+        }
+
+        final List<String> result = this.zrange(key, upperScore, lowerScore, true);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
 }
