@@ -37,6 +37,7 @@ import static glide.api.models.GlideString.gs;
 import glide.api.models.commands.LInsertOptions;
 import glide.api.models.commands.ListDirection;
 import glide.api.models.commands.RangeOptions;
+import glide.api.models.commands.ScoreFilter;
 
 import java.util.*;
 
@@ -74,6 +75,15 @@ public final class EZGlide {
 
         /// Move the list to the left.
         LEFT
+    }
+
+    /// The score filter for sorted set pop.
+    public enum PopScoreFilter {
+        /// Return the element with the minimum score.
+        MIN,
+
+        /// Return the element with the maximum score.
+        MAX
     }
 
     /// The constructor.
@@ -1337,6 +1347,27 @@ public final class EZGlide {
         return result;
     }
 
+    /// Return the rank of member in the sorted set, reversed, stored at key, with the scores ordered from low to high.
+    /// The rank (or index) is 0-based, which means that the member with the lowest score has rank 0.
+    ///
+    /// @param  key   java.lang.String
+    /// @param  value java.lang.String
+    /// @return       long
+    public long zrevrank(final String key, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, value));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.zrevrank(gs(key), gs(value));
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Return the number of members in the sorted set stored at key with a score between the given values.
     ///
     /// @param  key         java.lang.String
@@ -1512,6 +1543,72 @@ public final class EZGlide {
         }
 
         final List<String> result = this.zrange(key, upperScore, lowerScore, true);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Pop the minimum or maximum element from the sorted set stored at key.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  filter  net.jmp.spring.boot.valkey.ezglide.EZGlide.PopScoreFilter
+    /// @return         java.util.Map<java.lang.String, java.lang.Object>
+    public Map<String, Object> zmpop(final String key, final PopScoreFilter filter) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, filter));
+        }
+
+        final ScoreFilter scoreFilter = switch (filter) {
+            case MIN -> ScoreFilter.MIN;
+            case MAX -> ScoreFilter.MAX;
+        };
+
+        final CompletableFuture<Map<GlideString, Object>> future = this.glideClient.zmpop(new GlideString[] { gs(key) }, scoreFilter);
+        final Map<GlideString, Object> map = future.join();
+        final Map<String, Object> result = HashMap.newHashMap(map.size());
+
+        for (final Map.Entry<GlideString, Object> entry : map.entrySet()) {
+            result.put(entry.getKey().getString(), entry.getValue());
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Pop the maximum element from the sorted set stored at key.
+    ///
+    /// @param  key java.lang.String
+    /// @return     java.util.Map<java.lang.String, java.lang.Object>
+    public Map<String, Object> zmpopmax(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        final Map<String, Object> result = this.zmpop(key, PopScoreFilter.MAX);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Pop the minimum element from the sorted set stored at key.
+    ///
+    /// @param  key java.lang.String
+    /// @return     java.util.Map<java.lang.String, java.lang.Object>
+    public Map<String, Object> zmpopmin(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        final Map<String, Object> result = this.zmpop(key, PopScoreFilter.MIN);
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));

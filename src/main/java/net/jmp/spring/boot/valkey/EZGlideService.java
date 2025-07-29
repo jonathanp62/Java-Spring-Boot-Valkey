@@ -348,12 +348,16 @@ public class EZGlideService {
             this.logger.info("ZCard: {}", ezGlide.zcard("My-Sorted-Set"));
             this.logger.info("ZScore: {}", ezGlide.zscore("My-Sorted-Set", "CCC"));
             this.logger.info("ZRank: {}", ezGlide.zrank("My-Sorted-Set", "CCC"));
+            this.logger.info("ZRevRank: {}", ezGlide.zrevrank("My-Sorted-Set", "CCC"));
             this.logger.info("ZCount: {}", ezGlide.zcount("My-Sorted-Set", 1.0, 3.0));
             this.logger.info("ZIncBy: {}", ezGlide.zincby("My-Sorted-Set", 0.1, "CCC"));
             this.logger.info("ZRange: {}", ezGlide.zrange("My-Sorted-Set", 0, 26));
             this.logger.info("ZRevRange: {}", ezGlide.zrevrange("My-Sorted-Set", 0, 26));
             this.logger.info("ZRange: {}", ezGlide.zrange("My-Sorted-Set", 2.0, 25.0));
             this.logger.info("ZRevRange: {}", ezGlide.zrevrange("My-Sorted-Set", 2.0, 25.0));
+            this.logger.info("ZMPop: {}", ezGlide.zmpop("My-Sorted-Set", EZGlide.PopScoreFilter.MIN));
+            this.logger.info("ZMPopMin: {}", ezGlide.zmpopmin("My-Sorted-Set"));
+            this.logger.info("ZMPopMax: {}", ezGlide.zmpopmax("My-Sorted-Set"));
         }
 
         if (this.logger.isTraceEnabled()) {
