@@ -361,6 +361,9 @@ public class EZGlideService {
             this.logger.info("ZRandMember: {}", ezGlide.zrandmember("My-Sorted-Set").orElse("My-Sorted-Set not found or is empty"));
             this.logger.info("ZMRem: {}", ezGlide.zrem("My-Sorted-Set", "XXX"));
             this.logger.info("ZMRem: {}", ezGlide.zrem("My-Sorted-Set", List.of("BBB", "CCC")));
+            this.logger.info("ZAdd: {}", ezGlide.zadd("My-Sorted-Set", map));
+            this.logger.info("ZRemRangeByRank: {}", ezGlide.zremrangebyrank("My-Sorted-Set", 0, 2));
+            this.logger.info("ZRemRangeByScore: {}", ezGlide.zremrangebyscore("My-Sorted-Set", 24.0, 26.0));
         }
 
         if (this.logger.isTraceEnabled()) {

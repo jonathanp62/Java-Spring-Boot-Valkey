@@ -851,7 +851,13 @@ public final class EZGlide {
             default -> throw new IllegalArgumentException("ListInsertPosition is not supported: " + position);
         };
 
-        final CompletableFuture<Long> future = this.glideClient.linsert(gs(key), insertPosition, gs(pivot), gs(value));
+        final CompletableFuture<Long> future = this.glideClient.linsert(
+                gs(key),
+                insertPosition,
+                gs(pivot),
+                gs(value)
+        );
+
         final Long result = future.join();
 
         if (this.logger.isTraceEnabled()) {
@@ -991,10 +997,12 @@ public final class EZGlide {
         final ListDirection destinationDir = destinationDirection == ListMoveDirection.LEFT ? ListDirection.LEFT : ListDirection.RIGHT;
 
         final CompletableFuture<GlideString> future = this.glideClient.lmove(
-                                                                gs(sourceListKey),
-                                                                gs(destinationListKey),
-                                                                sourceDir,
-                                                                destinationDir);
+                                        gs(sourceListKey),
+                                        gs(destinationListKey),
+                                        sourceDir,
+                                        destinationDir
+        );
+
         final GlideString value = future.join();
 
         if (value != null) {
@@ -1455,7 +1463,11 @@ public final class EZGlide {
             this.logger.trace(entryWith(key, lowerScore, upperScore, reverse));
         }
 
-        final RangeOptions.RangeByScore options = new RangeOptions.RangeByScore(new RangeOptions.ScoreBoundary(lowerScore, true), new RangeOptions.ScoreBoundary(upperScore, true));
+        final RangeOptions.RangeByScore options = new RangeOptions.RangeByScore(
+                new RangeOptions.ScoreBoundary(lowerScore, true),
+                new RangeOptions.ScoreBoundary(upperScore, true)
+        );
+
         final CompletableFuture<GlideString[]> future = this.glideClient.zrange(gs(key), options, reverse);
         final GlideString[] array = future.join();
         final List<String> result = new ArrayList<>(array.length);
@@ -1566,7 +1578,11 @@ public final class EZGlide {
             case MAX -> ScoreFilter.MAX;
         };
 
-        final CompletableFuture<Map<GlideString, Object>> future = this.glideClient.zmpop(new GlideString[] { gs(key) }, scoreFilter);
+        final CompletableFuture<Map<GlideString, Object>> future = this.glideClient.zmpop(
+                new GlideString[] { gs(key) },
+                scoreFilter
+        );
+
         final Map<GlideString, Object> map = future.join();
         final Map<String, Object> result = HashMap.newHashMap(map.size());
 
@@ -1680,6 +1696,53 @@ public final class EZGlide {
         }
 
         final CompletableFuture<Long> future = this.glideClient.zrem(gs(key), array);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove all elements in the sorted set stored at key with rank between start and end.
+    ///
+    /// @param  key   java.lang.String
+    /// @param  start long
+    /// @param  end   long
+    /// @return       long
+    public long zremrangebyrank(final String key, final long start, final long end) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, start, end));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.zremrangebyrank(key, start, end);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove all elements in the sorted set stored at key with a score between min and max.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  lowerScore  double
+    /// @param  upperScore  double
+    /// @return             long
+    public long zremrangebyscore(final String key, final double lowerScore, final double upperScore) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, lowerScore, upperScore));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.zremrangebyscore(
+                key,
+                new RangeOptions.ScoreBoundary(lowerScore, true),
+                new RangeOptions.ScoreBoundary(upperScore, true)
+        );
+
         final long result = future.join();
 
         if (this.logger.isTraceEnabled()) {
