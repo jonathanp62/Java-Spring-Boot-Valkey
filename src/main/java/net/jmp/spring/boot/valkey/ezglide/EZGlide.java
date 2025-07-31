@@ -1315,6 +1315,56 @@ public final class EZGlide {
         return result;
     }
 
+    /// Return a random member from the set value stored at key.
+    ///
+    /// @param  key java.lang.String
+    /// @return     java.util.Optional<java.lang.String>
+    public Optional<String> srandmember(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        String result = null;
+
+        final CompletableFuture<GlideString> future = this.glideClient.srandmember(gs(key));
+        final GlideString value = future.join();
+
+        if (value != null) {
+            result = value.toString();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
+    }
+
+    /// Return count random members from the set value stored at key.
+    ///
+    /// @param  key   java.lang.String
+    /// @param  count long
+    /// @return       java.util.Set<java.lang.String>
+    public Set<String> srandmember(final String key, final long count) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, count));
+        }
+
+        final Set<String> result = new HashSet<>();
+        final CompletableFuture<GlideString[]> future = this.glideClient.srandmember(gs(key), count);
+        final GlideString[] glideStrings = future.join();
+
+        for (final GlideString glideString : glideStrings) {
+            result.add(glideString.toString());
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Add the specified member with the specified score to the sorted set stored at key.
     /// The number of elements added to the sorted set, not including elements already existing for which the
     /// score was updated, is returned.

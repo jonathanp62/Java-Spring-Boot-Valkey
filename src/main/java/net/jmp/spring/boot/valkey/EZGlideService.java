@@ -323,6 +323,8 @@ public class EZGlideService {
             this.logger.info("SPop: {}", ezGlide.spop("Girls", 2));
             this.logger.info("Exists: {}", ezGlide.exists("Girls"));
             this.logger.info("SAdd: {}", ezGlide.sadd("Girls", girls));
+            this.logger.info("SRandMember: {}", ezGlide.srandmember("Girls").orElse("Girls not found or is empty"));
+            this.logger.info("SRandMember: {}", ezGlide.srandmember("Girls", 2));
         }
 
         if (this.logger.isTraceEnabled()) {
