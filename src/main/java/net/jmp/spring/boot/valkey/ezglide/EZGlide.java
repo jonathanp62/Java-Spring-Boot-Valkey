@@ -1244,6 +1244,77 @@ public final class EZGlide {
         return result;
     }
 
+    /// Move member from the set at source to the set at destination.
+    ///
+    /// @param  source      java.lang.String
+    /// @param  destination java.lang.String
+    /// @param  value       java.lang.String
+    /// @return             boolean
+    public boolean smove(final String source, final String destination, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(source, destination, value));
+        }
+
+        final CompletableFuture<Boolean> future = this.glideClient.smove(gs(source), gs(destination), gs(value));
+        final boolean result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove and return a random member from the set value stored at key.
+    ///
+    /// @param  key java.lang.String
+    /// @return     java.util.Optional<java.lang.String>
+    public Optional<String> spop(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        String result = null;
+
+        final CompletableFuture<GlideString> future = this.glideClient.spop(gs(key));
+        final GlideString value = future.join();
+
+        if (value != null) {
+            result = value.toString();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
+    }
+
+    /// Remove and return up to count random members from the set value stored at key.
+    ///
+    /// @param  key   java.lang.String
+    /// @param  count long
+    /// @return       java.util.Set<java.lang.String>
+    public Set<String> spop(final String key, final long count) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, count));
+        }
+
+        final Set<String> result = new HashSet<>();
+        final CompletableFuture<Set<GlideString>> future = this.glideClient.spopCount(gs(key), count);
+        final Set<GlideString> glideStrings = future.join();
+
+        for (final GlideString glideString : glideStrings) {
+            result.add(glideString.toString());
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Add the specified member with the specified score to the sorted set stored at key.
     /// The number of elements added to the sorted set, not including elements already existing for which the
     /// score was updated, is returned.

@@ -316,6 +316,13 @@ public class EZGlideService {
             this.logger.info("SRem: {}", ezGlide.srem("Girls", "Jane"));
             this.logger.info("SRem: {}", ezGlide.srem("Girls", List.of("Heather", "Jill", "Amy")));
             this.logger.info("SMembers: {}", ezGlide.smembers("Girls"));
+            this.logger.info("SMove: {}", ezGlide.smove("Girls", "Bitches", "Brooke"));
+            this.logger.info("Exists: {}", ezGlide.exists("Bitches"));
+            this.logger.info("Del: {}", ezGlide.del("Bitches"));
+            this.logger.info("SPop: {}", ezGlide.spop("Girls").orElse("Girls not found or is empty"));
+            this.logger.info("SPop: {}", ezGlide.spop("Girls", 2));
+            this.logger.info("Exists: {}", ezGlide.exists("Girls"));
+            this.logger.info("SAdd: {}", ezGlide.sadd("Girls", girls));
         }
 
         if (this.logger.isTraceEnabled()) {
