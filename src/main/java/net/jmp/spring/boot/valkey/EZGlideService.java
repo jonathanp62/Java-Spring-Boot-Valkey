@@ -325,6 +325,8 @@ public class EZGlideService {
             this.logger.info("SAdd: {}", ezGlide.sadd("Girls", girls));
             this.logger.info("SRandMember: {}", ezGlide.srandmember("Girls").orElse("Girls not found or is empty"));
             this.logger.info("SRandMember: {}", ezGlide.srandmember("Girls", 2));
+            this.logger.info("Rename: {}", ezGlide.rename("Girls", "Lovers"));
+            this.logger.info("Copy: {}", ezGlide.copy("Lovers", "Girls"));
         }
 
         if (this.logger.isTraceEnabled()) {
