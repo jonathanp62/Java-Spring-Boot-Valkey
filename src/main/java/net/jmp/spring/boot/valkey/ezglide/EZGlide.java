@@ -1086,6 +1086,96 @@ public final class EZGlide {
         return Optional.ofNullable(result);
     }
 
+    /// Insert the specified value at the head of the list stored at key if the list exists.
+    ///
+    /// @param  key   java.lang.String
+    /// @param  value java.lang.String
+    /// @return       long
+    public long lpushnx(final String key, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, value));
+        }
+
+        final long result = this.lpushnx(key, List.of(value));
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Insert all the specified values at the head of the list stored at key if the list exists.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  values  java.util.List<java.lang.String>
+    /// @return         long
+    public long lpushnx(final String key, final List<String> values) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, values));
+        }
+
+        final GlideString[] array = new GlideString[values.size()];
+
+        for (int i = 0; i < values.size(); i++) {
+            array[i] = gs(values.get(i));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.lpushx(gs(key), array);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Insert the specified value at the tail of the list stored at key if the list exists.
+    ///
+    /// @param  key   java.lang.String
+    /// @param  value java.lang.String
+    /// @return       long
+    public long rpushnx(final String key, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, value));
+        }
+
+        final long result = this.rpushnx(key, List.of(value));
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Insert all the specified values at the tail of the list stored at key if the list exists.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  values  java.util.List<java.lang.String>
+    /// @return         long
+    public long rpushnx(final String key, final List<String> values) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, values));
+        }
+
+        final GlideString[] array = new GlideString[values.size()];
+
+        for (int i = 0; i < values.size(); i++) {
+            array[i] = gs(values.get(i));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.rpushx(gs(key), array);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Remove and return the element at the tail of the list stored at the source
     /// key and move it to the head of the list stored at the destination key.
     ///
