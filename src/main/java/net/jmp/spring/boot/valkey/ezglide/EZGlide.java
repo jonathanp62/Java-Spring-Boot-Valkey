@@ -546,6 +546,37 @@ public final class EZGlide {
         return result;
     }
 
+    /// Return a list of values in the hash.
+    ///
+    /// @param  key java.lang.String
+    /// @return     long
+    public List<String> hvals(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        List<String> result;
+
+        final CompletableFuture<GlideString[]> future = this.glideClient.hvals(gs(key));
+        final GlideString[] values = future.join();
+
+        if (values.length > 0) {
+            result = new ArrayList<>(values.length);
+
+            for (final GlideString keyName : values) {
+                result.add(keyName.getString());
+            }
+        } else {
+            result = Collections.emptyList();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Return the number of entries in the hash.
     ///
     /// @param  key java.lang.String
