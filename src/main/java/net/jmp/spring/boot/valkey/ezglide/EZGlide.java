@@ -515,6 +515,27 @@ public final class EZGlide {
         return result;
     }
 
+    /// Set a hash as the entry value associated with the entry key if the entry key does not already exist.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  entryKey    java.lang.String
+    /// @param  entryValue  java.lang.String
+    /// @return             boolean
+    public boolean hsetnx(final String key, final String entryKey, final String entryValue) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, entryKey, entryValue));
+        }
+
+        final CompletableFuture<Boolean> future = this.glideClient.hsetnx(gs(key), gs(entryKey), gs(entryValue));
+        final boolean result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Return a list of keys in the hash.
     ///
     /// @param  key java.lang.String
@@ -599,8 +620,9 @@ public final class EZGlide {
     /// Return the string length of the value associated with the entry key in the hash
     /// If there is no hash at the key or no entry key in the hash, return 0.
     ///
-    /// @param  key java.lang.String
-    /// @return     long
+    /// @param  key         java.lang.String
+    /// @param  entryKey    java.lang.String
+    /// @return             long
     public long hstrlen(final String key, final String entryKey) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(key, entryKey));

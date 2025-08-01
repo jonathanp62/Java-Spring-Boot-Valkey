@@ -228,6 +228,8 @@ public class EZGlideService {
             this.logger.info("HSet: {}", ezGlide.hset("Names", map));
             this.logger.info("HGetAll: {}", ezGlide.hgetall("Names"));
             this.logger.info("HGetAll: {}", ezGlide.hgetall("Undefined"));
+            this.logger.info("HSetNX: {}", ezGlide.hsetnx("Names", "firstName", "Bitch"));
+            this.logger.info("HSetNX: {}", ezGlide.hsetnx("Names", "nickName", "Bitch"));
         }
 
         if (this.logger.isTraceEnabled()) {
