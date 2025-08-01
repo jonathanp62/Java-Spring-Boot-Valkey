@@ -232,6 +232,26 @@ public class EZGlideService {
             this.logger.info("HSetNX: {}", ezGlide.hsetnx("Names", "nickName", "Bitch"));
         }
 
+        final Map<String, String> longMap = Map.of(
+                "one", "1",
+                "two", "2",
+                "three", "3"
+        );
+
+        final Map<String, String> doubleMap = Map.of(
+                "one", "1",
+                "two", "2",
+                "three", "3"
+        );
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("HSet: {}", ezGlide.hset("Longs", longMap));
+            this.logger.info("HIncrBy: {}", ezGlide.hincrBy("Longs", "two", 2));
+            this.logger.info("HSet: {}", ezGlide.hset("Doubles", doubleMap));
+            this.logger.info("HIncrBy: {}", ezGlide.hincrByFloat("Doubles", "three", 1.5));
+            this.logger.info("HIncrBy: {}", ezGlide.hincrByFloat("Doubles", "five", 5.0));
+        }
+
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
         }

@@ -536,6 +536,48 @@ public final class EZGlide {
         return result;
     }
 
+    /// Increment the long value of the entry key.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  entryKey    java.lang.String
+    /// @param  increment   int
+    /// @return             long
+    public long hincrBy(final String key, final String entryKey, final long increment) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, entryKey, increment));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.hincrBy(gs(key), gs(entryKey), increment);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Increment the float value of the entry key.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  entryKey    java.lang.String
+    /// @param  increment   double
+    /// @return             double
+    public double hincrByFloat(final String key, final String entryKey, final double increment) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, entryKey, increment));
+        }
+
+        final CompletableFuture<Double> future = this.glideClient.hincrByFloat(gs(key), gs(entryKey), increment);
+        final double result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Return a list of keys in the hash.
     ///
     /// @param  key java.lang.String
