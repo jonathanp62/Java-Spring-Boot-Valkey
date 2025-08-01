@@ -804,6 +804,31 @@ public final class EZGlide {
         return result;
     }
 
+    /// Return a random entry key from the hash.
+    ///
+    /// @param  key java.lang.String
+    /// @return     java.util.Optional<java.lang.String>
+    public Optional<String> hrandfield(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        String result = null;
+
+        final CompletableFuture<GlideString> future = this.glideClient.hrandfield(gs(key));
+        final GlideString value = future.join();
+
+        if (value != null) {
+            result = value.getString();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
+    }
+
     /// Insert all the specified values at the head of the list stored at key
     /// and return the number of elements added.
     ///

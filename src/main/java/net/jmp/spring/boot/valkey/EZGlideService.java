@@ -250,6 +250,7 @@ public class EZGlideService {
             this.logger.info("HSet: {}", ezGlide.hset("Doubles", doubleMap));
             this.logger.info("HIncrBy: {}", ezGlide.hincrByFloat("Doubles", "three", 1.5));
             this.logger.info("HIncrBy: {}", ezGlide.hincrByFloat("Doubles", "five", 5.0));
+            this.logger.info("HRandField: {}", ezGlide.hrandfield("Doubles").orElse("Doubles not found or is empty"));
         }
 
         if (this.logger.isTraceEnabled()) {
