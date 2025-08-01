@@ -218,6 +218,7 @@ public class EZGlideService {
             this.logger.info("HKeys: {}", ezGlide.hkeys("Names"));
             this.logger.info("HVals: {}", ezGlide.hvals("Names"));
             this.logger.info("HLen: {}", ezGlide.hlen("Names"));
+            this.logger.info("HStrLen: {}", ezGlide.hstrlen("Names", "firstName"));
             this.logger.info("HGet: {}", ezGlide.hget("Names", "middleName").orElse("middleName not found in Names"));
             this.logger.info("HGet: {}", ezGlide.hget("Names", "nickName").orElse("nickName not found in Names"));
             this.logger.info("HExists: {}", ezGlide.hexists("Names", "middleName"));

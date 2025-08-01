@@ -596,6 +596,26 @@ public final class EZGlide {
         return result;
     }
 
+    /// Return the string length of the value associated with the entry key in the hash
+    /// If there is no hash at the key or no entry key in the hash, return 0.
+    ///
+    /// @param  key java.lang.String
+    /// @return     long
+    public long hstrlen(final String key, final String entryKey) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, entryKey));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.hstrlen(gs(key), gs(entryKey));
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Get the value associated with the entry key in the hash.
     ///
     /// @param  hashKeyName     java.lang.String
