@@ -77,6 +77,15 @@ public final class EZGlide {
         LEFT
     }
 
+    /// The list pop direction.
+    public enum ListPopDirection {
+        /// Pop the list from the right.
+        RIGHT,
+
+        /// Pop the list from the left.
+        LEFT
+    }
+
     /// The score filter for sorted set pop.
     public enum PopScoreFilter {
         /// Return the element with the minimum score.
@@ -967,6 +976,67 @@ public final class EZGlide {
 
         final CompletableFuture<Long> future = this.glideClient.lrem(gs(key), count, gs(value));
         final Long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove the first element from the
+    /// list stored at key based on the direction.
+    ///
+    /// @param  keyNames    java.util.List<java.lang.String>
+    /// @param  direction   net.jmp.spring.boot.valkey.ezglide.ListPopDirection
+    /// @return             java.util.Map<java.lang.String,java.util.List<java.lang.String>>
+    public Map<String, List<String>> lmpop(final List<String> keyNames, final ListPopDirection direction) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(keyNames, direction));
+        }
+
+        final Map<String, List<String>> result = this.lmpop(keyNames, direction, 1);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove the first count occurrences of elements from
+    /// the list stored at key based on the direction.
+    ///
+    /// @param  keyNames    java.util.List<java.lang.String>
+    /// @param  direction   net.jmp.spring.boot.valkey.ezglide.ListPopDirection
+    /// @param  count       long
+    /// @return             java.util.Map<java.lang.String,java.util.List<java.lang.String>>
+    public Map<String, List<String>> lmpop(final List<String> keyNames, final ListPopDirection direction, final long count) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(keyNames, direction, count));
+        }
+
+        final ListDirection dir = direction == ListPopDirection.LEFT ? ListDirection.LEFT : ListDirection.RIGHT;
+        final GlideString[] keys = new GlideString[keyNames.size()];
+
+        for (int i = 0; i < keyNames.size(); i++) {
+            keys[i] = gs(keyNames.get(i));
+        }
+
+        final CompletableFuture<Map<GlideString, GlideString[]>> future = this.glideClient.lmpop(keys, dir, count);
+        final Map<GlideString, GlideString[]> map = future.join();
+
+        final Map<String, List<String>> result = HashMap.newHashMap(map.size());
+
+        for (final Map.Entry<GlideString, GlideString[]> entry : map.entrySet()) {
+            final List<String> list = new ArrayList<>(entry.getValue().length);
+
+            for (final GlideString value : entry.getValue()) {
+                list.add(value.getString());
+            }
+
+            result.put(entry.getKey().getString(), list);
+        }
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));

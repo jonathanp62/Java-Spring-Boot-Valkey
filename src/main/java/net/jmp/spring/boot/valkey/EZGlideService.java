@@ -290,6 +290,8 @@ public class EZGlideService {
             this.logger.info("LMove: {}", ezGlide.lmove("One", "Two", EZGlide.ListMoveDirection.RIGHT, EZGlide.ListMoveDirection.LEFT).orElse("One not found or is empty"));
             this.logger.info("LMove: {}", ezGlide.lmove("Two", "One", EZGlide.ListMoveDirection.LEFT, EZGlide.ListMoveDirection.RIGHT).orElse("Two not found or is empty"));
             this.logger.info("RPopLPush: {}", ezGlide.rpoplpush("One", "Two").orElse("One not found or is empty"));
+            this.logger.info("LMPop: {}", ezGlide.lmpop(List.of("Fruits"), EZGlide.ListPopDirection.LEFT, 2));
+            this.logger.info("LMPop: {}", ezGlide.lmpop(List.of("Fruits"), EZGlide.ListPopDirection.RIGHT));
         }
 
         if (this.logger.isTraceEnabled()) {
