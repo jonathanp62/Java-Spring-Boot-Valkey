@@ -294,6 +294,7 @@ public class EZGlideService {
             this.logger.info("LMPop: {}", ezGlide.lmpop(List.of("Fruits"), EZGlide.ListPopDirection.RIGHT));
             this.logger.info("LPushNX: {}", ezGlide.lpushnx("Fruits", "Blueberries"));
             this.logger.info("RPushNX: {}", ezGlide.rpushnx("Fruits", "Cherries"));
+            this.logger.info("LTrim: {}", ezGlide.ltrim("Fruits", 0, 1));
         }
 
         if (this.logger.isTraceEnabled()) {

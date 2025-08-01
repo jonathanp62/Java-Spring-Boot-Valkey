@@ -218,6 +218,7 @@ public final class EZGlide {
     }
 
     /// Flush the database.
+    /// OK is returned.
     ///
     /// @return java.lang.String
     public String flushall() {
@@ -392,6 +393,7 @@ public final class EZGlide {
     }
 
     /// Rename the source key to the target key.
+    /// OK is returned.
     ///
     /// @param  source  java.lang.String
     /// @param  target  java.lang.String
@@ -1084,6 +1086,28 @@ public final class EZGlide {
         }
 
         return Optional.ofNullable(result);
+    }
+
+    /// Trim an existing list so that it will contain only the specified range of elements specified.
+    /// OK is returned.
+    ///
+    /// @param  key   java.lang.String
+    /// @param  start long
+    /// @param  end   long
+    /// @return       java.lang.String
+    public String ltrim(final String key, final long start, final long end) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, start, end));
+        }
+
+        final CompletableFuture<String> future = this.glideClient.ltrim(gs(key), start, end);
+        final String result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
     }
 
     /// Insert the specified value at the head of the list stored at key if the list exists.
