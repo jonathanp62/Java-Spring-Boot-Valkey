@@ -829,6 +829,69 @@ public final class EZGlide {
         return Optional.ofNullable(result);
     }
 
+    /// Return the value at the entry key from the hash.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  entryKey    java.lang.String
+    /// @return             java.util.Optional<java.lang.String>
+    public Optional<String> hmget(final String key, final String entryKey) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, entryKey));
+        }
+
+        String result = null;
+
+        final List<String> list = this.hmget(key, List.of(entryKey));
+
+        if (!list.isEmpty()) {
+            result = list.getFirst();
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
+    }
+
+    /// Return the values at the entry keys from the hash.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  entryKeys   java.util.List<java.lang.String>
+    /// @return             java.util.List<java.lang.String>
+    public List<String> hmget(final String key, final List<String> entryKeys) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, entryKeys));
+        }
+
+        final int size = entryKeys.size();
+        final GlideString[] glideStrings = new GlideString[size];
+
+        for (int i = 0; i < size; i++) {
+            glideStrings[i] = gs(entryKeys.get(i));
+        }
+
+        final CompletableFuture<GlideString[]> future = this.glideClient.hmget(gs(key), glideStrings);
+        final GlideString[] array = future.join();
+        final List<String> result = new ArrayList<>(size);
+
+        for (int i = 0; i < size; i++) {
+            final GlideString value = array[i];
+
+            if (value == null) {
+                result.add(null);
+            } else {
+                result.add(value.getString());
+            }
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Insert all the specified values at the head of the list stored at key
     /// and return the number of elements added.
     ///

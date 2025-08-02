@@ -251,6 +251,8 @@ public class EZGlideService {
             this.logger.info("HIncrBy: {}", ezGlide.hincrByFloat("Doubles", "three", 1.5));
             this.logger.info("HIncrBy: {}", ezGlide.hincrByFloat("Doubles", "five", 5.0));
             this.logger.info("HRandField: {}", ezGlide.hrandfield("Doubles").orElse("Doubles not found or is empty"));
+            this.logger.info("HMGet: {}", ezGlide.hmget("Names", List.of("firstName", "nickName")));
+            this.logger.info("HMGet: {}", ezGlide.hmget("Names", "middleName").orElse("middleName not found in Names"));
         }
 
         if (this.logger.isTraceEnabled()) {
