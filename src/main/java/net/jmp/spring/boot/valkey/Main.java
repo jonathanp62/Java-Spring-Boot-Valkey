@@ -1,6 +1,7 @@
 package net.jmp.spring.boot.valkey;
 
 /*
+ * (#)Main.java 0.5.0   08/04/2025
  * (#)Main.java 0.4.0   07/22/2025
  * (#)Main.java 0.1.0   05/01/2025
  *
@@ -41,7 +42,7 @@ import org.springframework.stereotype.Component;
 
 /// The main application class.
 ///
-/// @version    0.4.0
+/// @version    0.5.0
 /// @since      0.1.0
 @Component
 public class Main implements Runnable {
@@ -57,19 +58,25 @@ public class Main implements Runnable {
     /// The EZGlide service.
     private final EZGlideService ezglideService;
 
+    /// The Sail service.
+    private final SailService sailService;
+
     /// The constructor.
     ///
     /// @param  environment         org.springframework.core.env.Environment
     /// @param  valkeyService       net.jmp.spring.boot.valkey.ValkeyService
     /// @param  ezglideService      net.jmp.spring.boot.valkey.EZGlideService
+    /// @param  sailService         net.jmp.spring.boot.valkey.SailService
     public Main(final Environment environment,
                 final ValkeyService valkeyService,
-                final EZGlideService ezglideService) {
+                final EZGlideService ezglideService,
+                final SailService sailService) {
         super();
 
         this.environment = environment;
         this.valkeyService = valkeyService;
         this.ezglideService = ezglideService;
+        this.sailService = sailService;
     }
 
     ///
@@ -88,6 +95,7 @@ public class Main implements Runnable {
 
         this.valkeyService.demo();
         this.ezglideService.demo();
+        this.sailService.demo();
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
