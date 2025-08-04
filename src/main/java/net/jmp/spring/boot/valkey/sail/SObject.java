@@ -1,7 +1,7 @@
 package net.jmp.spring.boot.valkey.sail;
 
 /*
- * (#)Sobject.java  0.5.0   08/04/2025
+ * (#)SObject.java  0.5.0   08/04/2025
  *
  * @author   Jonathan Parker
  *
