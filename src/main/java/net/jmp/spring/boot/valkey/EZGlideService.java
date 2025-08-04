@@ -253,6 +253,7 @@ public class EZGlideService {
             this.logger.info("HRandField: {}", ezGlide.hrandfield("Doubles").orElse("Doubles not found or is empty"));
             this.logger.info("HMGet: {}", ezGlide.hmget("Names", List.of("firstName", "nickName")));
             this.logger.info("HMGet: {}", ezGlide.hmget("Names", "middleName").orElse("middleName not found in Names"));
+            this.logger.info("HMSet: {}", ezGlide.hmset("Names", "marriedName", "Parker"));
         }
 
         if (this.logger.isTraceEnabled()) {

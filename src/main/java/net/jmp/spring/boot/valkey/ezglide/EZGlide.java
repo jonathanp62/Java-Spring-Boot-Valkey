@@ -892,6 +892,27 @@ public final class EZGlide {
         return result;
     }
 
+    /// Set the specified hash field to the specified value.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  entryKey    java.lang.String
+    /// @param  entryValue  java.lang.String
+    /// @return             java.lang.String
+    public String hmset(final String key, final String entryKey, final String entryValue) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, entryKey, entryValue));
+        }
+
+        final long value = this.hset(key, Map.of(entryKey, entryValue));
+        final String result = (value == 1) ? "OK" : "Not OK";
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Insert all the specified values at the head of the list stored at key
     /// and return the number of elements added.
     ///
