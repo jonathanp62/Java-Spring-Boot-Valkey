@@ -30,6 +30,7 @@ package net.jmp.spring.boot.valkey;
 
 import net.jmp.spring.boot.valkey.sail.Sail;
 import net.jmp.spring.boot.valkey.sail.SailConfig;
+import net.jmp.spring.boot.valkey.sail.SBucket;
 
 import static net.jmp.util.logging.LoggerUtils.entry;
 import static net.jmp.util.logging.LoggerUtils.exit;
@@ -95,7 +96,13 @@ public class SailService {
         this.logger.info("Sail config: {}", sailConfig);
 
         try (final Sail sail = new Sail(sailConfig)) {
+            final SBucket bucket = sail.newBucket("Demo");
 
+            bucket.set("Sail 0.5.0");
+
+            if (this.logger.isInfoEnabled()) {
+                this.logger.info("BUCKET: Demo: {}", bucket.get().orElse("No value found for key \"demo\""));
+            }
         }
 
         if (this.logger.isTraceEnabled()) {

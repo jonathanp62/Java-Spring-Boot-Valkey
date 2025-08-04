@@ -1,7 +1,7 @@
 package net.jmp.spring.boot.valkey.sail;
 
 /*
- * (#)SObject.java  0.5.0   08/04/2025
+ * (#)SBucket.java  0.5.0   08/04/2025
  *
  * @author   Jonathan Parker
  *
@@ -28,30 +28,67 @@ package net.jmp.spring.boot.valkey.sail;
  * SOFTWARE.
  */
 
-import net.jmp.spring.boot.valkey.ezglide.EZGlide;
-
 import static net.jmp.util.logging.LoggerUtils.*;
 
+import net.jmp.spring.boot.valkey.ezglide.EZGlide;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/// The Sail object base class.
+import java.util.Optional;
+
+/// The Sail bucket class.
 ///
 /// @version    0.5.0
 /// @since      0.5.0
-public class SObject {
+public final class SBucket extends SObject {
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    /// The EZGlide instance.
-    protected final EZGlide ezGlide;
+    /// The name.
+    private final String name;
 
     /// The constructor.
     ///
     /// @param  ezGlide net.jmp.spring.boot.valkey.ezglide.EZGlide
-    protected SObject(final EZGlide ezGlide) {
-        super();
+    /// @param  name    java.lang.String
+    public SBucket(final EZGlide ezGlide, final String name) {
+        super(ezGlide);
 
-        this.ezGlide = ezGlide;
+        this.name = name;
+    }
+
+    /// Set the value. OK is returned.
+    ///
+    /// @param  value   java.lang.String
+    /// @return         java.lang.String
+    public String set(final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(value));
+        }
+
+        final String result = this.ezGlide.set(this.name, value);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Get the value.
+    ///
+    /// @return java.util.Optional<java.lang.String>
+    public Optional<String> get() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final String result = this.ezGlide.get(this.name).orElse(null);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
     }
 }

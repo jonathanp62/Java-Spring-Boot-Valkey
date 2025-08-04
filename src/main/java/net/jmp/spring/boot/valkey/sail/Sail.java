@@ -33,9 +33,9 @@ import glide.api.GlideClient;
 import glide.api.models.configuration.GlideClientConfiguration;
 import glide.api.models.configuration.NodeAddress;
 
-import net.jmp.spring.boot.valkey.ezglide.EZGlide;
-
 import java.util.concurrent.ExecutionException;
+
+import net.jmp.spring.boot.valkey.ezglide.EZGlide;
 
 import static net.jmp.util.logging.LoggerUtils.exitWith;
 
@@ -48,7 +48,7 @@ public final class Sail implements AutoCloseable {
     private final SailConfig sailConfig;
 
     /// The EZGlide instance.
-    private EZGlide ezGlide;
+    private final EZGlide ezGlide;
 
     /// The Glide client.
     private final GlideClient glideClient;
@@ -61,6 +61,14 @@ public final class Sail implements AutoCloseable {
 
         this.glideClient = this.connect();
         this.ezGlide = new EZGlide(this.glideClient);
+    }
+
+    /// Create a new bucket.
+    ///
+    /// @param  name    java.lang.String
+    /// @return         net.jmp.spring.boot.valkey.sail.SBucket
+    public SBucket newBucket(final String name) {
+        return new SBucket(this.ezGlide, name);
     }
 
     /// Connect to Valkey using Glide.
