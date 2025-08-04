@@ -91,4 +91,6 @@ public final class SBucket extends SObject {
 
         return Optional.ofNullable(result);
     }
+
+    // TODO: Implement append and getdel
 }

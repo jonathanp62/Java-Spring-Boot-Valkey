@@ -54,4 +54,6 @@ public class SObject {
 
         this.ezGlide = ezGlide;
     }
+
+    // TODO: Implement copy, delete, exists, move, rename
 }
