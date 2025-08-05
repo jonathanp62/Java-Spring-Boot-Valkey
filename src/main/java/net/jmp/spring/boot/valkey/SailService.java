@@ -119,7 +119,7 @@ public class SailService {
         if (this.logger.isInfoEnabled()) {
             this.logger.info("BUCKET: Demo: {}", bucket.get().orElse("No value found for key \"demo\""));
             this.logger.info("BUCKET: Demo: {}", bucket.getThenDelete().orElse("No value found for key \"demo\""));
-            this.logger.info("BUCKET: Demo: {}", bucket.get().orElse("No value found for key \"demo\""));
+            this.logger.info("BUCKET: Demo: {}", bucket.exists());
         }
 
         if (this.logger.isTraceEnabled()) {

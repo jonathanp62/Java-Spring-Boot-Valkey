@@ -45,17 +45,12 @@ public final class SBucket extends SObject {
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    /// The name.
-    private final String name;
-
     /// The constructor.
     ///
     /// @param  ezGlide net.jmp.spring.boot.valkey.ezglide.EZGlide
     /// @param  name    java.lang.String
     public SBucket(final EZGlide ezGlide, final String name) {
-        super(ezGlide);
-
-        this.name = name;
+        super(ezGlide, name);
     }
 
     /// Set the value. OK is returned.

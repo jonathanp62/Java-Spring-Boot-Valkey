@@ -46,14 +46,36 @@ public class SObject {
     /// The EZGlide instance.
     protected final EZGlide ezGlide;
 
+    /// The object name.
+    protected final String name;
+
     /// The constructor.
     ///
     /// @param  ezGlide net.jmp.spring.boot.valkey.ezglide.EZGlide
-    protected SObject(final EZGlide ezGlide) {
+    /// @param  name    java.lang.String
+    protected SObject(final EZGlide ezGlide, final String name) {
         super();
 
         this.ezGlide = ezGlide;
+        this.name = name;
     }
 
-    // TODO: Implement copy, delete, exists, move, rename
+    // TODO: Implement copy, delete, move, rename
+
+    /// Return true if the key exists.
+    ///
+    /// @return boolean
+    public boolean exists() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final boolean result = this.ezGlide.exists(this.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
 }
