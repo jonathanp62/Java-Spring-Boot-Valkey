@@ -67,7 +67,7 @@ public class SObject {
         return this.name;
     }
 
-    // TODO: Implement copy, delete, move, rename
+    // TODO: Implement copy, delete, move
 
     /// Return true if the key exists.
     ///
