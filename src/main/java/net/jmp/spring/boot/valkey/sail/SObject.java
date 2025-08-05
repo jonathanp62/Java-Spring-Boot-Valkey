@@ -47,7 +47,7 @@ public class SObject {
     protected final EZGlide ezGlide;
 
     /// The object name.
-    protected final String name;
+    protected String name;
 
     /// The constructor.
     ///
@@ -58,6 +58,13 @@ public class SObject {
 
         this.ezGlide = ezGlide;
         this.name = name;
+    }
+
+    /// Get the name.
+    ///
+    /// @return java.lang.String
+    public String getName() {
+        return this.name;
     }
 
     // TODO: Implement copy, delete, move, rename
@@ -77,5 +84,28 @@ public class SObject {
         }
 
         return result;
+    }
+
+    /// Rename the key. The old key name is replaced with
+    /// the new key name and the new key name is returned.
+    ///
+    /// @param  newName java.lang.String
+    /// @return         java.lang.String
+    public String rename(final String newName) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(newName));
+        }
+
+        final String result = this.ezGlide.rename(this.name, newName);
+
+        if ("OK".equals(result)) {
+            this.name = newName;
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(this.name));
+        }
+
+        return this.name;
     }
 }

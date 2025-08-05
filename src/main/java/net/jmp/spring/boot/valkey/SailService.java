@@ -118,8 +118,11 @@ public class SailService {
 
         if (this.logger.isInfoEnabled()) {
             this.logger.info("BUCKET: Demo: {}", bucket.get().orElse("No value found for key \"demo\""));
-            this.logger.info("BUCKET: Demo: {}", bucket.getThenDelete().orElse("No value found for key \"demo\""));
-            this.logger.info("BUCKET: Demo: {}", bucket.exists());
+            this.logger.info("BUCKET: Demo: {}", bucket.rename("Demo-Renamed"));
+
+            this.logger.info("BUCKET: Demo-Renamed: {}", bucket.getThenDelete().orElse("No value found for key \"demo\""));
+            this.logger.info("BUCKET: Demo-Renamed: {}", bucket.exists());
+            this.logger.info("BUCKET: Demo-Renamed: {}", bucket.getName());
         }
 
         if (this.logger.isTraceEnabled()) {
