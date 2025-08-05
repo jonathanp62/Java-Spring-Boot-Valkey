@@ -117,13 +117,15 @@ public class SailService {
         bucket.append(" - Coming soon");
 
         if (this.logger.isInfoEnabled()) {
-            this.logger.info("BUCKET: Demo: {}", bucket.get().orElse("No value found for key \"demo\""));
-            this.logger.info("BUCKET: Demo: {}", bucket.rename("Demo-Renamed"));
-
-            this.logger.info("BUCKET: Demo-Renamed: {}", bucket.getThenDelete().orElse("No value found for key \"demo\""));
-            this.logger.info("BUCKET: Demo-Renamed: {}", bucket.exists());
-            this.logger.info("BUCKET: Demo-Renamed: {}", bucket.getName());
+            this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.get().orElse("No value found for key \"demo\""));
+            this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.rename("Demo-Renamed"));
+            this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.getThenDelete().orElse("No value found for key \"demo\""));
+            this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.exists());
         }
+
+        bucket.set("New value");
+
+        this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.delete());
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());

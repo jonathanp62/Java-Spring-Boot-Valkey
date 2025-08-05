@@ -67,7 +67,7 @@ public class SObject {
         return this.name;
     }
 
-    // TODO: Implement copy, delete, move
+    // TODO: Implement copy, move
 
     /// Return true if the key exists.
     ///
@@ -107,5 +107,22 @@ public class SObject {
         }
 
         return this.name;
+    }
+
+    /// Delete the key.
+    ///
+    /// @return boolean
+    public boolean delete() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final boolean result = this.ezGlide.del(this.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
     }
 }
