@@ -117,9 +117,9 @@ public class SailService {
         bucket.append(" - Coming soon");
 
         if (this.logger.isInfoEnabled()) {
-            this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.get().orElse("No value found for key \"demo\""));
-            this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.rename("Demo-Renamed"));
-            this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.getThenDelete().orElse("No value found for key \"demo\""));
+            this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.get().orElse("No value found for key \"Demo\""));
+            this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.rename("Renamed"));
+            this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.getThenDelete().orElse("No value found for key \"Renamed\""));
             this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.exists());
         }
 
@@ -127,6 +127,12 @@ public class SailService {
 
         this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.delete());
 
+        bucket.set("Sail 0.5.0");
+
+        bucket.copy("Copied").ifPresent(copiedBucket -> {
+            this.logger.info("BUCKET: {}: {}", copiedBucket.getName(), copiedBucket.get().orElse("No value found for key \"Copied\""));
+        });
+        
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
         }

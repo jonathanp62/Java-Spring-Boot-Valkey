@@ -122,4 +122,26 @@ public final class SBucket extends SObject {
 
         return Optional.ofNullable(result);
     }
+
+    /// Copy the bucket at this key to a new target bucket.
+    ///
+    /// @param  target  java.lang.String
+    /// @return         java.util.Optional<net.jmp.spring.boot.valkey.sail.SBucket>
+    public Optional<SBucket> copy(final String target) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target));
+        }
+
+        SBucket result = null;
+
+        if (super.copyObject(target)) {
+            result = new SBucket(this.ezGlide, target);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
+    }
 }

@@ -67,7 +67,7 @@ public class SObject {
         return this.name;
     }
 
-    // TODO: Implement copy, move
+    // TODO: Implement moveObject
 
     /// Return true if the key exists.
     ///
@@ -125,4 +125,23 @@ public class SObject {
 
         return result;
     }
+
+    /// Copy the object at this key to the target key.
+    ///
+    /// @param  target  java.lang.String
+    /// @return         boolean
+    protected boolean copyObject(final String target) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target));
+        }
+
+        final boolean result = this.ezGlide.copy(this.name, target);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
 }
+
