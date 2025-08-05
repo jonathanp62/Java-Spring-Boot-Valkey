@@ -28,13 +28,14 @@ package net.jmp.spring.boot.valkey.sail;
  * SOFTWARE.
  */
 
-import static net.jmp.util.logging.LoggerUtils.*;
+import java.util.Optional;
 
 import net.jmp.spring.boot.valkey.ezglide.EZGlide;
+
+import static net.jmp.util.logging.LoggerUtils.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Optional;
 
 /// The Sail bucket class.
 ///
@@ -92,5 +93,38 @@ public final class SBucket extends SObject {
         return Optional.ofNullable(result);
     }
 
-    // TODO: Implement append and getdel
+    /// Append the specified value to the key.
+    ///
+    /// @param  value   java.lang.String
+    /// @return         long
+    public long append(final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(value));
+        }
+
+        final long result = this.ezGlide.append(this.name, value);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Get the value then delete the key.
+    ///
+    /// @return java.util.Optional<java.lang.String>
+    public Optional<String> getThenDelete() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final String result = this.ezGlide.getdel(this.name).orElse(null);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
+    }
 }

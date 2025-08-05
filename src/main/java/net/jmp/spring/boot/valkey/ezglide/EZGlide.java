@@ -416,21 +416,26 @@ public final class EZGlide {
     /// Get the value from the key then delete the key.
     ///
     /// @param  key java.lang.String
-    /// @return     java.lang.String
-    public String getdel(final String key) {
+    /// @return     java.util.Optional<java.lang.String>
+    public Optional<String> getdel(final String key) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(key));
         }
 
+        String result = null;
+
         final CompletableFuture<GlideString> future = this.glideClient.getdel(gs(key));
         final GlideString value = future.join();
-        final String result = value.getString();
+
+        if (value != null) {
+            result = value.getString();
+        }
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));
         }
 
-        return result;
+        return Optional.ofNullable(result);
     }
 
     /// Return true if the key was deleted and false if not.

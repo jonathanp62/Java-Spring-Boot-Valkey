@@ -32,8 +32,7 @@ import net.jmp.spring.boot.valkey.sail.Sail;
 import net.jmp.spring.boot.valkey.sail.SailConfig;
 import net.jmp.spring.boot.valkey.sail.SBucket;
 
-import static net.jmp.util.logging.LoggerUtils.entry;
-import static net.jmp.util.logging.LoggerUtils.exit;
+import static net.jmp.util.logging.LoggerUtils.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,13 +95,31 @@ public class SailService {
         this.logger.info("Sail config: {}", sailConfig);
 
         try (final Sail sail = new Sail(sailConfig)) {
-            final SBucket bucket = sail.newBucket("Demo");
+            this.sBucket(sail);
+        }
 
-            bucket.set("Sail 0.5.0");
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
 
-            if (this.logger.isInfoEnabled()) {
-                this.logger.info("BUCKET: Demo: {}", bucket.get().orElse("No value found for key \"demo\""));
-            }
+    /// Demonstrate the SBucket class.
+    ///
+    /// @param  sail    net.jmp.spring.boot.valkey.sail.Sail
+    private void sBucket(final Sail sail) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(sail));
+        }
+
+        final SBucket bucket = sail.newBucket("Demo");
+
+        bucket.set("Sail 0.5.0");
+        bucket.append(" - Coming soon");
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("BUCKET: Demo: {}", bucket.get().orElse("No value found for key \"demo\""));
+            this.logger.info("BUCKET: Demo: {}", bucket.getThenDelete().orElse("No value found for key \"demo\""));
+            this.logger.info("BUCKET: Demo: {}", bucket.get().orElse("No value found for key \"demo\""));
         }
 
         if (this.logger.isTraceEnabled()) {

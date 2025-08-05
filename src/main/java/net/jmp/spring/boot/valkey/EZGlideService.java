@@ -185,7 +185,7 @@ public class EZGlideService {
             this.logger.info("Get: {}", ezGlide.get("Name").orElse("Name not found"));
             this.logger.info("Rename: {}", ezGlide.rename("Name", "My-Name"));
             this.logger.info("Exists: {}", ezGlide.exists("Name"));
-            this.logger.info("GetDel: {}", ezGlide.getdel("My-Name"));
+            this.logger.info("GetDel: {}", ezGlide.getdel("My-Name").orElse("My-Name not found"));
             this.logger.info("Exists: {}", ezGlide.exists("My-Name"));
             this.logger.info("Set: {}", ezGlide.set("Middle-Name", "Martin"));
             this.logger.info("Del: {}", ezGlide.del("Middle-Name"));
