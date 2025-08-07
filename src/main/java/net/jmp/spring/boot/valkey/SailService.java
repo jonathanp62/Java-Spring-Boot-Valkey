@@ -132,7 +132,11 @@ public class SailService {
         bucket.copy("Copied").ifPresent(copiedBucket -> {
             this.logger.info("BUCKET: {}: {}", copiedBucket.getName(), copiedBucket.get().orElse("No value found for key \"Copied\""));
         });
-        
+
+        bucket.move("Moved").ifPresent(movedBucket -> {
+            this.logger.info("BUCKET: {}: {}", movedBucket.getName(), movedBucket.get().orElse("No value found for key \"Moved\""));
+        });
+
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
         }
