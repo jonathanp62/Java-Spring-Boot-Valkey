@@ -28,6 +28,8 @@ package net.jmp.spring.boot.valkey.sail;
  * SOFTWARE.
  */
 
+import java.util.Optional;
+
 import net.jmp.spring.boot.valkey.ezglide.EZGlide;
 
 import static net.jmp.util.logging.LoggerUtils.*;
@@ -39,7 +41,7 @@ import org.slf4j.LoggerFactory;
 ///
 /// @version    0.5.0
 /// @since      0.5.0
-public class SObject {
+public abstract class SObject {
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -124,6 +126,12 @@ public class SObject {
         return result;
     }
 
+    /// Abstract method to copy the object at this key to the target key.
+    ///
+    /// @param  target  java.lang.String
+    /// @return         java.util.Optional<net.jmp.spring.boot.valkey.sail.SObject>
+    public abstract Optional<? extends SObject> copy(final String target);
+
     /// Copy the object at this key to the target key.
     ///
     /// @param  target  java.lang.String
@@ -141,6 +149,12 @@ public class SObject {
 
         return result;
     }
+
+    /// Abstract method to move the object at this key to the target key.
+    ///
+    /// @param  target  java.lang.String
+    /// @return         java.util.Optional<net.jmp.spring.boot.valkey.sail.SObject>
+    public abstract Optional<? extends SObject> move(final String target);
 
     /// Move the object at this key to the target key.
     ///
@@ -164,4 +178,3 @@ public class SObject {
         return result;
     }
 }
-

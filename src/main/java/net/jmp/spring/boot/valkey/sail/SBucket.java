@@ -127,6 +127,7 @@ public final class SBucket extends SObject {
     ///
     /// @param  target  java.lang.String
     /// @return         java.util.Optional<net.jmp.spring.boot.valkey.sail.SBucket>
+    @Override
     public Optional<SBucket> copy(final String target) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(target));
@@ -149,6 +150,7 @@ public final class SBucket extends SObject {
     ///
     /// @param  target  java.lang.String
     /// @return         java.util.Optional<net.jmp.spring.boot.valkey.sail.SBucket>
+    @Override
     public Optional<SBucket> move(final String target) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(target));
