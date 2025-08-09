@@ -49,7 +49,7 @@ public final class SBucket extends SObject {
     ///
     /// @param  ezGlide net.jmp.spring.boot.valkey.ezglide.EZGlide
     /// @param  name    java.lang.String
-    public SBucket(final EZGlide ezGlide, final String name) {
+    SBucket(final EZGlide ezGlide, final String name) {
         super(ezGlide, name);
     }
 

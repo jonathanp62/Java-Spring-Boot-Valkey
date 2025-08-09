@@ -37,8 +37,6 @@ import java.util.concurrent.ExecutionException;
 
 import net.jmp.spring.boot.valkey.ezglide.EZGlide;
 
-import static net.jmp.util.logging.LoggerUtils.exitWith;
-
 /// The Sail class.
 ///
 /// @version    0.5.0
@@ -63,12 +61,19 @@ public final class Sail implements AutoCloseable {
         this.ezGlide = new EZGlide(this.glideClient);
     }
 
-    /// Create a new bucket.
+    /// Create a new bucket instance.
     ///
     /// @param  name    java.lang.String
     /// @return         net.jmp.spring.boot.valkey.sail.SBucket
     public SBucket newBucket(final String name) {
         return new SBucket(this.ezGlide, name);
+    }
+
+    /// Create a new server instance.
+    ///
+    /// @return net.jmp.spring.boot.valkey.sail.SBucket
+    public SServer newServer() {
+        return new SServer(this.ezGlide);
     }
 
     /// Connect to Valkey using Glide.
