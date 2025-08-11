@@ -71,9 +71,16 @@ public final class Sail implements AutoCloseable {
 
     /// Create a new server instance.
     ///
-    /// @return net.jmp.spring.boot.valkey.sail.SBucket
+    /// @return net.jmp.spring.boot.valkey.sail.SServer
     public SServer newServer() {
         return new SServer(this.ezGlide);
+    }
+
+    /// Create a new client instance.
+    ///
+    /// @return net.jmp.spring.boot.valkey.sail.SClient
+    public SClient newClient() {
+        return new SClient(this.ezGlide);
     }
 
     /// Connect to Valkey using Glide.

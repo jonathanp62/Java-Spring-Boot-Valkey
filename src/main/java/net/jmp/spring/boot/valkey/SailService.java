@@ -28,10 +28,7 @@ package net.jmp.spring.boot.valkey;
  * SOFTWARE.
  */
 
-import net.jmp.spring.boot.valkey.sail.Sail;
-import net.jmp.spring.boot.valkey.sail.SailConfig;
-import net.jmp.spring.boot.valkey.sail.SBucket;
-import net.jmp.spring.boot.valkey.sail.SServer;
+import net.jmp.spring.boot.valkey.sail.*;
 
 import static net.jmp.util.logging.LoggerUtils.*;
 
@@ -98,6 +95,7 @@ public class SailService {
         try (final Sail sail = new Sail(sailConfig)) {
             this.sBucket(sail);
             this.sServer(sail);
+            this.sClient(sail);
         }
 
         if (this.logger.isTraceEnabled()) {
@@ -158,6 +156,27 @@ public class SailService {
             this.logger.info("SERVER: {}", server.ping());
             this.logger.info("SERVER: {}", server.ping("Hello"));
             this.logger.info("SERVER: {}", server.echo("World"));
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Demonstrate the SClient class.
+    ///
+    /// @param  sail    net.jmp.spring.boot.valkey.sail.Sail
+    private void sClient(final Sail sail) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(sail));
+        }
+
+        final SClient client = sail.newClient();
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("CLIENT: {}", client.name());
+            this.logger.info("CLIENT: {}", client.id());
+            this.logger.info("CLIENT: {}", client.info());
         }
 
         if (this.logger.isTraceEnabled()) {
