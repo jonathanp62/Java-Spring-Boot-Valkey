@@ -83,6 +83,34 @@ public final class Sail implements AutoCloseable {
         return new SClient(this.ezGlide);
     }
 
+    /// Create a new hash instance.
+    ///
+    /// @return net.jmp.spring.boot.valkey.sail.SHash
+    public SHash newHash() {
+        return new SHash(this.ezGlide);
+    }
+
+    /// Create a new list instance.
+    ///
+    /// @return net.jmp.spring.boot.valkey.sail.SList
+    public SList newList() {
+        return new SList(this.ezGlide);
+    }
+
+    /// Create a new set instance.
+    ///
+    /// @return net.jmp.spring.boot.valkey.sail.SSet
+    public SSet newSet() {
+        return new SSet(this.ezGlide);
+    }
+
+    /// Create a new sorted set instance.
+    ///
+    /// @return net.jmp.spring.boot.valkey.sail.SSortedSet
+    public SSortedSet newSortedSet() {
+        return new SSortedSet(this.ezGlide);
+    }
+
     /// Connect to Valkey using Glide.
     ///
     /// @return glide.api.GlideClient

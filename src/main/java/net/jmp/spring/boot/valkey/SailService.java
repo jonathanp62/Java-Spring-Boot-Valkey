@@ -96,6 +96,10 @@ public class SailService {
             this.sBucket(sail);
             this.sServer(sail);
             this.sClient(sail);
+            this.sHash(sail);
+            this.sList(sail);
+            this.sSet(sail);
+            this.sSortedSet(sail);
         }
 
         if (this.logger.isTraceEnabled()) {
@@ -178,6 +182,66 @@ public class SailService {
             this.logger.info("CLIENT: {}", client.id());
             this.logger.info("CLIENT: {}", client.info());
         }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Demonstrate the SHash class.
+    ///
+    /// @param  sail    net.jmp.spring.boot.valkey.sail.Sail
+    private void sHash(final Sail sail) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(sail));
+        }
+
+        final SHash hash = sail.newHash();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Demonstrate the SList class.
+    ///
+    /// @param  sail    net.jmp.spring.boot.valkey.sail.Sail
+    private void sList(final Sail sail) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(sail));
+        }
+
+        final SList list = sail.newList();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Demonstrate the SSet class.
+    ///
+    /// @param  sail    net.jmp.spring.boot.valkey.sail.Sail
+    private void sSet(final Sail sail) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(sail));
+        }
+
+        final SSet set = sail.newSet();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Demonstrate the SSortedSet class.
+    ///
+    /// @param  sail    net.jmp.spring.boot.valkey.sail.Sail
+    private void sSortedSet(final Sail sail) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(sail));
+        }
+
+        final SSortedSet sortedSet = sail.newSortedSet();
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
