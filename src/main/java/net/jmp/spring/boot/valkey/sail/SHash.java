@@ -28,6 +28,9 @@ package net.jmp.spring.boot.valkey.sail;
  * SOFTWARE.
  */
 
+import java.util.List;
+import java.util.Map;
+
 import net.jmp.spring.boot.valkey.ezglide.EZGlide;
 
 import static net.jmp.util.logging.LoggerUtils.*;
@@ -53,5 +56,60 @@ public final class SHash {
         super();
 
         this.ezGlide = ezGlide;
+    }
+
+    /// Set a hash as the value associated with the key.
+    ///
+    /// @param  key java.lang.String
+    /// @param  map java.util.Map<java.lang.String, java.lang.String>
+    /// @return     long
+    public long set(final String key, final Map<String, String> map) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, map));
+        }
+
+        final long result = this.ezGlide.hset(key, map);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return a list of keys in the hash.
+    ///
+    /// @param  key java.lang.String
+    /// @return     long
+    public List<String> keys(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        final List<String> result = this.ezGlide.hkeys(key);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return a list of values in the hash.
+    ///
+    /// @param  key java.lang.String
+    /// @return     long
+    public List<String> values(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        final List<String> result = this.ezGlide.hvals(key);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
     }
 }

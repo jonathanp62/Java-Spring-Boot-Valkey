@@ -108,6 +108,9 @@ tasks.named('test') {
 	}
 }
 
+// Tasks named bootRun need to be run with the --no-configuration-cache command line option
+//   ./gradlew --no-configuration-cache bootRun[...]
+
 bootRun {
 	mainClass = 'net.jmp.spring.boot.valkey.MainApplication'
 	jvmArgs = [ '-Xmx1g', '--enable-native-access=ALL-UNNAMED' ]
@@ -122,7 +125,6 @@ tasks.register("bootRunDev") {
 	doFirst {
 		tasks.bootRun.configure {
 			systemProperty("spring.profiles.active", "dev")
-			systemProperty("glide.flushDb", "false")
 		}
 	}
 
@@ -138,7 +140,6 @@ tasks.register("bootRunTest") {
 	doFirst {
 		tasks.bootRun.configure {
 			systemProperty("spring.profiles.active", "testing")
-			systemProperty("glide.flushDb", "true")
 		}
 	}
 
