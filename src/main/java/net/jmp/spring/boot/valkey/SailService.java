@@ -234,7 +234,7 @@ public class SailService {
             this.logger.trace(entryWith(sail));
         }
 
-        final SList list = sail.newList();
+        final SList list = sail.newList("Some name");
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
@@ -249,7 +249,7 @@ public class SailService {
             this.logger.trace(entryWith(sail));
         }
 
-        final SSet set = sail.newSet();
+        final SSet set = sail.newSet("Some name");
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
@@ -264,7 +264,7 @@ public class SailService {
             this.logger.trace(entryWith(sail));
         }
 
-        final SSortedSet sortedSet = sail.newSortedSet();
+        final SSortedSet sortedSet = sail.newSortedSet("Some name");
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());

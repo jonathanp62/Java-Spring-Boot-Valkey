@@ -28,6 +28,8 @@ package net.jmp.spring.boot.valkey.sail;
  * SOFTWARE.
  */
 
+import java.util.Optional;
+
 import net.jmp.spring.boot.valkey.ezglide.EZGlide;
 
 import static net.jmp.util.logging.LoggerUtils.*;
@@ -39,19 +41,61 @@ import org.slf4j.LoggerFactory;
 ///
 /// @version    0.5.0
 /// @since      0.5.0
-public final class SSortedSet {
+public final class SSortedSet extends SObject {
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-
-    /// The EZGlide instance.
-    private final EZGlide ezGlide;
 
     /// The constructor.
     ///
     /// @param  ezGlide net.jmp.spring.boot.valkey.ezglide.EZGlide
-    SSortedSet(final EZGlide ezGlide) {
-        super();
+    /// @param  name    java.lang.String
+    SSortedSet(final EZGlide ezGlide, final String name) {
+        super(ezGlide, name);
+    }
 
-        this.ezGlide = ezGlide;
+    /// Copy the sorted set at this key to a new target sorted set.
+    ///
+    /// @param  target  java.lang.String
+    /// @return         java.util.Optional<net.jmp.spring.boot.valkey.sail.SSortedSet>
+    @Override
+    public Optional<SSortedSet> copy(final String target) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target));
+        }
+
+        SSortedSet result = null;
+
+        if (super.copyObject(target)) {
+            result = new SSortedSet(this.ezGlide, target);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
+    }
+
+    /// Move the sorted set at this key to a new target sorted set.
+    ///
+    /// @param  target  java.lang.String
+    /// @return         java.util.Optional<net.jmp.spring.boot.valkey.sail.SSortedSet>
+    @Override
+    public Optional<SSortedSet> move(final String target) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target));
+        }
+
+        SSortedSet result = null;
+
+        if (super.moveObject(target)) {
+            result = new SSortedSet(this.ezGlide, target);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
     }
 }

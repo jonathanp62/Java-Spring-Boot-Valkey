@@ -28,6 +28,8 @@ package net.jmp.spring.boot.valkey.sail;
  * SOFTWARE.
  */
 
+import java.util.Optional;
+
 import net.jmp.spring.boot.valkey.ezglide.EZGlide;
 
 import static net.jmp.util.logging.LoggerUtils.*;
@@ -39,19 +41,61 @@ import org.slf4j.LoggerFactory;
 ///
 /// @version    0.5.0
 /// @since      0.5.0
-public final class SList {
+public final class SList extends SObject{
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-
-    /// The EZGlide instance.
-    private final EZGlide ezGlide;
 
     /// The constructor.
     ///
     /// @param  ezGlide net.jmp.spring.boot.valkey.ezglide.EZGlide
-    SList(final EZGlide ezGlide) {
-        super();
+    /// @param  name    java.lang.String
+    SList(final EZGlide ezGlide, final String name) {
+        super(ezGlide, name);
+    }
 
-        this.ezGlide = ezGlide;
+    /// Copy the list at this key to a new target list.
+    ///
+    /// @param  target  java.lang.String
+    /// @return         java.util.Optional<net.jmp.spring.boot.valkey.sail.SList>
+    @Override
+    public Optional<SList> copy(final String target) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target));
+        }
+
+        SList result = null;
+
+        if (super.copyObject(target)) {
+            result = new SList(this.ezGlide, target);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
+    }
+
+    /// Move the list at this key to a new target list.
+    ///
+    /// @param  target  java.lang.String
+    /// @return         java.util.Optional<net.jmp.spring.boot.valkey.sail.SList>
+    @Override
+    public Optional<SList> move(final String target) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target));
+        }
+
+        SList result = null;
+
+        if (super.moveObject(target)) {
+            result = new SList(this.ezGlide, target);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
     }
 }
