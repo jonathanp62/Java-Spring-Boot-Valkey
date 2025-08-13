@@ -28,6 +28,8 @@ package net.jmp.spring.boot.valkey;
  * SOFTWARE.
  */
 
+import java.util.Map;
+
 import net.jmp.spring.boot.valkey.sail.*;
 
 import static net.jmp.util.logging.LoggerUtils.*;
@@ -196,7 +198,28 @@ public class SailService {
             this.logger.trace(entryWith(sail));
         }
 
-        final SHash hash = sail.newHash();
+        final Map<String, String> map = Map.of(
+                "firstName", "Laura",
+                "middleName", "Anne",
+                "lastName", "Ashe"
+        );
+
+        final SHash hash = sail.newHash("Third");
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("HASH: {}", hash.set(map));
+            this.logger.info("HASH: {}", hash.keys());
+            this.logger.info("HASH: {}", hash.values());
+            this.logger.info("HASH: {}", hash.len());
+        }
+
+        hash.copy("CopiedHash").ifPresent(copiedHash -> {
+            this.logger.info("HASH: {}", copiedHash.getName());
+        });
+
+        hash.move("MovedHash").ifPresent(movedHash -> {
+            this.logger.info("HASH: {}", movedHash.getName());
+        });
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());

@@ -30,6 +30,7 @@ package net.jmp.spring.boot.valkey.sail;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import net.jmp.spring.boot.valkey.ezglide.EZGlide;
 
@@ -42,33 +43,28 @@ import org.slf4j.LoggerFactory;
 ///
 /// @version    0.5.0
 /// @since      0.5.0
-public final class SHash {
+public final class SHash extends SObject {
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-
-    /// The EZGlide instance.
-    private final EZGlide ezGlide;
 
     /// The constructor.
     ///
     /// @param  ezGlide net.jmp.spring.boot.valkey.ezglide.EZGlide
-    SHash(final EZGlide ezGlide) {
-        super();
-
-        this.ezGlide = ezGlide;
+    /// @param  name    java.lang.String
+    SHash(final EZGlide ezGlide, final String name) {
+        super(ezGlide, name);
     }
 
     /// Set a hash as the value associated with the key.
     ///
-    /// @param  key java.lang.String
     /// @param  map java.util.Map<java.lang.String, java.lang.String>
     /// @return     long
-    public long set(final String key, final Map<String, String> map) {
+    public long set(final Map<String, String> map) {
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(entryWith(key, map));
+            this.logger.trace(entryWith(map));
         }
 
-        final long result = this.ezGlide.hset(key, map);
+        final long result = this.ezGlide.hset(this.name, map);
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));
@@ -79,14 +75,13 @@ public final class SHash {
 
     /// Return a list of keys in the hash.
     ///
-    /// @param  key java.lang.String
-    /// @return     long
-    public List<String> keys(final String key) {
+    /// @return java.util.List<java.lang.String>
+    public List<String> keys() {
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(entryWith(key));
+            this.logger.trace(entry());
         }
 
-        final List<String> result = this.ezGlide.hkeys(key);
+        final List<String> result = this.ezGlide.hkeys(this.name);
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));
@@ -97,19 +92,81 @@ public final class SHash {
 
     /// Return a list of values in the hash.
     ///
-    /// @param  key java.lang.String
-    /// @return     long
-    public List<String> values(final String key) {
+    /// @return java.util.List<java.lang.String>
+    public List<String> values() {
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace(entryWith(key));
+            this.logger.trace(entry());
         }
 
-        final List<String> result = this.ezGlide.hvals(key);
+        final List<String> result = this.ezGlide.hvals(this.name);
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));
         }
 
         return result;
+    }
+
+    /// Return the number of entries in the hash.
+    ///
+    /// @return long
+    public long len() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final long result = this.ezGlide.hlen(this.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Copy the hash at this key to a new target hash.
+    ///
+    /// @param  target  java.lang.String
+    /// @return         java.util.Optional<net.jmp.spring.boot.valkey.sail.SHash>
+    @Override
+    public Optional<SHash> copy(final String target) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target));
+        }
+
+        SHash result = null;
+
+        if (super.copyObject(target)) {
+            result = new SHash(this.ezGlide, target);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
+    }
+
+    /// Move the hash at this key to a new target hash.
+    ///
+    /// @param  target  java.lang.String
+    /// @return         java.util.Optional<net.jmp.spring.boot.valkey.sail.SHash>
+    @Override
+    public Optional<SHash> move(final String target) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target));
+        }
+
+        SHash result = null;
+
+        if (super.moveObject(target)) {
+            result = new SHash(this.ezGlide, target);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return Optional.ofNullable(result);
     }
 }

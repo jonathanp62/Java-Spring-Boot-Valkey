@@ -85,9 +85,10 @@ public final class Sail implements AutoCloseable {
 
     /// Create a new hash instance.
     ///
-    /// @return net.jmp.spring.boot.valkey.sail.SHash
-    public SHash newHash() {
-        return new SHash(this.ezGlide);
+    /// @param  name    java.lang.String
+    /// @return         net.jmp.spring.boot.valkey.sail.SHash
+    public SHash newHash(final String name) {
+        return new SHash(this.ezGlide, name);
     }
 
     /// Create a new list instance.
