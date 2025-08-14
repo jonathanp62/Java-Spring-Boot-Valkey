@@ -110,7 +110,7 @@ public final class SHash extends SObject {
     /// Return the number of entries in the hash.
     ///
     /// @return long
-    public long len() {
+    public long size() {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entry());
         }

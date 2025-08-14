@@ -124,6 +124,7 @@ public class SailService {
 
         if (this.logger.isInfoEnabled()) {
             this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.get().orElse("No value found for key \"Demo\""));
+            this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.length());
             this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.rename("Renamed"));
             this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.getThenDelete().orElse("No value found for key \"Renamed\""));
             this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.exists());
@@ -210,7 +211,7 @@ public class SailService {
             this.logger.info("HASH: {}", hash.set(map));
             this.logger.info("HASH: {}", hash.keys());
             this.logger.info("HASH: {}", hash.values());
-            this.logger.info("HASH: {}", hash.len());
+            this.logger.info("HASH: {}", hash.size());
         }
 
         hash.copy("CopiedHash").ifPresent(copiedHash -> {

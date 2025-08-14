@@ -106,6 +106,23 @@ public final class SBucket extends SObject {
         return result;
     }
 
+    /// Return the length of the value.
+    ///
+    /// @return long
+    public long length() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final long result = this.ezGlide.strlen(this.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Get the value then delete the key.
     ///
     /// @return java.util.Optional<java.lang.String>

@@ -1,6 +1,7 @@
 package net.jmp.spring.boot.valkey.ezglide;
 
 /*
+ * (#)EZGlide.java  0.5.0   08/14/2025
  * (#)EZGlide.java  0.4.0   07/22/2025
  *
  * @author   Jonathan Parker
@@ -50,7 +51,7 @@ import org.slf4j.LoggerFactory;
 
 /// The EZ Glide class.
 ///
-/// @version    0.4.0
+/// @version    0.5.0
 /// @since      0.4.0
 public final class EZGlide {
     /// The logger.
@@ -312,6 +313,25 @@ public final class EZGlide {
         }
 
         final CompletableFuture<Long> future = this.glideClient.append(gs(key), gs(value));
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the length of the value.
+    ///
+    /// @param  key java.lang.String
+    /// @return     long
+    public long strlen(final String key) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.strlen(gs(key));
         final long result = future.join();
 
         if (this.logger.isTraceEnabled()) {
