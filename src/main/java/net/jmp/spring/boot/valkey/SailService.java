@@ -205,6 +205,11 @@ public class SailService {
                 "lastName", "Ashe"
         );
 
+        final Map<String, String> extraMappings = Map.of(
+                "firstHusband", "John",
+                "secondHusband", "Rob"
+        );
+
         final SHash hash = sail.newHash("Third");
 
         if (this.logger.isInfoEnabled()) {
@@ -223,6 +228,8 @@ public class SailService {
             this.logger.info("HASH: {}", hash.remove("nickName"));
         }
 
+        hash.putAll(extraMappings);
+
         hash.copy("CopiedHash").ifPresent(copiedHash -> {
             this.logger.info("HASH: {}", copiedHash.getName());
             copiedHash.clear();
@@ -230,6 +237,7 @@ public class SailService {
 
         hash.move("MovedHash").ifPresent(movedHash -> {
             this.logger.info("HASH: {}", movedHash.getName());
+            this.logger.info("HASH: {}", movedHash.toMap());
         });
         
         if (this.logger.isTraceEnabled()) {

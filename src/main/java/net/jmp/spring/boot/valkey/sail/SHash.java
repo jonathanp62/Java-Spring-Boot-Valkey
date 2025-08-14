@@ -184,6 +184,21 @@ public final class SHash extends SObject {
         return value;
     }
 
+    /// Add the mappings to the hash.
+    ///
+    /// @param  mappings    java.util.Map<java.lang.String, java.lang.String>
+    public void putAll(final Map<String, String> mappings) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(mappings));
+        }
+
+        this.set(mappings);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
     /// Remove the value associated with the entry key in the hash.
     /// If there is no hash at the key or no entry key in the hash,
     /// return null.
@@ -271,6 +286,23 @@ public final class SHash extends SObject {
 
         final List<String> values = this.values();
         final boolean result = values.contains(value);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the entire hash as a map.
+    ///
+    /// @return java.util.Map<java.lang.String, java.lang.String>
+    public Map<String, String> toMap() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final Map<String, String> result = this.ezGlide.hgetall(this.name);
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));
