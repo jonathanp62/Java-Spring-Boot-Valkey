@@ -212,16 +212,26 @@ public class SailService {
             this.logger.info("HASH: {}", hash.keys());
             this.logger.info("HASH: {}", hash.values());
             this.logger.info("HASH: {}", hash.size());
+            this.logger.info("HASH: {}", hash.valueLength("middleName"));
+            this.logger.info("HASH: {}", hash.get("middleName").orElse("No value found for key \"middleName\""));
+            this.logger.info("HASH: {}", hash.get("nickName").orElse("No value found for key \"nickName\""));
+            this.logger.info("HASH: {}", hash.containsKey("middleName"));
+            this.logger.info("HASH: {}", hash.containsKey("nickName"));
+            this.logger.info("HASH: {}", hash.isEmpty());
+            this.logger.info("HASH: {}", hash.containsValue("Laura"));
+            this.logger.info("HASH: {}", hash.put("nickName", "Bitch"));
+            this.logger.info("HASH: {}", hash.remove("nickName"));
         }
 
         hash.copy("CopiedHash").ifPresent(copiedHash -> {
             this.logger.info("HASH: {}", copiedHash.getName());
+            copiedHash.clear();
         });
 
         hash.move("MovedHash").ifPresent(movedHash -> {
             this.logger.info("HASH: {}", movedHash.getName());
         });
-
+        
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
         }

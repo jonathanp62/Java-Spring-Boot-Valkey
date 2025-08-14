@@ -124,6 +124,161 @@ public final class SHash extends SObject {
         return result;
     }
 
+    /// Return the string length of the value associated with the entry key in the hash.
+    /// If there is no hash at the key or no entry key in the hash, return 0.
+    ///
+    /// @param  entryKey    java.lang.String
+    /// @return             long
+    public long valueLength(final String entryKey) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(entryKey));
+        }
+
+        final long result = this.ezGlide.hstrlen(this.name, entryKey);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the value associated with the entry key in the hash.
+    /// If there is no hash at the key or no entry key in the hash,
+    /// return an empty optional.
+    ///
+    /// @param  entryKey    java.lang.String
+    /// @return             java.util.Optional<java.lang.String>
+    public Optional<String> get(final String entryKey) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(entryKey));
+        }
+
+        final Optional<String> result = this.ezGlide.hget(this.name, entryKey);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Set the value associated with the entry key in the hash.
+    ///
+    /// @param  entryKey    java.lang.String
+    /// @param  value       java.lang.String
+    /// @return             java.lang.String
+    public String put(final String entryKey, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(entryKey, value));
+        }
+
+        final Map<String, String> map = Map.of(entryKey, value);
+
+        this.ezGlide.hset(this.name, map);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(value));
+        }
+
+        return value;
+    }
+
+    /// Remove the value associated with the entry key in the hash.
+    /// If there is no hash at the key or no entry key in the hash,
+    /// return null.
+    ///
+    /// @param  entryKey    java.lang.String
+    /// @return             java.lang.String
+    public String remove(final String entryKey) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(entryKey));
+        }
+
+        String result = null;
+
+        final Optional<String> value = this.get(entryKey);
+        final long deleted = this.ezGlide.hdel(this.name, entryKey);
+
+        if (deleted == 1) {
+            result = value.orElse(null);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove all entries in the hash.
+    /// Note that the hash is deleted when the last entry is removed.
+    public void clear() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        this.delete();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Return true if the hash is empty.
+    ///
+    /// @return boolean
+    public boolean isEmpty() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final boolean result = this.size() == 0;
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return true if the hash contains the entry key.
+    ///
+    /// @param  entryKey    java.lang.String
+    /// @return             boolean
+    public boolean containsKey(final String entryKey) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(entryKey));
+        }
+
+        final boolean result = this.ezGlide.hexists(this.name, entryKey);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return true if the hash contains the value.
+    ///
+    /// @param  value   java.lang.String
+    /// @return         boolean
+    public boolean containsValue(final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(value));
+        }
+
+        final List<String> values = this.values();
+        final boolean result = values.contains(value);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the hash at this key to a new target hash.
     ///
     /// @param  target  java.lang.String
