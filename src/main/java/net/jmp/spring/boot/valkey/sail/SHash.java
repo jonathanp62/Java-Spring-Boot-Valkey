@@ -336,6 +336,23 @@ public final class SHash extends SObject {
         return result;
     }
 
+    /// Return a random entry key from the hash.
+    ///
+    /// @return java.util.Optional<java.lang.String>
+    public Optional<String> randomEntryKey() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final Optional<String> result = this.ezGlide.hrandfield(this.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the hash at this key to a new target hash.
     ///
     /// @param  target  java.lang.String

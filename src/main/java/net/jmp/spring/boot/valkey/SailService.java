@@ -227,6 +227,7 @@ public class SailService {
             this.logger.info("HASH: {}", hash.put("nickName", "Bitch"));
             this.logger.info("HASH: {}", hash.putIfAbsent("nickName", "Liar"));
             this.logger.info("HASH: {}", hash.remove("nickName"));
+            this.logger.info("HASH: {}", hash.randomEntryKey().orElse("No entry key found"));
         }
 
         hash.putAll(extraMappings);
