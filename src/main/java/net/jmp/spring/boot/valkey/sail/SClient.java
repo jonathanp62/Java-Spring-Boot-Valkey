@@ -28,6 +28,8 @@ package net.jmp.spring.boot.valkey.sail;
  * SOFTWARE.
  */
 
+import java.util.List;
+
 import net.jmp.spring.boot.valkey.ezglide.EZGlide;
 
 import static net.jmp.util.logging.LoggerUtils.*;
@@ -98,6 +100,42 @@ public final class SClient {
         }
 
         final String result = this.ezGlide.info();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the number of keys that exist.
+    ///
+    /// @param  keys    java.util.List<java.lang.String>
+    /// @return         long
+    public long keysExist(final List<String> keys) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final long result = this.ezGlide.exists(keys);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Delete the specified keys. The number of keys deleted is returned.
+    ///
+    /// @param  keys    java.util.List<java.lang.String>
+    /// @return         long
+    public long deleteKeys(final List<String> keys) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final long result = this.ezGlide.del(keys);
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));

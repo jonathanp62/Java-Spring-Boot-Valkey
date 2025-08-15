@@ -135,6 +135,7 @@ public class SailService {
         this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.delete());
 
         bucket.set("Sail 0.5.0");
+        bucket.setIfAbsent("Sail 0.5.1");
 
         bucket.copy("Copied").ifPresent(copiedBucket -> {
             this.logger.info("BUCKET: {}: {}", copiedBucket.getName(), copiedBucket.get().orElse("No value found for key \"Copied\""));

@@ -163,6 +163,26 @@ public final class SHash extends SObject {
         return result;
     }
 
+    /// Return the value associated with the entry key in the hash then delete the key.
+    /// If there is no hash at the key or no entry key in the hash,
+    /// return an empty optional. This performs the same operation as remove().
+    ///
+    /// @param  entryKey    java.lang.String
+    /// @return             java.util.Optional<java.lang.String>
+    public Optional<String> getThenDelete(final String entryKey) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(entryKey));
+        }
+
+        final String value = this.remove(entryKey);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(value));
+        }
+
+        return Optional.ofNullable(value);
+    }
+
     /// Set the value associated with the entry key in the hash.
     ///
     /// @param  entryKey    java.lang.String

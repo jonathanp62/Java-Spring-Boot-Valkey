@@ -71,6 +71,34 @@ public final class SBucket extends SObject {
         return result;
     }
 
+    /// Set the value if absent. True is returned if the value was set.
+    ///
+    /// @param  value   java.lang.String
+    /// @return         boolean
+    public boolean setIfAbsent(final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(value));
+        }
+
+        boolean result;
+
+        final Optional<String> currentValue = this.get();
+
+        if (currentValue.isPresent()) {
+            result = false;
+        } else {
+            this.ezGlide.set(this.name, value);
+
+            result = true;
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Get the value.
     ///
     /// @return java.util.Optional<java.lang.String>
