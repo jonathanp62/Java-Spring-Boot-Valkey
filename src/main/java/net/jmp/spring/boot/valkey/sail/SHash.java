@@ -184,6 +184,31 @@ public final class SHash extends SObject {
         return value;
     }
 
+    /// Set the value associated with the entry key in the hash if the entry key does not already exist.
+    ///
+    /// @param  entryKey    java.lang.String
+    /// @param  value       java.lang.String
+    /// @return             java.lang.String
+    public String putIfAbsent(final String entryKey, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(entryKey, value));
+        }
+
+        String result;
+
+        if (this.ezGlide.hsetnx(this.name, entryKey, value)) {
+            result = value;
+        } else {
+            result = this.get(entryKey).orElse(null);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Add the mappings to the hash.
     ///
     /// @param  mappings    java.util.Map<java.lang.String, java.lang.String>

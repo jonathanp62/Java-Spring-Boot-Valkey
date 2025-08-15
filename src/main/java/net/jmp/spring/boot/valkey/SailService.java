@@ -225,6 +225,7 @@ public class SailService {
             this.logger.info("HASH: {}", hash.isEmpty());
             this.logger.info("HASH: {}", hash.containsValue("Laura"));
             this.logger.info("HASH: {}", hash.put("nickName", "Bitch"));
+            this.logger.info("HASH: {}", hash.putIfAbsent("nickName", "Liar"));
             this.logger.info("HASH: {}", hash.remove("nickName"));
         }
 
