@@ -28,6 +28,7 @@ package net.jmp.spring.boot.valkey.sail;
  * SOFTWARE.
  */
 
+import java.util.List;
 import java.util.Optional;
 
 import net.jmp.spring.boot.valkey.ezglide.EZGlide;
@@ -51,6 +52,102 @@ public final class SList extends SObject{
     /// @param  name    java.lang.String
     SList(final EZGlide ezGlide, final String name) {
         super(ezGlide, name);
+    }
+
+    /// Add all the specified elements to the tail of list stored at key.
+    ///
+    /// @param  list    java.util.List<java.lang.String>
+    /// @return         boolean
+    public boolean addAll(final List<String> list) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final long oldCount = this.ezGlide.llen(this.name);
+        final long newCount = this.ezGlide.rpush(this.name, list);
+        final boolean result = oldCount != newCount;
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return true;
+    }
+
+    /// Return the element at index 'index' in the list stored at key.
+    /// The index is zero based.
+    ///
+    /// @param  index   long
+    /// @return         java.util.Optional<java.lang.String>
+    public Optional<String> get(final long index) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(index));
+        }
+
+        final Optional<String> result = this.ezGlide.lindex(this.name, index);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the number of elements in the list stored at key.
+    ///
+    /// @return long
+    public long size() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final long result = this.ezGlide.llen(this.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Insert the specified value before the specified pivot value in the list stored
+    /// at the key. The new length of the list is returned.
+    ///
+    /// @param  pivot   java.lang.String
+    /// @param  value   java.lang.String
+    /// @return         long
+    public long insertBefore(final String pivot, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(pivot, value));
+        }
+
+        final long result = this.ezGlide.linsert(this.name, EZGlide.ListInsertPosition.BEFORE, pivot, value);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Insert the specified value after the specified pivot value in the list stored
+    /// at the key. The new length of the list is returned.
+    ///
+    /// @param  pivot   java.lang.String
+    /// @param  value   java.lang.String
+    /// @return         long
+    public long insertAfter(final String pivot, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(pivot, value));
+        }
+
+        final long result = this.ezGlide.linsert(this.name, EZGlide.ListInsertPosition.AFTER, pivot, value);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
     }
 
     /// Copy the list at this key to a new target list.

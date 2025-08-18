@@ -168,6 +168,12 @@ public final class SString extends SObject {
         return Optional.ofNullable(result);
     }
 
+    /// Set the value at the specified offset.
+    /// The length of the new string is returned.
+    ///
+    /// @param  start   int
+    /// @param  value   java.lang.String
+    /// @return         long
     public long setRange(final int start, final String value) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(start, value));

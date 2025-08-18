@@ -28,6 +28,7 @@ package net.jmp.spring.boot.valkey;
  * SOFTWARE.
  */
 
+import java.util.List;
 import java.util.Map;
 
 import net.jmp.spring.boot.valkey.sail.*;
@@ -259,7 +260,17 @@ public class SailService {
             this.logger.trace(entryWith(sail));
         }
 
-        final SList list = sail.newList("Some name");
+        final List<String> composers = List.of("Bach", "Beethoven", "Brahms");
+        final SList list = sail.newList("Composers");
+
+        list.addAll(composers);
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("LIST: {}", list.size());
+            this.logger.info("LIST: {}", list.get(0).orElse("No value found for index 0"));
+            this.logger.info("LIST: {}", list.insertBefore("Bach", "Albeniz"));
+            this.logger.info("LIST: {}", list.insertAfter("Brahms", "Chopin"));
+        }
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
