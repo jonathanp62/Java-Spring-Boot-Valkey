@@ -270,7 +270,11 @@ public class SailService {
             this.logger.info("LIST: {}", list.get(0).orElse("No value found for index 0"));
             this.logger.info("LIST: {}", list.insertBefore("Bach", "Albeniz"));
             this.logger.info("LIST: {}", list.insertAfter("Brahms", "Chopin"));
+            this.logger.info("LIST: {}", list.indexOf("Beethoven"));
         }
+
+        list.addFirst("Adams");
+        list.addLast("Tchaikovsky");
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());

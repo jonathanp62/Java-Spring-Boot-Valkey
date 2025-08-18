@@ -150,6 +150,84 @@ public final class SList extends SObject{
         return result;
     }
 
+    /// Return the index of the first element of value in the list stored at key.
+    ///
+    /// @param  value   java.lang.String
+    /// @return         long
+    public long indexOf(final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(value));
+        }
+
+        final long result = this.ezGlide.lpos(this.name, value);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Add the specified value to the head of the list stored at key.
+    ///
+    /// @param  value   java.lang.String
+    public void addFirst(final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(value));
+        }
+
+        this.addFirst(List.of(value));
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Add all the specified values to the head of the list stored at key.
+    ///
+    /// @param  values  java.util.List<java.lang.String>
+    public void addFirst(final List<String> values) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(values));
+        }
+
+        this.ezGlide.lpush(this.name, values);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Add the specified value to the tail of the list stored at key.
+    ///
+    /// @param  value   java.lang.String
+    public void addLast(final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(value));
+        }
+
+        this.addLast(List.of(value));
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Add all the specified values to the tail of the list stored at key.
+    ///
+    /// @param  values  java.util.List<java.lang.String>
+    public void addLast(final List<String> values) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(values));
+        }
+
+        this.ezGlide.rpush(this.name, values);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
     /// Copy the list at this key to a new target list.
     ///
     /// @param  target  java.lang.String
