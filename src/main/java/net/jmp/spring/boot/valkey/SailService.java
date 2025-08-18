@@ -95,7 +95,7 @@ public class SailService {
         this.logger.info("Sail config: {}", sailConfig);
 
         try (final Sail sail = new Sail(sailConfig)) {
-            this.sBucket(sail);
+            this.sString(sail);
             this.sServer(sail);
             this.sClient(sail);
             this.sHash(sail);
@@ -109,43 +109,43 @@ public class SailService {
         }
     }
 
-    /// Demonstrate the SBucket class.
+    /// Demonstrate the SString class.
     ///
     /// @param  sail    net.jmp.spring.boot.valkey.sail.Sail
-    private void sBucket(final Sail sail) {
+    private void sString(final Sail sail) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(sail));
         }
 
-        final SBucket bucket = sail.newBucket("Demo");
+        final SString string = sail.newString("Demo");
 
-        bucket.set("Sail 0.5.0");
-        bucket.append(" - Coming soon");
+        string.set("Sail 0.5.0");
+        string.append(" - Coming soon");
 
         if (this.logger.isInfoEnabled()) {
-            this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.get().orElse("No value found for key \"Demo\""));
-            this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.length());
-            this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.rename("Renamed"));
-            this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.getThenDelete().orElse("No value found for key \"Renamed\""));
-            this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.exists());
+            this.logger.info("STRING: {}: {}", string.getName(), string.get().orElse("No value found for key \"Demo\""));
+            this.logger.info("STRING: {}: {}", string.getName(), string.length());
+            this.logger.info("STRING: {}: {}", string.getName(), string.rename("Renamed"));
+            this.logger.info("STRING: {}: {}", string.getName(), string.getThenDelete().orElse("No value found for key \"Renamed\""));
+            this.logger.info("STRING: {}: {}", string.getName(), string.exists());
         }
 
-        bucket.set("New value");
+        string.set("New value");
 
-        this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.delete());
+        this.logger.info("STRING: {}: {}", string.getName(), string.delete());
 
-        bucket.set("Sail 0.5.0");
-        bucket.setIfAbsent("Sail 0.5.1");
+        string.set("Sail 0.5.0");
+        string.setIfAbsent("Sail 0.5.1");
 
-        this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.substr(0, 3));
-        this.logger.info("BUCKET: {}: {}", bucket.getName(), bucket.setRange(5, "into the future"));
+        this.logger.info("STRING: {}: {}", string.getName(), string.substr(0, 3));
+        this.logger.info("STRING: {}: {}", string.getName(), string.setRange(5, "into the future"));
 
-        bucket.copy("Copied").ifPresent(copiedBucket -> {
-            this.logger.info("BUCKET: {}: {}", copiedBucket.getName(), copiedBucket.get().orElse("No value found for key \"Copied\""));
+        string.copy("Copied").ifPresent(copiedString -> {
+            this.logger.info("STRING: {}: {}", copiedString.getName(), copiedString.get().orElse("No value found for key \"Copied\""));
         });
 
-        bucket.move("Moved").ifPresent(movedBucket -> {
-            this.logger.info("BUCKET: {}: {}", movedBucket.getName(), movedBucket.get().orElse("No value found for key \"Moved\""));
+        string.move("Moved").ifPresent(movedString -> {
+            this.logger.info("STRING: {}: {}", movedString.getName(), movedString.get().orElse("No value found for key \"Moved\""));
         });
 
         if (this.logger.isTraceEnabled()) {

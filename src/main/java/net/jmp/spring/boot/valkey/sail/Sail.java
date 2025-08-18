@@ -61,12 +61,12 @@ public final class Sail implements AutoCloseable {
         this.ezGlide = new EZGlide(this.glideClient);
     }
 
-    /// Create a new bucket instance.
+    /// Create a new string instance.
     ///
     /// @param  name    java.lang.String
-    /// @return         net.jmp.spring.boot.valkey.sail.SBucket
-    public SBucket newBucket(final String name) {
-        return new SBucket(this.ezGlide, name);
+    /// @return         net.jmp.spring.boot.valkey.sail.SString
+    public SString newString(final String name) {
+        return new SString(this.ezGlide, name);
     }
 
     /// Create a new server instance.

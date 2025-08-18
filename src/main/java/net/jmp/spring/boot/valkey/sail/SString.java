@@ -1,7 +1,7 @@
 package net.jmp.spring.boot.valkey.sail;
 
 /*
- * (#)SBucket.java  0.5.0   08/04/2025
+ * (#)SString.java  0.5.0   08/04/2025
  *
  * @author   Jonathan Parker
  *
@@ -37,11 +37,11 @@ import static net.jmp.util.logging.LoggerUtils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/// The Sail bucket class.
+/// The Sail string class.
 ///
 /// @version    0.5.0
 /// @since      0.5.0
-public final class SBucket extends SObject {
+public final class SString extends SObject {
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -49,7 +49,7 @@ public final class SBucket extends SObject {
     ///
     /// @param  ezGlide net.jmp.spring.boot.valkey.ezglide.EZGlide
     /// @param  name    java.lang.String
-    SBucket(final EZGlide ezGlide, final String name) {
+    SString(final EZGlide ezGlide, final String name) {
         super(ezGlide, name);
     }
 
@@ -220,20 +220,20 @@ public final class SBucket extends SObject {
         return result;
     }
 
-    /// Copy the bucket at this key to a new target bucket.
+    /// Copy the string at this key to a new target string.
     ///
     /// @param  target  java.lang.String
-    /// @return         java.util.Optional<net.jmp.spring.boot.valkey.sail.SBucket>
+    /// @return         java.util.Optional<net.jmp.spring.boot.valkey.sail.SString>
     @Override
-    public Optional<SBucket> copy(final String target) {
+    public Optional<SString> copy(final String target) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(target));
         }
 
-        SBucket result = null;
+        SString result = null;
 
         if (super.copyObject(target)) {
-            result = new SBucket(this.ezGlide, target);
+            result = new SString(this.ezGlide, target);
         }
 
         if (this.logger.isTraceEnabled()) {
@@ -243,20 +243,20 @@ public final class SBucket extends SObject {
         return Optional.ofNullable(result);
     }
 
-    /// Move the bucket at this key to a new target bucket.
+    /// Move the string at this key to a new target string.
     ///
     /// @param  target  java.lang.String
-    /// @return         java.util.Optional<net.jmp.spring.boot.valkey.sail.SBucket>
+    /// @return         java.util.Optional<net.jmp.spring.boot.valkey.sail.SString>
     @Override
-    public Optional<SBucket> move(final String target) {
+    public Optional<SString> move(final String target) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(target));
         }
 
-        SBucket result = null;
+        SString result = null;
 
         if (super.moveObject(target)) {
-            result = new SBucket(this.ezGlide, target);
+            result = new SString(this.ezGlide, target);
         }
 
         if (this.logger.isTraceEnabled()) {
