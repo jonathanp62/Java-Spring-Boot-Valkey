@@ -341,6 +341,50 @@ public final class EZGlide {
         return result;
     }
 
+    /// Return the substring of the value.
+    ///
+    /// @param  key java.lang.String
+    /// @param  start int
+    /// @param  end   int
+    /// @return       java.lang.String
+    public String getrange(final String key, final int start, final int end) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, start, end));
+        }
+
+        final CompletableFuture<GlideString> future = this.glideClient.getrange(gs(key), start, end);
+        final GlideString value = future.join();
+        final String result = value.getString();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Set the value at the specified offset.
+    /// The length of the new string is returned.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  offset  int
+    /// @param  value   java.lang.String
+    /// @return         long
+    public long setrange(final String key, final int offset, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, offset, value));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.setrange(gs(key), offset, gs(value));
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the value in the source key to the target key.
     ///
     /// @param  source  java.lang.String

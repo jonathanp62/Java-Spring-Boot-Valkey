@@ -168,6 +168,58 @@ public final class SBucket extends SObject {
         return Optional.ofNullable(result);
     }
 
+    public long setRange(final int start, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(start, value));
+        }
+
+        final long result = this.ezGlide.setrange(this.name, start, value);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the substring of the value.
+    ///
+    /// @param  start int
+    /// @param  end   int
+    /// @return       java.lang.String
+    public String getRange(final int start, final int end) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(start, end));
+        }
+
+        final String result = this.ezGlide.getrange(this.name, start, end);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the substring of the value.
+    ///
+    /// @param  start int
+    /// @param  end   int
+    /// @return       java.lang.String
+    public String substr(final int start, final int end) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(start, end));
+        }
+
+        final String result = this.getRange(start, end);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the bucket at this key to a new target bucket.
     ///
     /// @param  target  java.lang.String
