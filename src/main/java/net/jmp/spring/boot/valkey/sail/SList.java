@@ -228,6 +228,72 @@ public final class SList extends SObject{
         }
     }
 
+    /// Remove and return the first element of the list stored at key.
+    ///
+    /// @return java.lang.String
+    public String removeFirst() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final Optional<String> value = this.ezGlide.lpop(this.name);
+        final String result = value.orElse(null);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove and return the last element of the list stored at key.
+    ///
+    /// @return java.lang.String
+    public String removeLast() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final Optional<String> value = this.ezGlide.rpop(this.name);
+        final String result = value.orElse(null);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove the first occurrence of the element equal to value from the list stored at key.
+    ///
+    /// @param  value   java.lang.String
+    /// @return         boolean
+    public boolean remove(final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(value));
+        }
+
+        final long result = this.ezGlide.lrem(this.name, 1, value);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result > 0));
+        }
+
+        return result > 0;
+    }
+
+    public void trimToRange(final long start, final long end) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(start, end));
+        }
+
+        this.ezGlide.ltrim(this.name, start, end);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
     /// Copy the list at this key to a new target list.
     ///
     /// @param  target  java.lang.String

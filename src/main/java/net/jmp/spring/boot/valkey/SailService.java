@@ -263,6 +263,8 @@ public class SailService {
         final List<String> composers = List.of("Bach", "Beethoven", "Brahms");
         final SList list = sail.newList("Composers");
 
+        this.logger.info("LIST: {}", list.exists());    // Will be false until an element is added
+
         list.addAll(composers);
 
         if (this.logger.isInfoEnabled()) {
@@ -275,6 +277,14 @@ public class SailService {
 
         list.addFirst("Adams");
         list.addLast("Tchaikovsky");
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("LIST: {}", list.removeFirst());
+            this.logger.info("LIST: {}", list.removeLast());
+            this.logger.info("LIST: {}", list.remove("Brahms"));
+        }
+
+        list.trimToRange(1, 2);
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
