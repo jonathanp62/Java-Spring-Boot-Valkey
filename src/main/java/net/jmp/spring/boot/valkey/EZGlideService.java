@@ -320,8 +320,8 @@ public class EZGlideService {
             this.logger.info("RPopLPush: {}", ezGlide.rpoplpush("One", "Two").orElse("One not found or is empty"));
             this.logger.info("LMPop: {}", ezGlide.lmpop(List.of("Fruits"), EZGlide.ListPopDirection.LEFT, 2));
             this.logger.info("LMPop: {}", ezGlide.lmpop(List.of("Fruits"), EZGlide.ListPopDirection.RIGHT));
-            this.logger.info("LPushNX: {}", ezGlide.lpushnx("Fruits", "Blueberries"));
-            this.logger.info("RPushNX: {}", ezGlide.rpushnx("Fruits", "Cherries"));
+            this.logger.info("LPushX: {}", ezGlide.lpushx("Fruits", "Blueberries"));
+            this.logger.info("RPushX: {}", ezGlide.rpushx("Fruits", "Cherries"));
             this.logger.info("LTrim: {}", ezGlide.ltrim("Fruits", 0, 1));
         }
 

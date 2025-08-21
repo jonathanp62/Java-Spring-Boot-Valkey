@@ -1408,12 +1408,12 @@ public final class EZGlide {
     /// @param  key   java.lang.String
     /// @param  value java.lang.String
     /// @return       long
-    public long lpushnx(final String key, final String value) {
+    public long lpushx(final String key, final String value) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(key, value));
         }
 
-        final long result = this.lpushnx(key, List.of(value));
+        final long result = this.lpushx(key, List.of(value));
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));
@@ -1427,7 +1427,7 @@ public final class EZGlide {
     /// @param  key     java.lang.String
     /// @param  values  java.util.List<java.lang.String>
     /// @return         long
-    public long lpushnx(final String key, final List<String> values) {
+    public long lpushx(final String key, final List<String> values) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(key, values));
         }
@@ -1453,12 +1453,12 @@ public final class EZGlide {
     /// @param  key   java.lang.String
     /// @param  value java.lang.String
     /// @return       long
-    public long rpushnx(final String key, final String value) {
+    public long rpushx(final String key, final String value) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(key, value));
         }
 
-        final long result = this.rpushnx(key, List.of(value));
+        final long result = this.rpushx(key, List.of(value));
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));
@@ -1472,7 +1472,7 @@ public final class EZGlide {
     /// @param  key     java.lang.String
     /// @param  values  java.util.List<java.lang.String>
     /// @return         long
-    public long rpushnx(final String key, final List<String> values) {
+    public long rpushx(final String key, final List<String> values) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(key, values));
         }

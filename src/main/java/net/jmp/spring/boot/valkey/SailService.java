@@ -263,7 +263,11 @@ public class SailService {
         final List<String> composers = List.of("Bach", "Beethoven", "Brahms");
         final SList list = sail.newList("Composers");
 
-        this.logger.info("LIST: {}", list.exists());    // Will be false until an element is added
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("LIST: {}", list.exists());    // Will be false until an element is added
+            this.logger.info("LIST: {}", list.addFirstIfExists("Beethoven"));
+            this.logger.info("LIST: {}", list.addLastIfExists("Zemlinsky"));
+        }
 
         list.addAll(composers);
 

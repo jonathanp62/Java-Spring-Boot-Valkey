@@ -242,6 +242,45 @@ public final class SList extends SObject{
         }
     }
 
+    /// Add the specified value to the head of the list stored at key
+    ///
+    ///
+    /// @param  value   java.lang.String
+    /// @return         boolean
+    public boolean addFirstIfExists(final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(value));
+        }
+
+        final boolean result = this.addFirstIfExists(List.of(value));
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Add all the specified values to the head of the list stored at key
+    /// if the list already contains at least one element.
+    ///
+    /// @param  values  java.util.List<java.lang.String>
+    /// @return         boolean
+    public boolean addFirstIfExists(final List<String> values) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(values));
+        }
+
+        final long count = this.ezGlide.lpushx(this.name, values);
+        final boolean result = count > 0;
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Add the specified value to the tail of the list stored at key.
     ///
     /// @param  value   java.lang.String
@@ -270,6 +309,45 @@ public final class SList extends SObject{
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
         }
+    }
+
+    /// Add the specified value to the tail of the list stored at key
+    /// if the list already contains at least one element.
+    ///
+    /// @param  value   java.lang.String
+    /// @return         boolean
+    public boolean addLastIfExists(final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(value));
+        }
+
+        final boolean result = this.addLastIfExists(List.of(value));
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Add all the specified values to the tail of the list stored at key
+    /// if the list already contains at least one element.
+    ///
+    /// @param  values  java.util.List<java.lang.String>
+    /// @return         boolean
+    public boolean addLastIfExists(final List<String> values) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(values));
+        }
+
+        final long count = this.ezGlide.rpushx(this.name, values);
+        final boolean result = count > 0;
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
     }
 
     /// Remove and return the first element of the list stored at key.
