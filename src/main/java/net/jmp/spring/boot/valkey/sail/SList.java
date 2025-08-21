@@ -93,6 +93,50 @@ public final class SList extends SObject{
         return result;
     }
 
+    /// Set the element at index 'index' in the list stored at key.
+    /// The previous element at that position is returned.
+    /// The index is zero based.
+    ///
+    /// @param  index   long
+    /// @param  value   java.lang.String
+    /// @return         java.lang.String
+    public String set(final long index, final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(index, value));
+        }
+
+        final String oldValue = this.get(index).orElse(null);
+
+        this.ezGlide.lset(this.name, index, value);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(oldValue));
+        }
+
+        return oldValue;
+    }
+
+    /// Return a list of elements from index 'fromIndex' to index 'toIndex' in the list stored at key.
+    /// The index is zero based and the range includes the element at 'fromIndex' and includes the element at 'toIndex'.
+    /// This behavior differs from the Java List interface as the toIndex is exclusive.
+    ///
+    /// @param  fromIndex   long
+    /// @param  toIndex     long
+    /// @return             java.util.List<java.lang.String>
+    public List<String> subList(final int fromIndex, final int toIndex) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(fromIndex, toIndex));
+        }
+
+        final List<String> result = this.ezGlide.lrange(this.name, fromIndex, toIndex);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Return the number of elements in the list stored at key.
     ///
     /// @return long
@@ -282,6 +326,11 @@ public final class SList extends SObject{
         return result > 0;
     }
 
+    /// Trim an existing list so that it will contain only the specified range of elements specified.
+    /// The start and end are inclusive and are zero-based.
+    ///
+    /// @param  start long
+    /// @param  end   long
     public void trimToRange(final long start, final long end) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(start, end));

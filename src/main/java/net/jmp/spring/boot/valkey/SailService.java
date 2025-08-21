@@ -279,12 +279,15 @@ public class SailService {
         list.addLast("Tchaikovsky");
 
         if (this.logger.isInfoEnabled()) {
+            this.logger.info("LIST: {}", list.subList(2, 5));
             this.logger.info("LIST: {}", list.removeFirst());
             this.logger.info("LIST: {}", list.removeLast());
             this.logger.info("LIST: {}", list.remove("Brahms"));
         }
 
         list.trimToRange(1, 2);
+
+        this.logger.info("LIST: {}", list.set(1, "Brahms"));
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
