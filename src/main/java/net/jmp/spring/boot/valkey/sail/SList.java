@@ -421,6 +421,96 @@ public final class SList extends SObject{
         }
     }
 
+    /// Move the first element of the list stored at key to the head of the list stored at the target key.
+    ///
+    /// @param  target  net.jmp.spring.boot.valkey.sail.SList
+    /// @return         java.util.Optional<java.lang.String>
+    public Optional<String> moveFirstToListFirst(final SList target) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target));
+        }
+
+        final Optional<String> result = this.ezGlide.lmove(
+                this.name,
+                target.name,
+                EZGlide.ListMoveDirection.LEFT,
+                EZGlide.ListMoveDirection.LEFT
+        );
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Move the first element of the list stored at key to the tail of the list stored at the target key.
+    ///
+    /// @param  target  net.jmp.spring.boot.valkey.sail.SList
+    /// @return         java.util.Optional<java.lang.String>
+    public Optional<String> moveFirstToListLast(final SList target) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target));
+        }
+
+        final Optional<String> result = this.ezGlide.lmove(
+                this.name,
+                target.name,
+                EZGlide.ListMoveDirection.LEFT,
+                EZGlide.ListMoveDirection.RIGHT
+        );
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Move the last element of the list stored at key to the head of the list stored at the target key.
+    ///
+    /// @param  target  net.jmp.spring.boot.valkey.sail.SList
+    /// @return         java.util.Optional<java.lang.String>
+    public Optional<String> moveLastToListFirst(final SList target) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target));
+        }
+
+        final Optional<String> result = this.ezGlide.rpoplpush(
+                this.name,
+                target.name
+        );
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Move the last element of the list stored at key to the tail of the list stored at the target key.
+    ///
+    /// @param  target  net.jmp.spring.boot.valkey.sail.SList
+    /// @return         java.util.Optional<java.lang.String>
+    public Optional<String> moveLastToListLast(final SList target) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target));
+        }
+
+        final Optional<String> result = this.ezGlide.lmove(
+                this.name,
+                target.name,
+                EZGlide.ListMoveDirection.RIGHT,
+                EZGlide.ListMoveDirection.RIGHT
+        );
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the list at this key to a new target list.
     ///
     /// @param  target  java.lang.String
