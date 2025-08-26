@@ -291,7 +291,25 @@ public class SailService {
 
         list.trimToRange(1, 2);
 
-        this.logger.info("LIST: {}", list.set(1, "Brahms"));
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("LIST: {}", list.set(1, "Brahms"));
+        }
+
+        final SList source = sail.newList("Source");
+        final SList target = sail.newList("Target");
+
+        source.addAll(List.of("A", "B", "C", "D", "E"));
+
+        if (this.logger.isInfoEnabled()) {
+            // A moves to target (A)
+            this.logger.info("LIST: {}", source.moveFirstToListFirst(target).orElse("No value found for key \"Source\""));
+            // B moves to target (A B)
+            this.logger.info("LIST: {}", source.moveFirstToListLast(target).orElse("No value found for key \"Source\""));
+            // E moves to target (E A B)
+            this.logger.info("LIST: {}", source.moveLastToListFirst(target).orElse("No value found for key \"Source\""));
+            // D moves to target (E A B D)
+            this.logger.info("LIST: {}", source.moveLastToListLast(target).orElse("No value found for key \"Source\""));
+        }
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
