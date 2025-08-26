@@ -301,6 +301,10 @@ public class SailService {
         source.addAll(List.of("A", "B", "C", "D", "E"));
 
         if (this.logger.isInfoEnabled()) {
+            this.logger.info("LIST: {}", list.contains("Brahms"));
+            this.logger.info("LIST: {}", list.contains("Bach"));
+            this.logger.info("LIST: {}", source.containsAll(List.of("A", "B", "C", "D", "E")));
+
             // A moves to target (A)
             this.logger.info("LIST: {}", source.moveFirstToListFirst(target).orElse("No value found for key \"Source\""));
             // B moves to target (A B)
@@ -309,6 +313,13 @@ public class SailService {
             this.logger.info("LIST: {}", source.moveLastToListFirst(target).orElse("No value found for key \"Source\""));
             // D moves to target (E A B D)
             this.logger.info("LIST: {}", source.moveLastToListLast(target).orElse("No value found for key \"Source\""));
+            this.logger.info("LIST: {}", source.containsAll(List.of("A", "B", "C", "D", "E")));
+        }
+
+        final SList reversed = target.reversed("Reversed");
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("LIST: {}", reversed.retainAll(List.of("D", "E")));
         }
 
         if (this.logger.isTraceEnabled()) {

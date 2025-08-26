@@ -28,6 +28,8 @@ package net.jmp.spring.boot.valkey.sail;
  * SOFTWARE.
  */
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -402,6 +404,145 @@ public final class SList extends SObject{
         }
 
         return result > 0;
+    }
+
+    /// Remove all elements from the list stored at key.
+    public void clear() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        this.ezGlide.del(this.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Check if the list stored at key contains the specified element.
+    ///
+    /// @param  element  java.lang.String
+    /// @return          boolean
+    public boolean contains(final String element) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(element));
+        }
+
+        boolean result = false;
+
+        final long size = this.size();
+
+        for (long i = 0; i < size; i++) {
+            final Optional<String> value = this.get(i);
+
+            if (value.isPresent() && value.get().equals(element)) {
+                result = true;
+                break;
+            }
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Check if the list stored at key contains all the specified elements.
+    ///
+    /// @param  elements  java.util.Collection<java.lang.String>
+    /// @return           boolean
+    public boolean containsAll(final Collection<String> elements) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(elements));
+        }
+
+        boolean result = true;
+
+        for (final String element : elements) {
+            if (!this.contains(element)) {
+                result = false;
+                break;
+            }
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Reverse the list stored at key and store it in the target key.
+    ///
+    /// @param  targetName  java.lang.String
+    /// @return             net.jmp.spring.boot.valkey.sail.SList
+    public SList reversed(final String targetName) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(targetName));
+        }
+
+        final SList result = new SList(this.ezGlide, targetName);
+        final long size = this.size();
+
+        for (long i = size - 1; i >= 0; i--) {
+            this.get(i).ifPresent(result::addLast);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Retain only the specified elements in the list stored at key.
+    ///
+    /// @param  elements  java.util.Collection<java.lang.String>
+    /// @return           boolean
+    public boolean retainAll(final Collection<String> elements) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(elements));
+        }
+
+        boolean result = false;
+
+        if (!this.isEmpty()) {
+            final long size = this.size();
+            final List<String> list = new ArrayList<>((int) size);
+
+            for (long i = 0; i < size; i++) {
+                this.get(i).ifPresent(list::add);
+            }
+
+            result = list.retainAll(elements);
+
+            this.clear();
+            this.addAll(list);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return true if the list is empty.
+    ///
+    /// @return boolean
+    public boolean isEmpty() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final boolean result = this.ezGlide.llen(this.name) == 0;
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
     }
 
     /// Trim an existing list so that it will contain only the specified range of elements specified.
