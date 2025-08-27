@@ -219,6 +219,42 @@ public final class SSet extends SObject{
         return result;
     }
 
+    /// Get and remove a random member from the set stored at key.
+    ///
+    /// @return java.util.Optional<java.lang.String>
+    public Optional<String> getAndRemoveRandomMember() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final Set<String> set = this.getAndRemoveRandomMembers(1);
+        final Optional<String> result = set.isEmpty() ? Optional.empty() : Optional.of(set.iterator().next());
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Get and remove the specified number of random members from the set stored at key.
+    ///
+    /// @param  count  int
+    /// @return        java.util.Set<java.lang.String>
+    public Set<String> getAndRemoveRandomMembers(final int count) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(count));
+        }
+
+        final Set<String> result = this.ezGlide.spop(this.name, count);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the set at this key to a new target set.
     ///
     /// @param  target  java.lang.String

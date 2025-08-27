@@ -347,6 +347,8 @@ public class SailService {
             this.logger.info("SET: {}", set.containsAll(List.of("Red", "Orange", "Yellow")));
             this.logger.info("SET: {}", set.members());
             this.logger.info("SET: {}", set.remove("Green"));
+            this.logger.info("SET: {}", set.getAndRemoveRandomMember().orElse("No value found"));
+            this.logger.info("SET: {}", set.getAndRemoveRandomMembers(3));
         }
 
         if (this.logger.isTraceEnabled()) {
