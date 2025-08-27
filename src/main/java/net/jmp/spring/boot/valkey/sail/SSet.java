@@ -28,7 +28,7 @@ package net.jmp.spring.boot.valkey.sail;
  * SOFTWARE.
  */
 
-import java.util.Optional;
+import java.util.*;
 
 import net.jmp.spring.boot.valkey.ezglide.EZGlide;
 
@@ -51,6 +51,172 @@ public final class SSet extends SObject{
     /// @param  name    java.lang.String
     SSet(final EZGlide ezGlide, final String name) {
         super(ezGlide, name);
+    }
+
+    /// Add the specified member to the set stored at key.
+    ///
+    /// @param  value   java.lang.String
+    /// @return         boolean
+    public boolean add(final String value) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(value));
+        }
+
+        final long count = this.ezGlide.sadd(this.name, value);
+        final boolean result = count > 0;
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Add all the specified members to the set stored at key.
+    ///
+    /// @param  values  java.util.Collection<java.lang.String>
+    /// @return         boolean
+    public boolean addAll(final Collection<String> values) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(values));
+        }
+
+        final long size = this.ezGlide.scard(this.name);
+        final List<String> list = new ArrayList<>(values);
+        final long count = this.ezGlide.sadd(this.name, list);
+        final boolean result = count != size;
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Get the number of members in the set stored at key.
+    ///
+    /// @return int
+    public int size() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final long result = this.ezGlide.scard(this.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return (int) result;
+    }
+
+    /// Check if the set stored at key is empty.
+    ///
+    /// @return boolean
+    public boolean isEmpty() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final boolean result = this.ezGlide.scard(this.name) == 0;
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove all elements from the set stored at key.
+    public void clear() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        this.ezGlide.del(this.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Check if the set stored at key contains the specified element.
+    ///
+    /// @param  element  java.lang.String
+    /// @return          boolean
+    public boolean contains(final String element) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(element));
+        }
+
+        final boolean result = this.ezGlide.sismember(this.name, element);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Check if the set stored at key contains all the specified elements.
+    ///
+    /// @param  elements  java.util.Collection<java.lang.String>
+    /// @return           boolean
+    public boolean containsAll(final Collection<String> elements) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(elements));
+        }
+
+        boolean result = true;
+
+        for (final String element : elements) {
+            if (!this.contains(element)) {
+                result = false;
+                break;
+            }
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Get all the members in the set stored at key.
+    ///
+    /// @return java.util.Set<java.lang.String>
+    public Set<String> members() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final Set<String> result = this.ezGlide.smembers(this.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove the specified element from the set stored at key.
+    ///
+    /// @param  element  java.lang.String
+    /// @return          boolean
+    public boolean remove(final String element) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(element));
+        }
+
+        final long count = this.ezGlide.srem(this.name, element);
+        final boolean result = count > 0;
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
     }
 
     /// Copy the set at this key to a new target set.

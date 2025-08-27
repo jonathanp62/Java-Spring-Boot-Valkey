@@ -335,7 +335,19 @@ public class SailService {
             this.logger.trace(entryWith(sail));
         }
 
-        final SSet set = sail.newSet("Some name");
+        final SSet set = sail.newSet("Colors");
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("SET: {}", set.isEmpty());
+            this.logger.info("SET: {}", set.add("Red"));
+            this.logger.info("SET: {}", set.addAll(List.of("Orange", "Yellow")));
+            this.logger.info("SET: {}", set.size());
+            this.logger.info("SET: {}", set.isEmpty());
+            this.logger.info("SET: {}", set.contains("Green"));
+            this.logger.info("SET: {}", set.containsAll(List.of("Red", "Orange", "Yellow")));
+            this.logger.info("SET: {}", set.members());
+            this.logger.info("SET: {}", set.remove("Green"));
+        }
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
