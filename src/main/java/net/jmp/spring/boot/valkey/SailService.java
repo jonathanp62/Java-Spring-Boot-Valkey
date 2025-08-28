@@ -351,6 +351,17 @@ public class SailService {
             this.logger.info("SET: {}", set.getAndRemoveRandomMembers(3));
         }
 
+        final SSet colors = sail.newSet("Colors");
+        final SSet green = sail.newSet("Green");
+
+        colors.addAll(List.of("Red", "Orange", "Yellow"));
+        colors.add("Green");
+        colors.addAll(List.of("Blue", "Indigo", "Violet"));
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("SET: {}", set.moveToSet("Green", green));
+        }
+
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
         }

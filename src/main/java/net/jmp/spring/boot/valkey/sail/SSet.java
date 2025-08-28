@@ -255,6 +255,25 @@ public final class SSet extends SObject{
         return result;
     }
 
+    /// Move the specified element from this set to the target set.
+    ///
+    /// @param  element  java.lang.String
+    /// @param  target   net.jmp.spring.boot.valkey.sail.SSet
+    /// @return          boolean
+    public boolean moveToSet(final String element, final SSet target) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(element, target));
+        }
+
+        final boolean result = this.ezGlide.smove(this.name, target.name, element);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the set at this key to a new target set.
     ///
     /// @param  target  java.lang.String
