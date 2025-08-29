@@ -255,6 +255,41 @@ public final class SSet extends SObject{
         return result;
     }
 
+    /// Get a random member from the set stored at key.
+    ///
+    /// @return java.util.Optional<java.lang.String>
+    public Optional<String> getRandomMember() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final Optional<String> result = this.ezGlide.srandmember(this.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Get the specified number of random members from the set stored at key.
+    ///
+    /// @param  count  int
+    /// @return        java.util.Set<java.lang.String>
+    public Set<String> getRandomMembers(final int count) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(count));
+        }
+
+        final Set<String> result = this.ezGlide.srandmember(this.name, count);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Move the specified element from this set to the target set.
     ///
     /// @param  element  java.lang.String

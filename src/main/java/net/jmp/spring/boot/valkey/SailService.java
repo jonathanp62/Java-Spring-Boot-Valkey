@@ -360,6 +360,8 @@ public class SailService {
 
         if (this.logger.isInfoEnabled()) {
             this.logger.info("SET: {}", set.moveToSet("Green", green));
+            this.logger.info("SET: {}", set.getRandomMembers(2));
+            this.logger.info("SET: {}", set.getRandomMember().orElse("No value found"));
         }
 
         if (this.logger.isTraceEnabled()) {
