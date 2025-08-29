@@ -380,8 +380,15 @@ public class SailService {
             this.logger.trace(entryWith(sail));
         }
 
-        final SSet set1 = sail.newSet("Fruits");
-        final SSet set2 = sail.newSet("Vegetables");
+        final SSet fruits = sail.newSet("Fruits");
+        final SSet vegetables = sail.newSet("Vegetables");
+
+        fruits.addAll(List.of("Apple", "Banana", "Cherry", "Date", "Tomato"));
+        vegetables.addAll(List.of("Asparagus", "Broccoli", "Carrot", "Tomato", "Turnip"));
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("SET: {}", fruits.diff(vegetables));   // Apple, Banana, Cherry, Date
+        }
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
