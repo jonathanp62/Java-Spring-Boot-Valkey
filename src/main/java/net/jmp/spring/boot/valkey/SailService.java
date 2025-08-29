@@ -386,8 +386,11 @@ public class SailService {
         fruits.addAll(List.of("Apple", "Banana", "Cherry", "Date", "Tomato"));
         vegetables.addAll(List.of("Asparagus", "Broccoli", "Carrot", "Tomato", "Turnip"));
 
+        final SSet diff = sail.newSet("Diff-Fruits&Vegetables");
+
         if (this.logger.isInfoEnabled()) {
             this.logger.info("SET: {}", fruits.diff(vegetables));   // Apple, Banana, Cherry, Date
+            this.logger.info("SET: {}", fruits.diffAndStore(diff, vegetables));
         }
 
         if (this.logger.isTraceEnabled()) {

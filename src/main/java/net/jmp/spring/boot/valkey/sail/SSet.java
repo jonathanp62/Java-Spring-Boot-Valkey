@@ -400,6 +400,47 @@ public final class SSet extends SObject{
         return result;
     }
 
+    /// Store the difference between the set at this key and the sets at otherKeys in the target key.
+    /// The number of elements stored in the target key is returned.
+    ///
+    /// @param  target      net.jmp.spring.boot.valkey.sail.SSet
+    /// @param  otherSSets  java.util.List<net.jmp.spring.boot.valkey.sail.SSet>
+    /// @return             long
+    public long diffAndStore(final SSet target, final List<SSet> otherSSets) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target, otherSSets));
+        }
+
+        final List<String> otherKeys = otherSSets.stream().map(SSet::getName).toList();
+        final long result = this.ezGlide.sdiffstore(this.name, target.name, otherKeys);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Store the difference between the set at this key and the set at otherKey in the target key.
+    /// The number of elements stored in the target key is returned.
+    ///
+    /// @param  target      net.jmp.spring.boot.valkey.sail.SSet
+    /// @param  otherSSet   net.jmp.spring.boot.valkey.sail.SSet
+    /// @return             long
+    public long diffAndStore(final SSet target, SSet otherSSet) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target, otherSSet));
+        }
+
+        final long result = this.ezGlide.sdiffstore(this.name, target.name, otherSSet.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the set at this key to a new target set.
     ///
     /// @param  target  java.lang.String
