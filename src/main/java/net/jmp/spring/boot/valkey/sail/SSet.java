@@ -441,6 +441,43 @@ public final class SSet extends SObject{
         return result;
     }
 
+    /// Return the intersection of the set at this key and the sets at otherKeys.
+    ///
+    /// @param  otherSSets  java.util.List<net.jmp.spring.boot.valkey.sail.SSet>
+    /// @return             java.util.Set<java.lang.String>
+    public Set<String> intersect(final List<SSet> otherSSets) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(otherSSets));
+        }
+
+        final List<String> otherKeys = otherSSets.stream().map(SSet::getName).toList();
+        final Set<String> result = this.ezGlide.sinter(this.name, otherKeys);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the intersection of the set at this key and the set at otherKey.
+    ///
+    /// @param  otherSSet  net.jmp.spring.boot.valkey.sail.SSet
+    /// @return            java.util.Set<java.lang.String>
+    public Set<String> intersect(final SSet otherSSet) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(otherSSet));
+        }
+
+        final Set<String> result = this.ezGlide.sinter(this.name, otherSSet.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the set at this key to a new target set.
     ///
     /// @param  target  java.lang.String

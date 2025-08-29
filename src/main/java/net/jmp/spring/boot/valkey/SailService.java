@@ -389,8 +389,9 @@ public class SailService {
         final SSet diff = sail.newSet("Diff-Fruits&Vegetables");
 
         if (this.logger.isInfoEnabled()) {
-            this.logger.info("SET: {}", fruits.diff(vegetables));   // Apple, Banana, Cherry, Date
+            this.logger.info("SET: {}", fruits.diff(vegetables));       // Apple, Banana, Cherry, Date
             this.logger.info("SET: {}", fruits.diffAndStore(diff, vegetables));
+            this.logger.info("SET: {}", fruits.intersect(vegetables));  // Tomato
         }
 
         if (this.logger.isTraceEnabled()) {

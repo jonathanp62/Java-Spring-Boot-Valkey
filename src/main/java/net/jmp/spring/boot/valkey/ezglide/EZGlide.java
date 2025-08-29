@@ -1947,6 +1947,60 @@ public final class EZGlide {
         return result;
     }
 
+    /// Return the intersection of the sets at key and otherKeys.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  otherKeys   java.util.List<java.lang.String>
+    /// @return             java.util.Set<java.lang.String>
+    public Set<String> sinter(final String key, final List<String> otherKeys) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, otherKeys));
+        }
+
+        final Set<String> result = new HashSet<>();
+        final GlideString[] keysArray = new GlideString[otherKeys.size() + 1];
+
+        keysArray[0] = gs(key);
+
+        for (int i = 0; i < otherKeys.size(); i++) {
+            keysArray[i + 1] = gs(otherKeys.get(i));
+        }
+
+        final CompletableFuture<Set<GlideString>> future = this.glideClient.sinter(keysArray);
+        final Set<GlideString> set = future.join();
+
+        if (!set.isEmpty()) {
+            for (final GlideString element : set) {
+                result.add(element.toString());
+            }
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the intersection of the sets at key and otherKey.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  otherKey    java.lang.String
+    /// @return             java.util.Set<java.lang.String>
+    public Set<String> sinter(final String key, final String otherKey) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, otherKey));
+        }
+
+        final Set<String> result = this.sinter(key, List.of(otherKey));
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Add the specified member with the specified score to the sorted set stored at key.
     /// The number of elements added to the sorted set, not including elements already existing for which the
     /// score was updated, is returned.
