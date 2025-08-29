@@ -102,6 +102,7 @@ public class SailService {
             this.sHash(sail);
             this.sList(sail);
             this.sSet(sail);
+            this.sSetIntersections(sail);
             this.sSortedSet(sail);
         }
 
@@ -362,7 +363,25 @@ public class SailService {
             this.logger.info("SET: {}", set.moveToSet("Green", green));
             this.logger.info("SET: {}", set.getRandomMembers(2));
             this.logger.info("SET: {}", set.getRandomMember().orElse("No value found"));
+            this.logger.info("SET: {}", set.retainAll(List.of("Red", "Orange", "Yellow")));
+            this.logger.info("SET: {}", set.removeAll(List.of("Red", "Orange")));
         }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Demonstrate the SSet intersections.
+    ///
+    /// @param  sail    net.jmp.spring.boot.valkey.sail.Sail
+    private void sSetIntersections(final Sail sail) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(sail));
+        }
+
+        final SSet set1 = sail.newSet("Fruits");
+        final SSet set2 = sail.newSet("Vegetables");
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());

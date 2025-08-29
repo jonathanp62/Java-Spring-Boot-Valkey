@@ -309,6 +309,60 @@ public final class SSet extends SObject{
         return result;
     }
 
+    /// Retain only the specified elements in the set stored at key.
+    ///
+    /// @param  elements  java.util.Collection<java.lang.String>
+    /// @return           boolean
+    public boolean retainAll(final Collection<String> elements) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(elements));
+        }
+
+        boolean result = false;
+
+        if (!this.isEmpty()) {
+            final Set<String> set = this.ezGlide.smembers(this.name);
+
+            result = set.retainAll(elements);
+
+            this.clear();
+            this.addAll(set);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove all the specified elements from the set stored at key.
+    ///
+    /// @param  elements  java.util.Collection<java.lang.String>
+    /// @return           boolean
+    public boolean removeAll(final Collection<String> elements) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(elements));
+        }
+
+        boolean result = false;
+
+        if (!this.isEmpty()) {
+            final Set<String> set = this.ezGlide.smembers(this.name);
+
+            result = set.removeAll(elements);
+
+            this.clear();
+            this.addAll(set);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the set at this key to a new target set.
     ///
     /// @param  target  java.lang.String
