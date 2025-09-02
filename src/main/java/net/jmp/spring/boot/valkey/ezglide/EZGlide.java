@@ -2001,6 +2001,93 @@ public final class EZGlide {
         return result;
     }
 
+    /// Return the number of elements in the intersection of the sets at key and otherKeys.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  otherKeys   java.util.List<java.lang.String>
+    /// @param  limit       java.lang.Long
+    /// @return             long
+    public long sintercard(final String key, final List<String> otherKeys, final Long limit) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, otherKeys));
+        }
+
+        final GlideString[] keysArray = new GlideString[otherKeys.size() + 1];
+
+        keysArray[0] = gs(key);
+
+        for (int i = 0; i < otherKeys.size(); i++) {
+            keysArray[i + 1] = gs(otherKeys.get(i));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.sintercard(keysArray, limit);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the number of elements in the intersection of the sets at key and otherKeys.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  otherKeys   java.util.List<java.lang.String>
+    /// @return             long
+    public long sintercard(final String key, final List<String> otherKeys) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, otherKeys));
+        }
+
+        final long result = this.sintercard(key, otherKeys, 0L);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the number of elements in the intersection of the sets at key and otherKey.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  otherKey    java.lang.String
+    /// @param  limit       java.lang.Long
+    /// @return             long
+    public long sintercard(final String key, final String otherKey, final Long limit) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, otherKey));
+        }
+
+        final long result = this.sintercard(key, List.of(otherKey), limit);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the number of elements in the intersection of the sets at key and otherKey.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  otherKey    java.lang.String
+    /// @return             long
+    public long sintercard(final String key, final String otherKey) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, otherKey));
+        }
+
+        final long result = this.sintercard(key, otherKey, 0L);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Add the specified member with the specified score to the sorted set stored at key.
     /// The number of elements added to the sorted set, not including elements already existing for which the
     /// score was updated, is returned.

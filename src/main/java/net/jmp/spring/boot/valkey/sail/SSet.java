@@ -478,6 +478,82 @@ public final class SSet extends SObject{
         return result;
     }
 
+    /// Return the number of elements in the intersection of the set at this key and the sets at otherKeys.
+    ///
+    /// @param  otherSSets  java.util.List<net.jmp.spring.boot.valkey.sail.SSet>
+    /// @param  limit       long
+    /// @return             long
+    public long intersectSize(final List<SSet> otherSSets, final long limit) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(otherSSets, limit));
+        }
+
+        final List<String> otherKeys = otherSSets.stream().map(SSet::getName).toList();
+        final long result = this.ezGlide.sintercard(this.name, otherKeys, limit);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the number of elements in the intersection of the set at this key and the sets at otherKeys.
+    ///
+    /// @param  otherSSets  java.util.List<net.jmp.spring.boot.valkey.sail.SSet>
+    /// @return             long
+    public long intersectSize(final List<SSet> otherSSets) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(otherSSets));
+        }
+
+        final List<String> otherKeys = otherSSets.stream().map(SSet::getName).toList();
+        final long result = this.ezGlide.sintercard(this.name, otherKeys);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the number of elements in the intersection of the set at this key and the set at otherKey.
+    ///
+    /// @param  otherSSet  net.jmp.spring.boot.valkey.sail.SSet
+    /// @param  limit      long
+    /// @return            long
+    public long intersectSize(final SSet otherSSet, final long limit) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(otherSSet, limit));
+        }
+
+        final long result = this.ezGlide.sintercard(this.name, otherSSet.name, limit);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the number of elements in the intersection of the set at this key and the set at otherKey.
+    ///
+    /// @param  otherSSet  net.jmp.spring.boot.valkey.sail.SSet
+    /// @return            long
+    public long intersectSize(final SSet otherSSet) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(otherSSet));
+        }
+
+        final long result = this.ezGlide.sintercard(this.name, otherSSet.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the set at this key to a new target set.
     ///
     /// @param  target  java.lang.String
