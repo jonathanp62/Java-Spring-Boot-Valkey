@@ -2001,6 +2001,57 @@ public final class EZGlide {
         return result;
     }
 
+    /// Store the intersection of the set at key and the sets at otherKeys in the target key.
+    /// The number of elements stored in the target key is returned.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  target      java.lang.String
+    /// @param  otherKeys   java.util.List<java.lang.String>
+    /// @return             long
+    public long sinterstore(final String key, final String target, final List<String> otherKeys) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, target, otherKeys));
+        }
+
+        final GlideString[] keysArray = new GlideString[otherKeys.size() + 1];
+
+        keysArray[0] = gs(key);
+
+        for (int i = 0; i < otherKeys.size(); i++) {
+            keysArray[i + 1] = gs(otherKeys.get(i));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.sinterstore(gs(target), keysArray);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Store the intersection of the set at key and the set at otherKey in the target key.
+    /// The number of elements stored in the target key is returned.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  target      java.lang.String
+    /// @param  otherKey    java.lang.String
+    /// @return             long
+    public long sinterstore(final String key, final String target, final String otherKey) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, target, otherKey));
+        }
+
+        final long result = this.sinterstore(key, target, List.of(otherKey));
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Return the number of elements in the intersection of the sets at key and otherKeys.
     ///
     /// @param  key         java.lang.String

@@ -387,12 +387,14 @@ public class SailService {
         vegetables.addAll(List.of("Asparagus", "Broccoli", "Carrot", "Tomato", "Turnip"));
 
         final SSet diff = sail.newSet("Diff-Fruits&Vegetables");
+        final SSet intersection = sail.newSet("Intersection-Fruits&Vegetables");
 
         if (this.logger.isInfoEnabled()) {
             this.logger.info("SET: {}", fruits.diff(vegetables));       // Apple, Banana, Cherry, Date
             this.logger.info("SET: {}", fruits.diffAndStore(diff, vegetables));
             this.logger.info("SET: {}", fruits.intersect(vegetables));  // Tomato
             this.logger.info("SET: {}", fruits.intersectSize(vegetables));
+            this.logger.info("SET: {}", fruits.intersectAndStore(intersection, vegetables));
         }
 
         if (this.logger.isTraceEnabled()) {
