@@ -413,7 +413,28 @@ public class SailService {
             this.logger.trace(entryWith(sail));
         }
 
-        final SSortedSet sortedSet = sail.newSortedSet("Some name");
+        final SSortedSet sortedSet = sail.newSortedSet("Scored-Letters");
+
+        /* A sorted set is a collection of unique strings that maintain order by each string's associated score */
+
+        final Map<String, Double> map = Map.of(
+                "ZZZ", 1.0,
+                "YYY", 2.0,
+                "XXX", 3.0,
+                "CCC", 24.0,
+                "BBB", 25.0,
+                "AAA", 26.0
+        );
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("SORTEDSET: {}", sortedSet.addAll(map));
+            this.logger.info("SORTEDSET: {}", sortedSet.add("WWW", 4.0));
+            this.logger.info("SORTEDSET: {}", sortedSet.size());
+            this.logger.info("SORTEDSET: {}", sortedSet.score("CCC"));
+            this.logger.info("SORTEDSET: {}", sortedSet.rank("CCC"));
+            this.logger.info("SORTEDSET: {}", sortedSet.reversedRank("CCC"));
+            this.logger.info("SORTEDSET: {}", sortedSet.count(1.0, 3.0));
+        }
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());

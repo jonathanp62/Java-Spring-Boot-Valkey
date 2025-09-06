@@ -2374,7 +2374,7 @@ public final class EZGlide {
         return result;
     }
 
-    /// Return the number of members in the sorted set stored at key with a score between the given values.
+    /// Return the number of members in the sorted set stored at key with a score between the given values, inclusively.
     ///
     /// @param  key         java.lang.String
     /// @param  lowerBound  double
