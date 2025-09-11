@@ -186,6 +186,140 @@ public final class SSortedSet extends SObject {
         return result;
     }
 
+    /// Increment the score of member in the sorted set stored at key by increment.
+    /// The new score of member is returned.
+    ///
+    /// @param  member       java.lang.String
+    /// @param  increment   double
+    /// @return             double
+    public double incrementScoreBy(final String member, final double increment) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(member, increment));
+        }
+
+        final double result = this.ezGlide.zincrby(this.name, increment, member);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the specified range of elements by index in a sorted set stored at key.
+    ///
+    /// @param  start   long
+    /// @param  end     long
+    /// @return         java.util.List
+    public List<String> rangeByIndices(final long start, final long end) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(start, end));
+        }
+
+        final List<String> result = this.ezGlide.zrange(this.name, start, end);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the specified range of elements by score in a sorted set stored at key.
+    ///
+    /// @param  start   double
+    /// @param  end     double
+    /// @return         java.util.List
+    public List<String> rangeByScores(final double start, final double end) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(start, end));
+        }
+
+        final List<String> result = this.ezGlide.zrange(this.name, start, end);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+
+    }
+
+    /// Return the specified range of elements by index in a sorted set stored at key in reverse order.
+    ///
+    /// @param  start   long
+    /// @param  end     long
+    /// @return         java.util.List
+    public List<String> reversedRangeByIndices(final long start, final long end) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(start, end));
+        }
+
+        final List<String> result = this.ezGlide.zrevrange(this.name, start, end);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the specified range of elements by score in a sorted set stored at key in reverse order.
+    ///
+    /// @param  start   double
+    /// @param  end     double
+    /// @return         java.util.List
+    public List<String> reversedRangeByScores(final double start, final double end) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(start, end));
+        }
+
+        final List<String> result = this.ezGlide.zrevrange(this.name, start, end);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove and return the minimum or maximum element by score from a sorted set stored at key.
+    ///
+    /// @param  filter  net.jmp.spring.boot.valkey.ezglide.EZGlide.PopScoreFilter
+    /// @return         java.util.Map<java.lang.String, java.lang.Object>
+    public Map<String, Object> pop(final EZGlide.PopScoreFilter filter) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(filter));
+        }
+
+        final Map<String, Object> result = this.ezGlide.zmpop(this.name, filter);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove and return the minimum or maximum elements by score from a sorted set stored at key.
+    ///
+    /// @param  filter  net.jmp.spring.boot.valkey.ezglide.EZGlide.PopScoreFilter
+    /// @param  count   long
+    /// @return         java.util.Map<java.lang.String, java.lang.Object>
+    public Map<String, Object> pop(final EZGlide.PopScoreFilter filter, final long count) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(filter, count));
+        }
+
+        final Map<String, Object> result = this.ezGlide.zmpop(this.name, filter, count);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the sorted set at this key to a new target sorted set.
     ///
     /// @param  target  java.lang.String

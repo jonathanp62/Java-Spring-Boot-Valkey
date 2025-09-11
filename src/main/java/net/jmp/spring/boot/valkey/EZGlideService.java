@@ -394,7 +394,7 @@ public class EZGlideService {
             this.logger.info("ZRank: {}", ezGlide.zrank("My-Sorted-Set", "CCC"));
             this.logger.info("ZRevRank: {}", ezGlide.zrevrank("My-Sorted-Set", "CCC"));
             this.logger.info("ZCount: {}", ezGlide.zcount("My-Sorted-Set", 1.0, 3.0));
-            this.logger.info("ZIncBy: {}", ezGlide.zincby("My-Sorted-Set", 0.1, "CCC"));
+            this.logger.info("ZIncrBy: {}", ezGlide.zincrby("My-Sorted-Set", 0.1, "CCC"));
             this.logger.info("ZRange: {}", ezGlide.zrange("My-Sorted-Set", 0, 26));
             this.logger.info("ZRevRange: {}", ezGlide.zrevrange("My-Sorted-Set", 0, 26));
             this.logger.info("ZRange: {}", ezGlide.zrange("My-Sorted-Set", 2.0, 25.0));

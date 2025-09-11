@@ -31,6 +31,8 @@ package net.jmp.spring.boot.valkey;
 import java.util.List;
 import java.util.Map;
 
+import net.jmp.spring.boot.valkey.ezglide.EZGlide;
+
 import net.jmp.spring.boot.valkey.sail.*;
 
 import static net.jmp.util.logging.LoggerUtils.*;
@@ -434,6 +436,13 @@ public class SailService {
             this.logger.info("SORTEDSET: {}", sortedSet.rank("CCC"));
             this.logger.info("SORTEDSET: {}", sortedSet.reversedRank("CCC"));
             this.logger.info("SORTEDSET: {}", sortedSet.count(1.0, 3.0));
+            this.logger.info("SORTEDSET: {}", sortedSet.incrementScoreBy("CCC", 0.1));
+            this.logger.info("SORTEDSET: {}", sortedSet.rangeByIndices(0, 6));
+            this.logger.info("SORTEDSET: {}", sortedSet.rangeByScores(0, 26));
+            this.logger.info("SORTEDSET: {}", sortedSet.reversedRangeByIndices(0, 6));
+            this.logger.info("SORTEDSET: {}", sortedSet.reversedRangeByScores(0, 26));
+            this.logger.info("SORTEDSET: {}", sortedSet.pop(EZGlide.PopScoreFilter.MIN));
+            this.logger.info("SORTEDSET: {}", sortedSet.pop(EZGlide.PopScoreFilter.MAX, 2));
         }
 
         if (this.logger.isTraceEnabled()) {

@@ -2404,7 +2404,7 @@ public final class EZGlide {
     /// @param  increment   double
     /// @param  value       java.lang.String
     /// @return             double
-    public double zincby(final String key, final double increment, final String value) {
+    public double zincrby(final String key, final double increment, final String value) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(key, increment, value));
         }
@@ -2579,6 +2579,42 @@ public final class EZGlide {
         final CompletableFuture<Map<GlideString, Object>> future = this.glideClient.zmpop(
                 new GlideString[] { gs(key) },
                 scoreFilter
+        );
+
+        final Map<GlideString, Object> map = future.join();
+        final Map<String, Object> result = HashMap.newHashMap(map.size());
+
+        for (final Map.Entry<GlideString, Object> entry : map.entrySet()) {
+            result.put(entry.getKey().getString(), entry.getValue());
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Pop the minimum or maximum elements from the sorted set stored at key.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  filter  net.jmp.spring.boot.valkey.ezglide.EZGlide.PopScoreFilter
+    /// @param  count   long
+    /// @return         java.util.Map<java.lang.String, java.lang.Object>
+    public Map<String, Object> zmpop(final String key, final PopScoreFilter filter, final long count) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, filter, count));
+        }
+
+        final ScoreFilter scoreFilter = switch (filter) {
+            case MIN -> ScoreFilter.MIN;
+            case MAX -> ScoreFilter.MAX;
+        };
+
+        final CompletableFuture<Map<GlideString, Object>> future = this.glideClient.zmpop(
+                new GlideString[] { gs(key) },
+                scoreFilter,
+                count
         );
 
         final Map<GlideString, Object> map = future.join();
