@@ -2521,6 +2521,41 @@ public final class EZGlide {
         return result;
     }
 
+    /// Return the specified range of elements by lexicographical order in a sorted set stored at key.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  min     java.lang.String
+    /// @param  max     java.lang.String
+    /// @return         java.util.List
+    public List<String> zrange(final String key, final String min, final String max) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, min, max));
+        }
+
+        final List<String> result = new ArrayList<>();
+
+        final RangeOptions.LexBoundary minimum = new RangeOptions.LexBoundary(min, true);
+        final RangeOptions.LexBoundary maximum = new RangeOptions.LexBoundary(max, true);
+        final RangeOptions.RangeByLex range = new RangeOptions.RangeByLex(minimum, maximum);
+
+        final CompletableFuture<GlideString[]> future = this.glideClient.zrange(
+                gs(key),
+                range
+        );
+
+        final GlideString[] strings = future.join();
+
+        for (final GlideString element : strings) {
+            result.add(element.getString());
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Return the specified range of elements by index, reversed, in a sorted set stored at key.
     ///
     /// @param  key     java.lang.String

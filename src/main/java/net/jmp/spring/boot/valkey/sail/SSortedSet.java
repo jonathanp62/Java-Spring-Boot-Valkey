@@ -242,7 +242,25 @@ public final class SSortedSet extends SObject {
         }
 
         return result;
+    }
 
+    /// Return the specified range of elements by lexicographical order in a sorted set stored at key.
+    ///
+    /// @param  min     java.lang.String
+    /// @param  max     java.lang.String
+    /// @return         java.util.List
+    public List<String> rangeByLex(final String min, final String max) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(min, max));
+        }
+
+        final List<String> result = this.ezGlide.zrange(this.name, min, max);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
     }
 
     /// Return the specified range of elements by index in a sorted set stored at key in reverse order.

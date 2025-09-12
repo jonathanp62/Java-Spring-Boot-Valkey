@@ -475,6 +475,7 @@ public class SailService {
         if (this.logger.isInfoEnabled()) {
             this.logger.info("SORTEDSET: {}", unscoredLetters.addAll(unscoredMap));
             this.logger.info("SORTEDSET: {}", unscoredLetters.countLexically("B", "YYY"));
+            this.logger.info("SORTEDSET: {}", unscoredLetters.rangeByLex("B", "YYY"));
         }
 
         if (this.logger.isTraceEnabled()) {
