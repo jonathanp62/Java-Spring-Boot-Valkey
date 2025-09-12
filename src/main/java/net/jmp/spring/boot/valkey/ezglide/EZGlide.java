@@ -2635,7 +2635,7 @@ public final class EZGlide {
     ///
     /// @param  key java.lang.String
     /// @return     java.util.Map<java.lang.String, java.lang.Object>
-    public Map<String, Object> zmpopmax(final String key) {
+    public Map<String, Object> zpopmax(final String key) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(key));
         }
@@ -2649,16 +2649,54 @@ public final class EZGlide {
         return result;
     }
 
+    /// Pop the maximum elements from the sorted set stored at key.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  count   long
+    /// @return         java.util.Map<java.lang.String, java.lang.Object>
+    public Map<String, Object> zpopmax(final String key, final long count) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        final Map<String, Object> result = this.zmpop(key, PopScoreFilter.MAX, count);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Pop the minimum element from the sorted set stored at key.
     ///
     /// @param  key java.lang.String
     /// @return     java.util.Map<java.lang.String, java.lang.Object>
-    public Map<String, Object> zmpopmin(final String key) {
+    public Map<String, Object> zpopmin(final String key) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(key));
         }
 
         final Map<String, Object> result = this.zmpop(key, PopScoreFilter.MIN);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Pop the minimum elements from the sorted set stored at key.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  count   long
+    /// @return         java.util.Map<java.lang.String, java.lang.Object>
+    public Map<String, Object> zpopmin(final String key, final long count) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key));
+        }
+
+        final Map<String, Object> result = this.zmpop(key, PopScoreFilter.MIN, count);
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));
@@ -2690,6 +2728,82 @@ public final class EZGlide {
         }
 
         return Optional.ofNullable(result);
+    }
+
+    /// Return random elements from the sorted set stored at key.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  count   long
+    /// @return         java.util.List<java.lang.String>
+    public List<String> zrandmember(final String key, final long count) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, count));
+        }
+
+        List<String> result = new ArrayList<>();
+
+        final CompletableFuture<GlideString[]> future = this.glideClient.zrandmemberWithCount(gs(key), count);
+        final GlideString[] array = future.join();
+
+        for (final GlideString value : array) {
+            result.add(value.getString());
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return random elements from the sorted set stored at key.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  count   long
+    /// @return         java.util.Map<java.lang.String, java.lang.Double>
+    public Map<String, Double> zrandmemberwithscores(final String key, final long count) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, count));
+        }
+
+        final Map<String, Double> result = new HashMap<>();
+        final CompletableFuture<Object[][]> future = this.glideClient.zrandmemberWithCountWithScores(gs(key), count);
+        final Object[][] array = future.join();
+
+        for (final Object[] value : array) {
+            final GlideString gs = (GlideString) value[0];
+
+            result.put(gs.getString(), (Double) value[1]);
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Count the number of members in a sorted set lexically within the specified range.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  min     java.lang.String
+    /// @param  max     java.lang.String
+    /// @return         long
+    public long zlexcount(final String key, final String min, final String max) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, min, max));
+        }
+
+        final RangeOptions.LexBoundary minimum = new RangeOptions.LexBoundary(min, true);
+        final RangeOptions.LexBoundary maximum = new RangeOptions.LexBoundary(max, true);
+        final CompletableFuture<Long> future = this.glideClient.zlexcount(gs(key), minimum, maximum);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
     }
 
     /// Remove the specified member from the sorted set stored at key.

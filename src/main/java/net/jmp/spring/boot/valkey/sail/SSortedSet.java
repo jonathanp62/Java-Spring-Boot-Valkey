@@ -320,6 +320,148 @@ public final class SSortedSet extends SObject {
         return result;
     }
 
+    /// Remove and return the maximum element from a sorted set stored at key.
+    ///
+    /// @return java.util.Map<java.lang.String, java.lang.Object>
+    public Map<String, Object> popMax() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final Map<String, Object> result = this.ezGlide.zpopmax(this.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove and return the maximum elements from a sorted set stored at key.
+    ///
+    /// @param  count   long
+    /// @return         java.util.Map<java.lang.String, java.lang.Object>
+    public Map<String, Object> popMax(final long count) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(count));
+        }
+
+        final Map<String, Object> result = this.ezGlide.zpopmax(this.name, count);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove and return the minimum element from a sorted set stored at key.
+    ///
+    /// @return java.util.Map<java.lang.String, java.lang.Object>
+    public Map<String, Object> popMin() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final Map<String, Object> result = this.ezGlide.zpopmin(this.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove and return the minimum elements from a sorted set stored at key.
+    ///
+    /// @param  count   long
+    /// @return         java.util.Map<java.lang.String, java.lang.Object>
+    public Map<String, Object> popMin(final long count) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(count));
+        }
+
+        final Map<String, Object> result = this.ezGlide.zpopmin(this.name, count);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return a random element from a sorted set stored at key.
+    ///
+    /// @return java.util.Optional<java.lang.String>
+    public Optional<String> randomMember() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        final Optional<String> result = this.ezGlide.zrandmember(this.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return random elements from a sorted set stored at key.
+    ///
+    /// @param  count   long
+    /// @return         java.util.List<java.lang.String>
+    public List<String> randomMembers(final long count) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(count));
+        }
+
+        final List<String> result = this.ezGlide.zrandmember(this.name, count);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return random elements from the sorted set stored at key.
+    ///
+    /// @param  count   long
+    /// @return         java.util.Map<java.lang.String, java.lang.Double>
+    public Map<String, Double> randomMembersWithScores(final long count) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(count));
+        }
+
+        final Map<String, Double> result = this.ezGlide.zrandmemberwithscores(this.name, count);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Count the number of members in a sorted set lexically within the specified range.
+    ///
+    /// @param  min     java.lang.String
+    /// @param  max     java.lang.String
+    /// @return         long
+    public long countLexically(final String min, final String max) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(min, max));
+        }
+
+        final long result = this.ezGlide.zlexcount(this.name, min, max);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the sorted set at this key to a new target sorted set.
     ///
     /// @param  target  java.lang.String

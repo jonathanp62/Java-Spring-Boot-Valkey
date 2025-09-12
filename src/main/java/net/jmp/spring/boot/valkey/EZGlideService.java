@@ -400,9 +400,10 @@ public class EZGlideService {
             this.logger.info("ZRange: {}", ezGlide.zrange("My-Sorted-Set", 2.0, 25.0));
             this.logger.info("ZRevRange: {}", ezGlide.zrevrange("My-Sorted-Set", 2.0, 25.0));
             this.logger.info("ZMPop: {}", ezGlide.zmpop("My-Sorted-Set", EZGlide.PopScoreFilter.MIN));
-            this.logger.info("ZMPopMin: {}", ezGlide.zmpopmin("My-Sorted-Set"));
-            this.logger.info("ZMPopMax: {}", ezGlide.zmpopmax("My-Sorted-Set"));
+            this.logger.info("ZPopMin: {}", ezGlide.zpopmin("My-Sorted-Set"));
+            this.logger.info("ZPopMax: {}", ezGlide.zpopmax("My-Sorted-Set"));
             this.logger.info("ZRandMember: {}", ezGlide.zrandmember("My-Sorted-Set").orElse("My-Sorted-Set not found or is empty"));
+            this.logger.info("ZRandMemberWithScores: {}", ezGlide.zrandmemberwithscores("My-Sorted-Set", 3));
             this.logger.info("ZMRem: {}", ezGlide.zrem("My-Sorted-Set", "XXX"));
             this.logger.info("ZMRem: {}", ezGlide.zrem("My-Sorted-Set", List.of("BBB", "CCC")));
             this.logger.info("ZAdd: {}", ezGlide.zadd("My-Sorted-Set", map));

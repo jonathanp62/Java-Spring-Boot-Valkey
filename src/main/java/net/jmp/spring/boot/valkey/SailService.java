@@ -443,6 +443,35 @@ public class SailService {
             this.logger.info("SORTEDSET: {}", sortedSet.reversedRangeByScores(0, 26));
             this.logger.info("SORTEDSET: {}", sortedSet.pop(EZGlide.PopScoreFilter.MIN));
             this.logger.info("SORTEDSET: {}", sortedSet.pop(EZGlide.PopScoreFilter.MAX, 2));
+            this.logger.info("SORTEDSET: {}", sortedSet.add("ZZZ", 1.0));
+            this.logger.info("SORTEDSET: {}", sortedSet.add("BBB", 25.0));
+            this.logger.info("SORTEDSET: {}", sortedSet.add("AAA", 26.0));
+            this.logger.info("SORTEDSET: {}", sortedSet.popMax());
+            this.logger.info("SORTEDSET: {}", sortedSet.popMin());
+            this.logger.info("SORTEDSET: {}", sortedSet.popMax(2));
+            this.logger.info("SORTEDSET: {}", sortedSet.popMin(2));
+            this.logger.info("SORTEDSET: {}", sortedSet.addAll(map));
+            this.logger.info("SORTEDSET: {}", sortedSet.randomMember().orElse("No value found"));
+            this.logger.info("SORTEDSET: {}", sortedSet.randomMembers(3));
+            this.logger.info("SORTEDSET: {}", sortedSet.randomMembersWithScores(3));
+        }
+
+        final SSortedSet unscoredLetters = sail.newSortedSet("Unscored-Letters");
+
+        /* A sorted set is a collection of unique strings that maintain order by each string's associated score */
+
+        final Map<String, Double> unscoredMap = Map.of(
+                "ZZZ", 0.0,
+                "YYY", 0.0,
+                "XXX", 0.0,
+                "CCC", 0.0,
+                "BBB", 0.0,
+                "AAA", 0.0
+        );
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("SORTEDSET: {}", unscoredLetters.addAll(unscoredMap));
+            this.logger.info("SORTEDSET: {}", unscoredLetters.countLexically("B", "YYY"));
         }
 
         if (this.logger.isTraceEnabled()) {
