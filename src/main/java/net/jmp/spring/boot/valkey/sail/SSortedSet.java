@@ -462,6 +462,80 @@ public final class SSortedSet extends SObject {
         return result;
     }
 
+    /// Remove the specified member from the sorted set stored at key.
+    ///
+    /// @param  member  java.lang.String
+    /// @return         long
+    public long remove(final String member) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(member));
+        }
+
+        final long result = this.ezGlide.zrem(this.name, member);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove the specified members from the sorted set stored at key.
+    ///
+    /// @param  members  java.util.List<java.lang.String>
+    /// @return          long
+    public long remove(final List<String> members) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(members));
+        }
+
+        final long result = this.ezGlide.zrem(this.name, members);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove the specified range of elements by index in a sorted set stored at key.
+    ///
+    /// @param  start   long
+    /// @param  end     long
+    /// @return         long
+    public long removeRangeByRank(final long start, final long end) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(start, end));
+        }
+
+        final long result = this.ezGlide.zremrangebyrank(this.name, start, end);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Remove the specified range of elements by score in a sorted set stored at key.
+    ///
+    /// @param  lower   double
+    /// @param  upper   double
+    /// @return         long
+    public long removeRangeByScore(final double lower, final double upper) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(lower, upper));
+        }
+
+        final long result = this.ezGlide.zremrangebyscore(this.name, lower, upper);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the sorted set at this key to a new target sorted set.
     ///
     /// @param  target  java.lang.String

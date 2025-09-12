@@ -454,6 +454,9 @@ public class SailService {
             this.logger.info("SORTEDSET: {}", sortedSet.randomMember().orElse("No value found"));
             this.logger.info("SORTEDSET: {}", sortedSet.randomMembers(3));
             this.logger.info("SORTEDSET: {}", sortedSet.randomMembersWithScores(3));
+            this.logger.info("SORTEDSET: {}", sortedSet.remove("WWW"));
+            this.logger.info("SORTEDSET: {}", sortedSet.removeRangeByRank(0, 1));
+            this.logger.info("SORTEDSET: {}", sortedSet.removeRangeByScore(25.0, 26.0));
         }
 
         final SSortedSet unscoredLetters = sail.newSortedSet("Unscored-Letters");
