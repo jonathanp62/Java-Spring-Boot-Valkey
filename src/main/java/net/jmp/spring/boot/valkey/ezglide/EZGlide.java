@@ -2586,6 +2586,27 @@ public final class EZGlide {
             this.logger.trace(entryWith(key, min, max));
         }
 
+        final List<String> result = this.zrange(key, min, max, false);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the specified range of elements by lexicographical order in a sorted set stored at key.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  min     java.lang.String
+    /// @param  max     java.lang.String
+    /// @param  reverse boolean
+    /// @return         java.util.List
+    public List<String> zrange(final String key, final String min, final String max, final boolean reverse) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, min, max, reverse));
+        }
+
         final List<String> result = new ArrayList<>();
 
         final RangeOptions.LexBoundary minimum = new RangeOptions.LexBoundary(min, true);
@@ -2599,8 +2620,14 @@ public final class EZGlide {
 
         final GlideString[] strings = future.join();
 
-        for (final GlideString element : strings) {
-            result.add(element.getString());
+        if (reverse) {
+            for (int i = strings.length - 1; i >= 0; i--) {
+                result.add(strings[i].getString());
+            }
+        } else {
+            for (final GlideString element : strings) {
+                result.add(element.getString());
+            }
         }
 
         if (this.logger.isTraceEnabled()) {
@@ -2673,6 +2700,26 @@ public final class EZGlide {
         }
 
         final List<String> result = this.zrange(key, upperScore, lowerScore, true);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the specified range of elements, reversed, by lexicographical order in a sorted set stored at key.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  min     java.lang.String
+    /// @param  max     java.lang.String
+    /// @return         java.util.List
+    public List<String> zrevrange(final String key, final String min, final String max) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, min, max));
+        }
+
+        final List<String> result = this.zrange(key, min, max, true);
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));

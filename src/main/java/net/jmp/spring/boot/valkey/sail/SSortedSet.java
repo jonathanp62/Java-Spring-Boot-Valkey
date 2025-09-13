@@ -361,6 +361,25 @@ public final class SSortedSet extends SObject {
         return result;
     }
 
+    /// Return the specified range of elements by lexicographical order in a sorted set stored at key in reverse order.
+    ///
+    /// @param  min     java.lang.String
+    /// @param  max     java.lang.String
+    /// @return         java.util.List
+    public List<String> reversedRangeByLex(final String min, final String max) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(min, max));
+        }
+
+        final List<String> result = this.ezGlide.zrevrange(this.name, min, max);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Remove and return the minimum or maximum element by score from a sorted set stored at key.
     ///
     /// @param  filter  net.jmp.spring.boot.valkey.ezglide.EZGlide.PopScoreFilter
