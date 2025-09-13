@@ -225,6 +225,26 @@ public final class SSortedSet extends SObject {
         return result;
     }
 
+    /// Store the specified range of elements by index in a sorted set stored at key into a new sorted set stored at target.
+    ///
+    /// @param  target   net.jmp.spring.boot.valkey.sail.SSortedSet
+    /// @param  start    long
+    /// @param  end      long
+    /// @return          long
+    public long rangeByIndicesAndStore(final SSortedSet target, final long start, final long end) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target, start, end));
+        }
+
+        final long result = this.ezGlide.zrangestore(this.name, target.name, start, end, false);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Return the specified range of elements by score in a sorted set stored at key.
     ///
     /// @param  start   double
@@ -244,6 +264,26 @@ public final class SSortedSet extends SObject {
         return result;
     }
 
+    /// Store the specified range of elements by score in a sorted set stored at key into a new sorted set stored at target.
+    ///
+    /// @param  target   net.jmp.spring.boot.valkey.sail.SSortedSet
+    /// @param  start    double
+    /// @param  end      double
+    /// @return          long
+    public long rangeByScoresAndStore(final SSortedSet target, final double start, final double end) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target, start, end));
+        }
+
+        final long result = this.ezGlide.zrangestore(this.name, target.name, start, end, false);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Return the specified range of elements by lexicographical order in a sorted set stored at key.
     ///
     /// @param  min     java.lang.String
@@ -255,6 +295,26 @@ public final class SSortedSet extends SObject {
         }
 
         final List<String> result = this.ezGlide.zrange(this.name, min, max);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Store the specified range of elements by lexicographical order in a sorted set stored at key into a new sorted set stored at target.
+    ///
+    /// @param  target   net.jmp.spring.boot.valkey.sail.SSortedSet
+    /// @param  min      java.lang.String
+    /// @param  max      java.lang.String
+    /// @return          long
+    public long rangeByLexAndStore(final SSortedSet target, final String min, final String max) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target, min, max));
+        }
+
+        final long result = this.ezGlide.zrangestore(this.name, target.name, min, max);
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));

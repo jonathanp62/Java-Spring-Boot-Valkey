@@ -428,6 +428,9 @@ public class SailService {
                 "AAA", 26.0
         );
 
+        final SSortedSet rangeByIndices = sail.newSortedSet("Target-Range-By-Indices");
+        final SSortedSet rangeByScores = sail.newSortedSet("Target-Range-By-Scores");
+
         if (this.logger.isInfoEnabled()) {
             this.logger.info("SORTEDSET: {}", sortedSet.addAll(map));
             this.logger.info("SORTEDSET: {}", sortedSet.add("WWW", 4.0));
@@ -438,7 +441,9 @@ public class SailService {
             this.logger.info("SORTEDSET: {}", sortedSet.count(1.0, 3.0));
             this.logger.info("SORTEDSET: {}", sortedSet.incrementScoreBy("CCC", 0.1));
             this.logger.info("SORTEDSET: {}", sortedSet.rangeByIndices(0, 6));
+            this.logger.info("SORTEDSET: {}", sortedSet.rangeByIndicesAndStore(rangeByIndices, 0, 6));
             this.logger.info("SORTEDSET: {}", sortedSet.rangeByScores(0, 26));
+            this.logger.info("SORTEDSET: {}", sortedSet.rangeByScoresAndStore(rangeByScores, 0, 26));
             this.logger.info("SORTEDSET: {}", sortedSet.reversedRangeByIndices(0, 6));
             this.logger.info("SORTEDSET: {}", sortedSet.reversedRangeByScores(0, 26));
             this.logger.info("SORTEDSET: {}", sortedSet.pop(EZGlide.PopScoreFilter.MIN));
@@ -472,10 +477,13 @@ public class SailService {
                 "AAA", 0.0
         );
 
+        final SSortedSet rangeByLex = sail.newSortedSet("Target-Range-By-Lex");
+
         if (this.logger.isInfoEnabled()) {
             this.logger.info("SORTEDSET: {}", unscoredLetters.addAll(unscoredMap));
             this.logger.info("SORTEDSET: {}", unscoredLetters.countLexically("B", "YYY"));
             this.logger.info("SORTEDSET: {}", unscoredLetters.rangeByLex("B", "YYY"));
+            this.logger.info("SORTEDSET: {}", unscoredLetters.rangeByLexAndStore(rangeByLex, "B", "YYY"));
         }
 
         if (this.logger.isTraceEnabled()) {

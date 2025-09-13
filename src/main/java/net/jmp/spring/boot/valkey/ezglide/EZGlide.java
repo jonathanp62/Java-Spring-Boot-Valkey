@@ -2448,6 +2448,31 @@ public final class EZGlide {
         return result;
     }
 
+    /// Store the specified range of elements by index in a sorted set stored at key into a new sorted set stored at target.
+    /// The list is reversed when the reverse option is true.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  target  java.lang.String
+    /// @param  start   long
+    /// @param  end     long
+    /// @param  reverse boolean
+    /// @return         long
+    public long zrangestore(final String key, final String target, final long start, final long end, final boolean reverse) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, target, start, end, reverse));
+        }
+
+        final RangeOptions.RangeByIndex options = new RangeOptions.RangeByIndex(start, end);
+        final CompletableFuture<Long> future = this.glideClient.zrangestore(gs(target), gs(key), options, reverse);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Return the specified range of elements by score in a sorted set stored at key.
     /// The list is reversed when the reverse option is true.
     ///
@@ -2473,6 +2498,35 @@ public final class EZGlide {
         for (final GlideString element : array) {
             result.add(element.getString());
         }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Store the specified range of elements by score in a sorted set stored at key into a new sorted set stored at target.
+    /// The list is reversed when the reverse option is true.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  target      java.lang.String
+    /// @param  lowerScore  double
+    /// @param  upperScore  double
+    /// @param  reverse     boolean
+    /// @return             long
+    public long zrangestore(final String key, final String target, final double lowerScore, final double upperScore, final boolean reverse) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, target, lowerScore, upperScore, reverse));
+        }
+
+        final RangeOptions.RangeByScore options = new RangeOptions.RangeByScore(
+                new RangeOptions.ScoreBoundary(lowerScore, true),
+                new RangeOptions.ScoreBoundary(upperScore, true)
+        );
+
+        final CompletableFuture<Long> future = this.glideClient.zrangestore(gs(target), gs(key), options, reverse);
+        final long result = future.join();
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));
@@ -2548,6 +2602,37 @@ public final class EZGlide {
         for (final GlideString element : strings) {
             result.add(element.getString());
         }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Store the specified range of elements by lexicographical order in a sorted set stored at key into a new sorted set stored at target.
+    ///
+    /// @param  key     java.lang.String
+    /// @param  target  java.lang.String
+    /// @param  min     java.lang.String
+    /// @param  max     java.lang.String
+    /// @return         long
+    public long zrangestore(final String key, final String target, final String min, final String max) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, target, min, max));
+        }
+
+        final RangeOptions.LexBoundary minimum = new RangeOptions.LexBoundary(min, true);
+        final RangeOptions.LexBoundary maximum = new RangeOptions.LexBoundary(max, true);
+        final RangeOptions.RangeByLex range = new RangeOptions.RangeByLex(minimum, maximum);
+
+        final CompletableFuture<Long> future = this.glideClient.zrangestore(
+                gs(target),
+                gs(key),
+                range
+        );
+
+        final long result = future.join();
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));
