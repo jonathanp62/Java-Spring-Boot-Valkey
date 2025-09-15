@@ -728,6 +728,82 @@ public final class SSortedSet extends SObject {
         return result;
     }
 
+    /// Return the number of elements in the intersection of the sorted sets stored at this key and otherSSortedSets.
+    ///
+    /// @param  otherSSortedSets java.util.List<net.jmp.spring.boot.valkey.sail.SSortedSet>
+    /// @param  limit            long
+    /// @return                  long
+    public long intersectSize(final List<SSortedSet> otherSSortedSets, final long limit) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(otherSSortedSets, limit));
+        }
+
+        final List<String> otherKeys = otherSSortedSets.stream().map(SSortedSet::getName).toList();
+        final long result = this.ezGlide.zintercard(this.name, otherKeys, limit);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the number of elements in the intersection of the sorted sets stored at this key and otherSSortedSets.
+    ///
+    /// @param  otherSSortedSets java.util.List<net.jmp.spring.boot.valkey.sail.SSortedSet>
+    /// @return                 long
+    public long intersectSize(final List<SSortedSet> otherSSortedSets) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(otherSSortedSets));
+        }
+
+        final List<String> otherKeys = otherSSortedSets.stream().map(SSortedSet::getName).toList();
+        final long result = this.ezGlide.zintercard(this.name, otherKeys);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the number of elements in the intersection of the sorted sets stored at this key and otherSSortedSet.
+    ///
+    /// @param  otherSSortedSet net.jmp.spring.boot.valkey.sail.SSortedSet
+    /// @param  limit           long
+    /// @return                 long
+    public long intersectSize(final SSortedSet otherSSortedSet, final long limit) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(otherSSortedSet, limit));
+        }
+
+        final long result = this.ezGlide.zintercard(this.name, otherSSortedSet.name, limit);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the number of elements in the intersection of the sorted sets stored at this key and otherSSortedSet.
+    ///
+    /// @param  otherSSortedSet net.jmp.spring.boot.valkey.sail.SSortedSet
+    /// @return                 long
+    public long intersectSize(final SSortedSet otherSSortedSet) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(otherSSortedSet));
+        }
+
+        final long result = this.ezGlide.zintercard(this.name, otherSSortedSet.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the sorted set at this key to a new target sorted set.
     ///
     /// @param  target  java.lang.String
