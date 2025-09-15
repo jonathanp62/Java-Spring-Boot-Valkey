@@ -495,6 +495,8 @@ public class SailService {
     }
 
     /// Demonstrate the SSortedSet intersections.
+    ///
+    /// @param  sail    net.jmp.spring.boot.valkey.sail.Sail
     private void sSortedSetIntersections(final Sail sail) {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entryWith(sail));
@@ -519,6 +521,16 @@ public class SailService {
 
         blueCars.addAll(carsThatAreBlue);
         redCars.addAll(carsThatAreRed);
+
+        final SSortedSet diff1 = sail.newSortedSet("Diff-BlueCars&RedCars");
+        final SSortedSet diff2 = sail.newSortedSet("Diff-RedCars&BlueCars");
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("SORTEDSET: {}", blueCars.diff(redCars));  // Audi, Cadillac
+            this.logger.info("SORTEDSET: {}", redCars.diff(blueCars));  // Chrysler, Alpha Romeo
+            this.logger.info("SORTEDSET: {}", blueCars.diffAndStore(diff1, redCars));  // Audi, Cadillac
+            this.logger.info("SORTEDSET: {}", redCars.diffAndStore(diff2, blueCars));  // Chrysler, Alpha Romeo
+        }
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());

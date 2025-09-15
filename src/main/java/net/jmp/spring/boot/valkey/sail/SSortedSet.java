@@ -652,6 +652,82 @@ public final class SSortedSet extends SObject {
         return result;
     }
 
+    /// Return the difference between the sorted set at this key and the sorted sets at otherKeys.
+    ///
+    /// @param  otherSSortedSets  java.util.List<net.jmp.spring.boot.valkey.sail.SSortedSet>
+    /// @return                   java.util.Set<java.lang.String>
+    public Set<String> diff(final List<SSortedSet> otherSSortedSets) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(otherSSortedSets));
+        }
+
+        final List<String> otherKeys = otherSSortedSets.stream().map(SSortedSet::getName).toList();
+        final Set<String> result = this.ezGlide.zdiff(this.name, otherKeys);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the difference between the sorted set at this key and the sorted set at otherKey.
+    ///
+    /// @param  otherSSortedSet  net.jmp.spring.boot.valkey.sail.SSortedSet
+    /// @return                  java.util.Set<java.lang.String>
+    public Set<String> diff(final SSortedSet otherSSortedSet) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(otherSSortedSet));
+        }
+
+        final Set<String> result = this.ezGlide.zdiff(this.name, otherSSortedSet.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Store the difference between the sorted set at this key and the sorted sets at otherKeys in the sorted set at target.
+    ///
+    /// @param  target          net.jmp.spring.boot.valkey.sail.SSortedSet
+    /// @param  otherSSortedSets java.util.List<net.jmp.spring.boot.valkey.sail.SSortedSet>
+    /// @return                 long
+    public long diffAndStore(final SSortedSet target, final List<SSortedSet> otherSSortedSets) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target, otherSSortedSets));
+        }
+
+        final List<String> otherKeys = otherSSortedSets.stream().map(SSortedSet::getName).toList();
+        final long result = this.ezGlide.zdiffstore(this.name, target.name, otherKeys);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Store the difference between the sorted set at this key and the sorted set at otherKey in the sorted set at target.
+    ///
+    /// @param  target          net.jmp.spring.boot.valkey.sail.SSortedSet
+    /// @param  otherSSortedSet net.jmp.spring.boot.valkey.sail.SSortedSet
+    /// @return                 long
+    public long diffAndStore(final SSortedSet target, final SSortedSet otherSSortedSet) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target, otherSSortedSet));
+        }
+
+        final long result = this.ezGlide.zdiffstore(this.name, target.name, otherSSortedSet.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the sorted set at this key to a new target sorted set.
     ///
     /// @param  target  java.lang.String

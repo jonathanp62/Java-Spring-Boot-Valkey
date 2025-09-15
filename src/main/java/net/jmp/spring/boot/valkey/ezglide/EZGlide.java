@@ -2398,6 +2398,107 @@ public final class EZGlide {
         return result;
     }
 
+    /// Return the difference between the sorted set at key and the sorted sets at otherKeys.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  otherKeys   java.util.List<java.lang.String>
+    /// @return             java.util.Set<java.lang.String>
+    public Set<String> zdiff(final String key, final List<String> otherKeys) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, otherKeys));
+        }
+
+        final Set<String> result = new HashSet<>();
+        final GlideString[] keysArray = new GlideString[otherKeys.size() + 1];
+
+        keysArray[0] = gs(key);
+
+        for (int i = 0; i < otherKeys.size(); i++) {
+            keysArray[i + 1] = gs(otherKeys.get(i));
+        }
+
+        final CompletableFuture<GlideString[]> future = this.glideClient.zdiff(keysArray);
+        final GlideString[] strings = future.join();
+
+        for (final GlideString element : strings) {
+            result.add(element.toString());
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the difference between the sorted set at key and the sorted set at otherKey.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  otherKey    java.lang.String
+    /// @return             java.util.Set<java.lang.String>
+    public Set<String> zdiff(final String key, final String otherKey) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, otherKey));
+        }
+
+        final Set<String> result = this.zdiff(key, List.of(otherKey));
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Store the difference between the sorted set at key and the sorted sets at otherKeys in the sorted set at target.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  target      java.lang.String
+    /// @param  otherKeys   java.util.List<java.lang.String>
+    /// @return             long
+    public long zdiffstore(final String key, final String target, final List<String> otherKeys) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, target, otherKeys));
+        }
+
+        final GlideString[] keysArray = new GlideString[otherKeys.size() + 1];
+
+        keysArray[0] = gs(key);
+
+        for (int i = 0; i < otherKeys.size(); i++) {
+            keysArray[i + 1] = gs(otherKeys.get(i));
+        }
+
+        final CompletableFuture<Long> future = this.glideClient.zdiffstore(gs(target), keysArray);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Store the difference between the sorted set at key and the sorted set at otherKey in the sorted set at target.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  target      java.lang.String
+    /// @param  otherKey    java.lang.String
+    /// @return             long
+    public long zdiffstore(final String key, final String target, final String otherKey) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, target, otherKey));
+        }
+
+        final long result = this.zdiffstore(key, target, List.of(otherKey));
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Increment the score of member in the sorted set stored at key by increment.
     ///
     /// @param  key         java.lang.String
