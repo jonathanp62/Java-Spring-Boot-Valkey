@@ -500,6 +500,26 @@ public class SailService {
             this.logger.trace(entryWith(sail));
         }
 
+        final SSortedSet blueCars = sail.newSortedSet("Blue Cars");
+        final SSortedSet redCars = sail.newSortedSet("Red Cars");
+
+        final Map<String, Double> carsThatAreBlue = Map.of(
+                "Audi", 1.0,
+                "BMW", 2.0,
+                "Cadillac", 3.0,
+                "Dodge", 4.0
+        );
+
+        final Map<String, Double> carsThatAreRed = Map.of(
+                "Alpha Romeo", 1.0,
+                "BMW", 2.0,
+                "Chrysler", 3.0,
+                "Dodge", 4.0
+        );
+
+        blueCars.addAll(carsThatAreBlue);
+        redCars.addAll(carsThatAreRed);
+
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
         }
