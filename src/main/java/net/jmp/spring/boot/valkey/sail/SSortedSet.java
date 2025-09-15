@@ -633,6 +633,25 @@ public final class SSortedSet extends SObject {
         return result;
     }
 
+    /// Remove the specified range of elements by lexicographical order in a sorted set stored at key.
+    ///
+    /// @param  min     java.lang.String
+    /// @param  max     java.lang.String
+    /// @return         long
+    public long removeRangeByLex(final String min, final String max) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(min, max));
+        }
+
+        final long result = this.ezGlide.zremrangebylex(this.name, min, max);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the sorted set at this key to a new target sorted set.
     ///
     /// @param  target  java.lang.String

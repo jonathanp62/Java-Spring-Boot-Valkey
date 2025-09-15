@@ -106,6 +106,7 @@ public class SailService {
             this.sSet(sail);
             this.sSetIntersections(sail);
             this.sSortedSet(sail);
+            this.sSortedSetIntersections(sail);
         }
 
         if (this.logger.isTraceEnabled()) {
@@ -485,6 +486,18 @@ public class SailService {
             this.logger.info("SORTEDSET: {}", unscoredLetters.rangeByLex("B", "YYY"));
             this.logger.info("SORTEDSET: {}", unscoredLetters.rangeByLexAndStore(rangeByLex, "B", "YYY"));
             this.logger.info("SORTEDSET: {}", unscoredLetters.reversedRangeByLex("B", "YYY"));
+            this.logger.info("SORTEDSET: {}", unscoredLetters.removeRangeByLex("B", "YYY"));
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
+    }
+
+    /// Demonstrate the SSortedSet intersections.
+    private void sSortedSetIntersections(final Sail sail) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(sail));
         }
 
         if (this.logger.isTraceEnabled()) {

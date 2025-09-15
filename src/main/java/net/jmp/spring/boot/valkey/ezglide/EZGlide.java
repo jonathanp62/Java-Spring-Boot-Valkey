@@ -3041,6 +3041,29 @@ public final class EZGlide {
         return result;
     }
 
+    /// Remove all elements in the sorted set stored at key lexically between min and max.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  min         java.lang.String
+    /// @param  max         java.lang.String
+    /// @return             long
+    public long zremrangebylex(final String key, final String min, final String max) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, min, max));
+        }
+
+        final RangeOptions.LexBoundary minimum = new RangeOptions.LexBoundary(min, true);
+        final RangeOptions.LexBoundary maximum = new RangeOptions.LexBoundary(max, true);
+        final CompletableFuture<Long> future = this.glideClient.zremrangebylex(key, minimum, maximum);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Remove all elements in the sorted set stored at key with a score between min and max.
     ///
     /// @param  key         java.lang.String
