@@ -531,6 +531,7 @@ public class SailService {
             this.logger.info("SORTEDSET: {}", blueCars.diffAndStore(diff1, redCars));  // Audi, Cadillac
             this.logger.info("SORTEDSET: {}", redCars.diffAndStore(diff2, blueCars));  // Chrysler, Alpha Romeo
             this.logger.info("SORTEDSET: {}", redCars.intersectSize(blueCars));
+            this.logger.info("SORTEDSET: {}", redCars.intersect(blueCars)); // Dodge, BMW
         }
 
         if (this.logger.isTraceEnabled()) {

@@ -35,10 +35,7 @@ import glide.api.models.GlideString;
 
 import static glide.api.models.GlideString.gs;
 
-import glide.api.models.commands.LInsertOptions;
-import glide.api.models.commands.ListDirection;
-import glide.api.models.commands.RangeOptions;
-import glide.api.models.commands.ScoreFilter;
+import glide.api.models.commands.*;
 
 import java.util.*;
 
@@ -2512,6 +2509,59 @@ public final class EZGlide {
 
         final CompletableFuture<Double> future = this.glideClient.zincrby(gs(key), increment, gs(value));
         final double result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the intersection of the sorted sets stored at key and otherKeys.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  otherKeys   java.util.List<java.lang.String>
+    /// @return             java.util.Set<java.lang.String>
+    public Set<String> zinter(final String key, final List<String> otherKeys) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, otherKeys));
+        }
+
+        final Set<String> result = new HashSet<>();
+        final GlideString[] keysArray = new GlideString[otherKeys.size() + 1];
+
+        keysArray[0] = gs(key);
+
+        for (int i = 0; i < otherKeys.size(); i++) {
+            keysArray[i + 1] = gs(otherKeys.get(i));
+        }
+
+        final WeightAggregateOptions.KeyArrayBinary keyArrayBinary = new WeightAggregateOptions.KeyArrayBinary(keysArray);
+        final CompletableFuture<GlideString[]> future = this.glideClient.zinter(keyArrayBinary);
+        final GlideString[] array = future.join();
+
+        for (final GlideString element : array) {
+            result.add(element.toString());
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the intersection of the sorted sets stored at key and otherKey.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  otherKey    java.lang.String
+    /// @return             java.util.Set<java.lang.String>
+    public Set<String> zinter(final String key, final String otherKey) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, otherKey));
+        }
+
+        final Set<String> result = this.zinter(key, List.of(otherKey));
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exitWith(result));
