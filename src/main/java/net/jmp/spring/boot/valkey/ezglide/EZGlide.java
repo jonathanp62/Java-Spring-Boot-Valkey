@@ -2570,6 +2570,58 @@ public final class EZGlide {
         return result;
     }
 
+    /// Store the intersection of the sorted sets stored at key and otherKeys in the sorted set stored at target.
+    /// The number of elements stored in the target key is returned.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  target      java.lang.String
+    /// @param  otherKeys   java.util.List<java.lang.String>
+    /// @return             long
+    public long zinterstore(final String key, final String target, final List<String> otherKeys) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, target, otherKeys));
+        }
+
+        final GlideString[] keysArray = new GlideString[otherKeys.size() + 1];
+
+        keysArray[0] = gs(key);
+
+        for (int i = 0; i < otherKeys.size(); i++) {
+            keysArray[i + 1] = gs(otherKeys.get(i));
+        }
+
+        final WeightAggregateOptions.KeyArrayBinary keyArrayBinary = new WeightAggregateOptions.KeyArrayBinary(keysArray);
+        final CompletableFuture<Long> future = this.glideClient.zinterstore(gs(target), keyArrayBinary);
+        final long result = future.join();
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Store the intersection of the sorted sets stored at key and otherKey in the sorted set stored at target.
+    /// The number of elements stored in the target key is returned.
+    ///
+    /// @param  key         java.lang.String
+    /// @param  target      java.lang.String
+    /// @param  otherKey    java.lang.String
+    /// @return             long
+    public long zinterstore(final String key, final String target, final String otherKey) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(key, target, otherKey));
+        }
+
+        final long result = this.zinterstore(key, target, List.of(otherKey));
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Return the number of elements in the intersection of the sorted sets stored at key and otherKeys.
     ///
     /// @param  key         java.lang.String

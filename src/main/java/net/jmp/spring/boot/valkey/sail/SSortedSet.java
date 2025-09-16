@@ -765,6 +765,47 @@ public final class SSortedSet extends SObject {
         return result;
     }
 
+    /// Store the intersection of the sorted sets stored at this key and otherSSortedSets in the sorted set stored at target.
+    /// The number of elements stored in the target key is returned.
+    ///
+    /// @param  target          net.jmp.spring.boot.valkey.sail.SSortedSet
+    /// @param  otherSSortedSets java.util.List<net.jmp.spring.boot.valkey.sail.SSortedSet>
+    /// @return                 long
+    public long intersectAndStore(final SSortedSet target, final List<SSortedSet> otherSSortedSets) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target, otherSSortedSets));
+        }
+
+        final List<String> otherKeys = otherSSortedSets.stream().map(SSortedSet::getName).toList();
+        final long result = this.ezGlide.zinterstore(this.name, target.name, otherKeys);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Store the intersection of the sorted sets stored at this key and otherKey in the sorted set stored at target.
+    /// The number of elements stored in the target key is returned.
+    ///
+    /// @param  target          net.jmp.spring.boot.valkey.sail.SSortedSet
+    /// @param  otherSSortedSet net.jmp.spring.boot.valkey.sail.SSortedSet
+    /// @return                 long
+    public long intersectAndStore(final SSortedSet target, SSortedSet otherSSortedSet) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target, otherSSortedSet));
+        }
+
+        final long result = this.ezGlide.zinterstore(this.name, target.name, otherSSortedSet.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Return the number of elements in the intersection of the sorted sets stored at this key and otherSSortedSets.
     ///
     /// @param  otherSSortedSets java.util.List<net.jmp.spring.boot.valkey.sail.SSortedSet>
