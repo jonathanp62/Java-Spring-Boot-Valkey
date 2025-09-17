@@ -882,6 +882,84 @@ public final class SSortedSet extends SObject {
         return result;
     }
 
+    /// Return the union of the sorted sets stored at this key and the sorted sets stored at otherSSortedSets.
+    ///
+    /// @param  otherSSortedSets java.util.List<net.jmp.spring.boot.valkey.sail.SSortedSet>
+    /// @return                  java.util.Set<java.lang.String>
+    public Set<String> union(final List<SSortedSet> otherSSortedSets) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(otherSSortedSets));
+        }
+
+        final List<String> otherKeys = otherSSortedSets.stream().map(SSortedSet::getName).toList();
+        final Set<String> result = this.ezGlide.zunion(this.name, otherKeys);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Return the union of the sorted sets stored at this key and the sorted set stored at otherSSortedSet.
+    ///
+    /// @param  otherSSortedSet net.jmp.spring.boot.valkey.sail.SSortedSet
+    /// @return                 java.util.Set<java.lang.String>
+    public Set<String> union(final SSortedSet otherSSortedSet) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(otherSSortedSet));
+        }
+
+        final Set<String> result = this.ezGlide.zunion(this.name, otherSSortedSet.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Store the union of the sorted sets stored at this key and the sorted sets stored at otherSSortedSets in the sorted set stored at target.
+    /// The number of elements stored in the target key is returned.
+    ///
+    /// @param  target              net.jmp.spring.boot.valkey.sail.SSortedSet
+    /// @param  otherSSortedSets    java.util.List<net.jmp.spring.boot.valkey.sail.SSortedSet>
+    /// @return                     long
+    public long unionAndStore(final SSortedSet target, final List<SSortedSet> otherSSortedSets) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target, otherSSortedSets));
+        }
+
+        final List<String> otherKeys = otherSSortedSets.stream().map(SSortedSet::getName).toList();
+        final long result = this.ezGlide.zunionstore(this.name, target.name, otherKeys);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
+    /// Store the union of the sorted sets stored at this key and the sorted set stored at otherSSortedSet in the sorted set stored at target.
+    /// The number of elements stored in the target key is returned.
+    ///
+    /// @param  target          net.jmp.spring.boot.valkey.sail.SSortedSet
+    /// @param  otherSSortedSet net.jmp.spring.boot.valkey.sail.SSortedSet
+    /// @return                 long
+    public long unionAndStore(final SSortedSet target, SSortedSet otherSSortedSet) {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entryWith(target, otherSSortedSet));
+        }
+
+        final long result = this.ezGlide.zunionstore(this.name, target.name, otherSSortedSet.name);
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exitWith(result));
+        }
+
+        return result;
+    }
+
     /// Copy the sorted set at this key to a new target sorted set.
     ///
     /// @param  target  java.lang.String

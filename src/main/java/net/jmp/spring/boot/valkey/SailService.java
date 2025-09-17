@@ -525,7 +525,8 @@ public class SailService {
         final SSortedSet diff1 = sail.newSortedSet("Diff-BlueCars&RedCars");
         final SSortedSet diff2 = sail.newSortedSet("Diff-RedCars&BlueCars");
 
-        final SSortedSet intersection = sail.newSortedSet("Intersection-Blue cars&Red cars");
+        final SSortedSet intersection = sail.newSortedSet("Intersection-BlueCars&RedCars");
+        final SSortedSet union = sail.newSortedSet("Union-BlueCars&RedCars");
 
         if (this.logger.isInfoEnabled()) {
             this.logger.info("SORTEDSET: {}", blueCars.diff(redCars));  // Audi, Cadillac
@@ -535,6 +536,8 @@ public class SailService {
             this.logger.info("SORTEDSET: {}", redCars.intersectSize(blueCars));
             this.logger.info("SORTEDSET: {}", redCars.intersect(blueCars)); // Dodge, BMW
             this.logger.info("SORTEDSET: {}", blueCars.intersectAndStore(intersection, redCars));
+            this.logger.info("SORTEDSET: {}", blueCars.union(redCars));
+            this.logger.info("SORTEDSET: {}", blueCars.unionAndStore(union, redCars));
         }
 
         if (this.logger.isTraceEnabled()) {
